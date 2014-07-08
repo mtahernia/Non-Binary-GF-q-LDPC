@@ -49,10 +49,14 @@ public:
 
   // General functions ----------------------------------------------------
 
+
+
  /// Constructor for LDPC_Code class
   LDPC_Code( std::ifstream &File,
              int p_BlockLength = -1,
 	     channel *p_Channel = NULL );
+
+
 
   /// Initialization of the constructor is called without any arguements
   LDPC_Code() : /* After colon, there is initialization of constant variables!
@@ -60,12 +64,18 @@ public:
     BlockLength(-1),
     Channel(NULL) {}
 
+
+
   /// Operator overloading function for = . The argument is rhs of the assignment operator
   LDPC_Code &operator=(LDPC_Code &Code); // FIXME: This function should have explicit definition somewhere
+
+
 
   /// Reads the parameters of LDPC code from the input file
   void GetFromFile( std::ifstream &file );
  
+
+
   /// Sets the channel used for the simulation
   void SetChannel( channel &p_Channel )
   {
@@ -73,10 +83,13 @@ public:
   }
 
 
-  double sigma_lambda();			//!<
-  double sigma_rho();				//!<
+  double sigma_lambda();			//!< \f$ \sum_{i=1}^{c}\frac{\lambda_i}{i} \f$
+  double sigma_rho();				//!< \f$ \sum_{j=1}^{c}\frac{\rho_j}{j} \f$
 
-  double Calc_Energy();				//!< FIXME: I don't know where is the definition
+  //double Calc_Energy();				//!< FIXME: This is not used so I commented it
+
+
+
 
   /// Calculates \f$ \sum_{i=1}^{c} \lambda_i \f$
   /**
@@ -89,8 +102,11 @@ public:
 	sum += lambda_wts[i];
       return sum;
     }
-  /*!
-   * Calculates \f$ \sum_{j=1}^{d} \rho_i \f$
+
+
+
+  /**
+   * Calculates \f$ \sum_{j=1}^{d} \rho_j \f$
    */
   double SumRho()
     { 
@@ -99,40 +115,76 @@ public:
 	sum += rho_wts[i];
       return sum;
     }
-  double Calc_Symbol_Rate();
 
+/**
+ * \f$ Rate = 1- \frac{M}{N}=1 - \frac{ \sum_{j=1}^{d} \rho_j }{ \sum_{i=1}^{c} \lambda_i } \f$
+ */
+  double Calc_Symbol_Rate();		//!< Calculate the Symbol rate
+
+
+
+  /**
+   * Calculates bit-rate from symbol-rate
+   */
   double Calc_Bit_Rate()
   {return Calc_Symbol_Rate() * log((double)GFq::q)/log(2.);   }
 
-  void MakeLambdasValid()   // Make lambdas sum = 1
-    {
-      double sum = SumLambda();
-      for (int i = 0; lambda_degs[i] != -1; i++)
-	lambda_wts[i] /= sum;
-    }
 
-  void MakeRhosValid()   // Make lambdas sum = 1
-    {
-      double sum = SumRho();
-      for (int i = 0; rho_degs[i] != -1; i++)
-	rho_wts[i] /= sum;
-    }
 
-  void GetLambdasWtsFromFile( std::ifstream &file );
-  void GetRhoWtsFromFile( std::ifstream &file );
+
+  /**
+   * Normalize \f$ \lambda \f$ to make it a probability distribution
+   */
+  void MakeLambdasValid()   /// Make lambdas sum = 1
+  {
+	  double sum = SumLambda();
+	  for (int i = 0; lambda_degs[i] != -1; i++)
+		  lambda_wts[i] /= sum;
+  }
+
+
+
+
+  /**
+   * Normalize \f$ \rho \f$ to make it a probability distribution
+   */
+  void MakeRhosValid()   /// Make rhos sum = 1
+  {
+	  double sum = SumRho();
+	  for (int i = 0; rho_degs[i] != -1; i++)
+		  rho_wts[i] /= sum;
+  }
+
+  void GetLambdasWtsFromFile( std::ifstream &file );	//!< Reads lambda weights from file
+  void GetRhoWtsFromFile( std::ifstream &file );		//!< Reads rho weights from file
+
+
+/// Calculate c
+/**
+ * c is the number of possible degrees of variable nodes
+ */
   int CountLambdaDegs()
-    {
-      int count;
-      for (count = 0; lambda_degs[count] != -1; count++);
-      return count;
-    }
+  {
+	  int count;
+	  for (count = 0; lambda_degs[count] != -1; count++);
+	  return count;
+  }
 
+
+
+
+  /// Calculate d
+  /**
+   * d is the number of possible degrees of check nodes
+   */
   int CountRhoDegs()
     {
       int count;
       for (count = 0; rho_degs[count] != -1; count++);
       return count;
     }
+
+
 
   // Monte Carlo functions -----------------------------------------
   void Init_Messages( vector &ChannelOutput );
@@ -152,13 +204,13 @@ public:
    }
 
   // Encoding ------------------------------------------------------
-  double Calc_Source_Coding_Symbol_Rate();
-  double Calc_Source_Coding_Bit_Rate();
-  void GenerateRandomSystematic();
-  void Encode();
-  void GenerateEncoder();
-  void GenerateEncoder_WithoutGap();
+  double Calc_Source_Coding_Symbol_Rate(); 	//!< Calculate source coding symbol rate(FIXME:Not implemented yet)
+  double Calc_Source_Coding_Bit_Rate();		//!< Calculate source coding bit rate(FIXME:Not implemented yet)
+  void GenerateRandomSystematic();			//!< Randomly generate systematic code
+  void Encode();							//!< Encode using Urbanke method
+  void GenerateEncoder();					//!< Generate encoder with gap (FIXME: )
+  void GenerateEncoder_WithoutGap();		//!< Generate encoder without gap (FIXME:)
 
 } ;
 
-#endif
+#endif // Preprocessor guard ends here

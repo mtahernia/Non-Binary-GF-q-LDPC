@@ -103,10 +103,10 @@ double LDPC_Code::sigma_lambda()
   double n;
 
   n = 0;
-  
+
   for (int i = 0; lambda_degs[i] != -1; i++)
     n += lambda_wts[i]/lambda_degs[i];
- 
+
   return n;
 }
 

@@ -670,7 +670,9 @@ void bipartite_graph::Reset(
  ************************************************************************/
 
 
-
+/**
+ * Initialize Variable nodes with channel output
+ */
 void LDPC_Code::Init_Messages( vector &ChannelOutput )
 {
   if (ChannelOutput.GetSize() != Variables.GetLength())

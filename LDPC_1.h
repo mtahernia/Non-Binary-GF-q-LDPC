@@ -11,10 +11,8 @@
 #include "Utils_1.h"
 #include "LDPC_2.h"
 
-
-
-#define MAX_LAMBDAS 1000
-#define MAX_RHOS    1000
+#define MAX_LAMBDAS 1000//!< Maximum number of Lambdas
+#define MAX_RHOS    1000//!< Maximum number of Rhos
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -25,48 +23,65 @@
 
 //class convolutional_code; //FIXME: I really don't know why this line is here! I just commented this line
 
+/// LDPC_Code Class definition
 class LDPC_Code
 {
 public:
-  bipartite_graph Graph;
-  int lambda_degs[MAX_LAMBDAS + 1];
-  double lambda_wts[MAX_LAMBDAS + 1];
-  int rho_degs[MAX_RHOS + 1];
-  double rho_wts[MAX_RHOS + 1];
-  int BlockLength;  // Used in monte-carlo simulations
-  mapping MapInUse;
-  channel *Channel;
+  bipartite_graph Graph;				//!< Bipartite graph of underlying LDPC Code
+  int lambda_degs[MAX_LAMBDAS + 1];		//!< Degrees of variable nodes
+  double lambda_wts[MAX_LAMBDAS + 1];	//!< Weights of the variable nodes
+  int rho_degs[MAX_RHOS + 1];			//!< Degrees of check nodes
+  double rho_wts[MAX_RHOS + 1];			//!< Weights of check nodes
+  int BlockLength;  					//!< Block Length that is used in monte-carlo simulations
+  mapping MapInUse; 					//!< Mapping from code symbols to channel symbols
+  channel *Channel; 					//!< Channel in use
 
   // For use in encoding
-  VariableNodeList Variables;
-  CheckNodeList Checks;
-  int Systematic, Gap, Triangle;
-  matrix GapMatrix, MinusPhiInverse;
+  VariableNodeList Variables; 			//!< List of variable nodes, this is used in encoding
+  CheckNodeList Checks; 				//!< List of check nodes, this is used in encoding
+  int Systematic;				 		//!< FIXME: I don't know where are these used, in the encoding process
+  int Gap;								//!< FIXME: I don't know where are these used, in the encoding process
+  int Triangle;							//!< FIXME: I don't know where are these used, in the encoding process
+  matrix GapMatrix;						//!< FIXME: I don't know where are these used, in the encoding process
+  matrix MinusPhiInverse; 				//!< FIXME: I don't know where are these used, in the encoding process
 
 public:
 
   // General functions ----------------------------------------------------
+
+ /// Constructor for LDPC_Code class
   LDPC_Code( std::ifstream &File,
              int p_BlockLength = -1,
 	     channel *p_Channel = NULL );
 
-  LDPC_Code() : 
+  /// Initialization of the constructor is called without any arguements
+  LDPC_Code() : /* After colon, there is initialization of constant variables!
+	  	  	  	you can not initialize constant int,... inside the constructor function */
     BlockLength(-1),
     Channel(NULL) {}
 
-  LDPC_Code &operator=(LDPC_Code &Code);
+  /// Operator overloading function for = . The argument is rhs of the assignment operator
+  LDPC_Code &operator=(LDPC_Code &Code); // FIXME: This function should have explicit definition somewhere
 
+  /// Reads the parameters of LDPC code from the input file
   void GetFromFile( std::ifstream &file );
  
+  /// Sets the channel used for the simulation
   void SetChannel( channel &p_Channel )
   {
      Channel = &p_Channel;
   }
 
-  double sigma_lambda();
-  double sigma_rho();
 
-  double Calc_Energy();
+  double sigma_lambda();			//!<
+  double sigma_rho();				//!<
+
+  double Calc_Energy();				//!< FIXME: I don't know where is the definition
+
+  /// Calculates \f$ \sum_{i=1}^{c} \lambda_i \f$
+  /**
+   * This will be needed to calculate the lower bound on code rate
+   */
   double SumLambda()
     { 
       double sum = 0;
@@ -74,6 +89,9 @@ public:
 	sum += lambda_wts[i];
       return sum;
     }
+  /*!
+   * Calculates \f$ \sum_{j=1}^{d} \rho_i \f$
+   */
   double SumRho()
     { 
       double sum = 0;

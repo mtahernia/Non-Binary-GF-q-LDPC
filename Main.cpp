@@ -10,7 +10,8 @@
 
 BOOLEAN debug = FALSE;
 
-/*****************************************************************************
+/**
+ * ***************************************************************************
  *
  * MAIN
  *
@@ -47,12 +48,12 @@ int main(int argc, char **argv)
       return -1;
     }
 
-  sscanf(argv[1], "%s", infilename);
+  sscanf(argv[1], "%s", infilename);/** Get the input file name */
 
-  for (int i = 3; i < argc; i++)
+  for (int i = 3; i < argc; i++) 	/** Start checking the input arguments, 0, 1, 2 are already processed */
   {
      CurrentOption = argv[i];
-     if (CurrentOption[0] != '-')
+     if (CurrentOption[0] != '-')	/** An Argument should start with "-" */
      {
         cout << "Invalid command line parameter #" << i << ": " << CurrentOption << "\n";
         exit(1);

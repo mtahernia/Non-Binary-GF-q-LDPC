@@ -39,28 +39,27 @@ class mapping;
 class channel
 {
 public:
-   virtual char *GetChannelName() = 0;
+	virtual char *GetChannelName() = 0;
 
-   // General functions ------------------------------------------
-   GFq &MaxProbableForOutput( mapping &MapInUse );
+	// General functions ------------------------------------------
+	GFq &MaxProbableForOutput( mapping &MapInUse );
 
-   double ErrorUndefined(char *FuncName)
-   {
-      cout << GetChannelName() << "::" << FuncName << " undefined.\n";
-      exit(1);
-   }
-   virtual void PrintChannelData(LDPC_Code &Code) = 0; /*!<This is a pure virtual function, meaning the child classes should define it or it will retun zero if not defined */
-   virtual void ProcessMapping(LDPC_Code &Code) = 0;
-   
-   // Channel functions-------------------------------------------
-   void SimulateOutputVector(vector &InVector, vector &OutVector);
-   
-   virtual double SimulateOutput(   double ChannelInput ) = 0;
-   virtual double CalcProbForInput( double ChannelOutput, 
-				    double ChannelInput ) = 0;
+	double ErrorUndefined(char *FuncName)
+	{
+		cout << GetChannelName() << "::" << FuncName << " undefined.\n";
+		exit(1);
+	}
+	virtual void PrintChannelData(LDPC_Code &Code) = 0; /*!<This is a pure virtual function, meaning the child classes should define it or it will retun zero if not defined */
+	virtual void ProcessMapping(LDPC_Code &Code) = 0;
 
-   // Statistical data -------------------------------------------
-   virtual double CapacityInBits() = 0;
+	// Channel functions-------------------------------------------
+	void SimulateOutputVector(vector &InVector, vector &OutVector);
+
+	virtual double SimulateOutput(   double ChannelInput ) = 0;
+	virtual double CalcProbForInput( double ChannelOutput, double ChannelInput ) = 0;
+
+	// Statistical data -------------------------------------------
+	virtual double CapacityInBits() = 0;
 } ;
 
 

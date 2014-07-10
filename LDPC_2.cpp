@@ -19,36 +19,52 @@
 void message::DFT2()          // A real-valued DFT - also IDFT
 {
 	static message Aux;
-      GFq mask, n0_index, n1_index;
+	GFq mask, n0_index, n1_index;
 	BYTE j_bit;
+	double temp;
 
-      if (GFq::IsPrimeQ)
-      {
-         cout << "Error, message::DFT2:  Only q that is a power of 2 is supported.\n";
-         exit(1);
-      }
+	if (!GFq::IsPrimeQ)
+	{
+		for (int i  = 0; i < GFq::log_2_q; i++)
+		{
+			Aux = *this;			// Initialize
+			mask.val = 1 << i;  //Shift left i times to get powers of 2
 
-      for (int i  = 0; i < GFq::log_2_q; i++)
-      {
-	   Aux = *this;			// Initialize
-	   mask.val = 1 << i;
+			//			cout << "mask.val("<<i<<")="<<mask.val<<std::endl; // Just for debugging
 
-         for (GFq j(0); j.val < q; j.val++)
-         {
-            j_bit = (j.val & mask.val) >> i;	// obtain value of j
-		n0_index.val = j.val & (~mask.val);	// turn bit off
-		n1_index.val = j.val | mask.val;    // turn bit on
+			for (GFq j(0); j.val < q; j.val++)
+			{
+				j_bit = (j.val & mask.val) >> i;	// obtain value of j which is i th bit of j
+				n0_index.val = j.val & (~mask.val);	// turn bit off
+				n1_index.val = j.val | mask.val;    // turn bit on
 
-		//cout << (int)j_bit;
+				//cout << (int)j_bit;
 
-            if (j_bit == 0)
-               Probs[j.val] = Aux[n0_index] + Aux[n1_index];
-            else
-               Probs[j.val] = Aux[n0_index] - Aux[n1_index];
-         }
+				if (j_bit == 0)
+					Probs[j.val] = Aux[n0_index] + Aux[n1_index];
+				else
+					Probs[j.val] = Aux[n0_index] - Aux[n1_index];
+				//				cout << "Aux(" << n0_index << ")= " << Aux[n0_index] << std::endl;
+			}//end for j
+		}//end for i
+	}//end else
+	else if (GFq::IsPrimeQ) // FIXME: this is not a real FFT, here I used normal DFT for prime fields
+	{
+		Aux = *this;
 
-      }
+		for (GFq j(0); j.val < q; j.val++)
+		{	temp = 0;
+		for (int n = 0; n < q; n++)
+		{
+			temp += Aux[n]*cos(2*M_PI*n*j.val/q);
+//			cout << "Aux["<< n <<"]="<<Aux[n] << std::endl ;
+		}
+		Probs[j.val] = temp;
+		}//end for j
+
+	}
 }
+
 
 
 
@@ -324,7 +340,7 @@ void check_node::CalcAllLeftboundMessages( )
   //-------------------------------------------------------------
   // If power of two - use DFT2
   //-------------------------------------------------------------
-  if (!GFq::IsPrimeQ)
+  if (true)//(!GFq::IsPrimeQ) FIXME
   {
      for (int i = 0; i < GetDegree(); i++)
 	 {
@@ -354,6 +370,10 @@ void check_node::CalcAllLeftboundMessages( )
        GetEdge(i).LeftBoundMessage = FastCalcLeftboundMessage(AuxLeft, AuxRight, i, GetDegree());
        GetEdge(i).LeftBoundMessage.PermuteTimes(GetEdge(i).label);
      }
+  }
+  else
+  {
+	  cout <<  "FIXME!!!" << std::endl;
   }
 }
 
@@ -760,7 +780,7 @@ double LDPC_Code::Calc_Rightbound_Symbol_Error_Rate()
 double LDPC_Code::Belief_Propagation_Decoder(int Count_Iterations)
 {
   static char buffer[500];
-  double Func_RC;
+  double Func_RC=0; //=0 is for initialization of the variable so the compiler won't give warnings
   double LastMin = INF;
   int CountIncreaseIterations = 0;
 

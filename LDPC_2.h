@@ -57,8 +57,8 @@ public:
 
 	// Statistical data -------------------------------------------
 	virtual double CapacityInBits() = 0;
-	virtual ~channel(void) {
-	} // Virtual destructor
+//	virtual ~channel(void) {
+//	} // Virtual destructor
 };
 
 /****************************************************************************
@@ -770,8 +770,8 @@ public:
 	node() :
 			degree(-1), edges(NULL) {
 	}
-	virtual ~node(void) {
-	} // Virtual destructor
+//	virtual ~node(void) {
+//	} // Virtual destructor
 	void Disconnect();  // Disconnect all edges
 
 	void DisconnectEdge(edge *e) {

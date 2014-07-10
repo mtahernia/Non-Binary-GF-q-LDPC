@@ -17,9 +17,7 @@ typedef unsigned char BYTE;
 #define TRUE   1
 #define FALSE  0
 
-
 #define MAX_DEGREE	1000
-
 
 /****************************************************************************
  *
@@ -36,16 +34,14 @@ class mapping;
  * General Channel Class
  * More specific channel classes will be defined as children of this classes
  */
-class channel
-{
+class channel {
 public:
 	virtual char *GetChannelName() = 0;
 
 	// General functions ------------------------------------------
-	GFq &MaxProbableForOutput( mapping &MapInUse );
+	GFq &MaxProbableForOutput(mapping &MapInUse);
 
-	double ErrorUndefined(char *FuncName)
-	{
+	double ErrorUndefined(char *FuncName) {
 		cout << GetChannelName() << "::" << FuncName << " undefined.\n";
 		exit(1);
 	}
@@ -55,14 +51,15 @@ public:
 	// Channel functions-------------------------------------------
 	void SimulateOutputVector(vector &InVector, vector &OutVector);
 
-	virtual double SimulateOutput(   double ChannelInput ) = 0;
-	virtual double CalcProbForInput( double ChannelOutput, double ChannelInput ) = 0;
+	virtual double SimulateOutput(double ChannelInput) = 0;
+	virtual double CalcProbForInput(double ChannelOutput,
+			double ChannelInput) = 0;
 
 	// Statistical data -------------------------------------------
 	virtual double CapacityInBits() = 0;
-	virtual ~channel(void) { } // Virtual destructor
-} ;
-
+	virtual ~channel(void) {
+	} // Virtual destructor
+};
 
 /****************************************************************************
  *
@@ -74,59 +71,55 @@ public:
  * BSC Channel, which is a child of Channel.
  * It is only useful for binary channels
  */
-class BSC_Channel : public channel
-{
+class BSC_Channel: public channel {
 private:
 	double channel_p;			///< Bit flip probability for BSC
 	double source_p;				///< Input source
-	double InterferenceProb;     ///< Dirty paper, I guess this value is unused here
+	double InterferenceProb; ///< Dirty paper, I guess this value is unused here
 
 public:
 	// General functions ------------------------------------------
 
-	BSC_Channel( )  : channel_p(0), InterferenceProb(0.5)
-{ }
-	void SetChannel_p( double p_channel_p )
-	{
+	BSC_Channel() :
+			channel_p(0), InterferenceProb(0.5) {
+	}
+	void SetChannel_p(double p_channel_p) {
 		channel_p = p_channel_p;
 	}
-	int Flip( double prob )
-	{  return (my_rand() < prob); }
-	virtual char *GetChannelName()
-	{ 	return "BSC_Channel"; }
+	int Flip(double prob) {
+		return (my_rand() < prob);
+	}
+	virtual char *GetChannelName() {
+		return "BSC_Channel";
+	}
 
 	virtual void PrintChannelData(LDPC_Code &Code);
 	virtual void ProcessMapping(LDPC_Code &Code);
 
 	// Channel coding functions -----------------------------------
-	virtual double SimulateOutput(   double ChannelInput )
-	{  return (double)(int(ChannelInput) ^ Flip( channel_p ));  }
-	virtual double CalcProbForInput( double ChannelOutput, double ChannelInput )
-	{
+	virtual double SimulateOutput(double ChannelInput) {
+		return (double) (int(ChannelInput) ^ Flip(channel_p));
+	}
+	virtual double CalcProbForInput(double ChannelOutput, double ChannelInput) {
 		if (ChannelOutput == ChannelInput)
-			return 1.-channel_p;
+			return 1. - channel_p;
 		else
 			return channel_p;
 	}
 
 	// Statistical functions -------------------------------------
 	virtual double CapacityInBits();
-	virtual double CalcProbForOutput( double ChannelOutput )
-	{
+	virtual double CalcProbForOutput(double ChannelOutput) {
 		if (ChannelOutput == 1)
 			return source_p;
 		else if (ChannelOutput == 0)
 			return 1 - source_p;
-		else
-		{
+		else {
 			cout << "BSC_Channel.CalcProbForOutput: Invalid parameter\n";
 			exit(1);
 		}
 	}
 };
-
-
-
 
 /****************************************************************************
  *
@@ -136,26 +129,26 @@ public:
 
 double GaussGenerate(double sigma);
 
-
-class AWGN_Channel : public channel
-{
+class AWGN_Channel: public channel {
 private:
 	double source_sigma;
 	double noise_sigma;
 public:
 	// Specialized functions ----------------------------
 	AWGN_Channel(double p_noise_sigma = -1) :
-		noise_sigma(p_noise_sigma)
-{
-}
+			noise_sigma(p_noise_sigma) {
+	}
 
 	double NoiseVariance();
 	double NoiseStdDev();
-	void SetNoiseSigma(double p_noise_sigma) { noise_sigma = p_noise_sigma; }
+	void SetNoiseSigma(double p_noise_sigma) {
+		noise_sigma = p_noise_sigma;
+	}
 
 	// General functions --------------------------------
-	virtual char *GetChannelName()
-	{ return "AWGN_Channel"; }
+	virtual char *GetChannelName() {
+		return "AWGN_Channel";
+	}
 	virtual void PrintChannelData(LDPC_Code &Code);
 	virtual void ProcessMapping(LDPC_Code &Code);
 
@@ -166,9 +159,7 @@ public:
 	// Statistical data ---------------------------------
 	virtual double CapacityInBits();
 
-} ;
-
-
+};
 
 /***************************************************************************
  *
@@ -176,26 +167,21 @@ public:
  *
  ***************************************************************************/
 
-
-class mapping
-{
+class mapping {
 public:
 	int q;
 	double vals[MAX_Q];
 public:
-	mapping(int p_q = -1, double *p_vals = NULL)
-{
+	mapping(int p_q = -1, double *p_vals = NULL) {
 		if (p_q != -1)
 			Set_Q(p_q);
 
 		if (p_vals != NULL)
-			bcopy( /*from*/ p_vals, /*to*/ vals, q * sizeof(double));
-}
+			bcopy( /*from*/p_vals, /*to*/vals, q * sizeof(double));
+	}
 
-	void Set_Q(int p_q)
-	{
-		if (p_q > MAX_Q)
-		{
+	void Set_Q(int p_q) {
+		if (p_q > MAX_Q) {
 			cout << "Exceeded MAX_Q in mapping (simply increase)\n";
 			exit(1);
 		}
@@ -204,18 +190,16 @@ public:
 	}
 
 	mapping(mapping &p_MapInUse) :
-		q(p_MapInUse.q)
-	{
-		bcopy( /*from*/ p_MapInUse.vals, /*to*/ vals, q * sizeof(double));
+			q(p_MapInUse.q) {
+		bcopy( /*from*/p_MapInUse.vals, /*to*/vals, q * sizeof(double));
 	}
 
-	BOOLEAN IsBinary()
-	{
+	BOOLEAN IsBinary() {
 		if (q != 2)
 			return FALSE;
 
-		if (((vals[0] != 0) && (vals[0] != 1))   ||
-				((vals[1] != 0) && (vals[1] != 1)))
+		if (((vals[0] != 0) && (vals[0] != 1))
+				|| ((vals[1] != 0) && (vals[1] != 1)))
 			return FALSE;
 
 		return TRUE;
@@ -223,17 +207,15 @@ public:
 
 	void GetFromFile(std::ifstream &file);
 
-	double Average_E()
-	{
+	double Average_E() {
 		double sum_E = 0;
 		for (int i = 0; i < q; i++)
 			sum_E += pow(vals[i], 2);
 
-		return sum_E / (double)q;
+		return sum_E / (double) q;
 	}
 
-	void Normalize()
-	{
+	void Normalize() {
 		// Normalize average energy to 1
 
 		double factor = sqrt(Average_E());
@@ -242,39 +224,34 @@ public:
 			vals[i] /= factor;
 	}
 
-
-	void operator/=(double d)
-		   {
+	void operator/=(double d) {
 		for (int i = 0; i < q; i++)
 			vals[i] /= d;
-		   }
+	}
 
-	void operator*=(double d)
-		   {
+	void operator*=(double d) {
 		for (int i = 0; i < q; i++)
 			vals[i] *= d;
-		   }
+	}
 
-	double map(int x)
-	{ return vals[x]; }
+	double map(int x) {
+		return vals[x];
+	}
 
-	double map(GFq &g)
-	{ return map(g.val); }
+	double map(GFq &g) {
+		return map(g.val);
+	}
 
-	int GetQ() {return q; }
-} ;
+	int GetQ() {
+		return q;
+	}
+};
 
-
-
-
-
-
-inline std::ostream &operator<<( std::ostream &s, mapping &MapInUse )
-{
+inline std::ostream &operator<<(std::ostream &s, mapping &MapInUse) {
 	s << "[";
-	for (int i = 0; i < MapInUse.GetQ(); i++)
-	{
-		if (i != 0) s << " ";
+	for (int i = 0; i < MapInUse.GetQ(); i++) {
+		if (i != 0)
+			s << " ";
 		s << MapInUse.vals[i];
 	}
 
@@ -283,39 +260,38 @@ inline std::ostream &operator<<( std::ostream &s, mapping &MapInUse )
 	return s;
 }
 
-
 /***************************************************************************
  *
  * Messages
  *
  ***************************************************************************/
 
-class message
-{
+class message {
 public:
-	signed int    q;
+	signed int q;
 	double Probs[MAX_Q];
 public:
-	message(int p_q = -1) : q(p_q)
-{ }
+	message(int p_q = -1) :
+			q(p_q) {
+	}
 
-	message(message &M) :   q(M.q)
-	{ *this = M; }
+	message(message &M) :
+			q(M.q) {
+		*this = M;
+	}
 
-	void HardMessage(GFq &g)
-	{
+	void HardMessage(GFq &g) {
 		*this = 0;
 		(*this)[g] = 1;
 	}
 
-	void Set_q(int p_q)
-	{ q = p_q; }
-
+	void Set_q(int p_q) {
+		q = p_q;
+	}
 
 	void DFT2();
 
-	BOOLEAN operator<(message &m2)
-	{
+	BOOLEAN operator<(message &m2) {
 		message &m1 = *this;
 
 		for (int i = 0; i <= m1.q; i++)
@@ -325,8 +301,7 @@ public:
 		return TRUE;
 	}
 
-	double Maximum()
-	{
+	double Maximum() {
 		double maximum = -INF;
 		for (int i = 0; i < q; i++)
 			if (Probs[i] > maximum)
@@ -335,33 +310,34 @@ public:
 		return maximum;
 	}
 
-	double &operator[](int i) { return Probs[i]; }
-	double &operator[](GFq i) { return Probs[i.val]; }
-	message &operator=(message &M)
-	{
-		if (q != M.q) Set_q(M.q);
+	double &operator[](int i) {
+		return Probs[i];
+	}
+	double &operator[](GFq i) {
+		return Probs[i.val];
+	}
+	message &operator=(message &M) {
+		if (q != M.q)
+			Set_q(M.q);
 
-		bcopy(/* from */ M.Probs, /* to */ Probs, sizeof(double)*q);
+		bcopy(/* from */M.Probs, /* to */Probs, sizeof(double) * q);
 		return *this;
 	}
 
-	message &operator=(double d)
-	{
+	message &operator=(double d) {
 		for (int i = 0; i < q; i++)
 			Probs[i] = d;
 		return *this;
 	}
 
-	message &operator*=(message &M)
-    		  {
+	message &operator*=(message &M) {
 		for (int i = 0; i < q; i++)
 			Probs[i] *= M.Probs[i];
 
 		return *this;
-    		  }
+	}
 
-	message &operator*(message &M2)
-	{
+	message &operator*(message &M2) {
 		static message Aux(q);
 		message &M1 = *this;
 
@@ -371,8 +347,7 @@ public:
 		return Aux;
 	}
 
-	message &operator*(double d)
-	{
+	message &operator*(double d) {
 		static message Aux(q);
 
 		for (int i = 0; i < q; i++)
@@ -381,39 +356,35 @@ public:
 		return Aux;
 	}
 
-	BOOLEAN operator==(message &m)
-		   {
+	BOOLEAN operator==(message &m) {
 		if (q != m.q)
 			return FALSE;
 
 		for (int i = 0; i < q; i++)
 			//         if (Probs[i] != m[i])
-				if (fabs(Probs[i] - m[i]) > EPSILON)
-					return FALSE;
+			if (fabs(Probs[i] - m[i]) > EPSILON)
+				return FALSE;
 
 		return TRUE;
-		   }
+	}
 
-	BOOLEAN operator==(double d)
-		   {
+	BOOLEAN operator==(double d) {
 		for (int i = 0; i < q; i++)
 			//if (fabs(Probs[i] - d) > EPSILON)
 			if (Probs[i] != d)
 				return FALSE;
 
 		return TRUE;
-		   }
+	}
 
-	message &operator+=(message &M)
-		   {
+	message &operator+=(message &M) {
 		for (int i = 0; i < q; i++)
 			Probs[i] += M.Probs[i];
 
 		return *this;
-		   }
+	}
 
-	message &operator+(message &M)
-	{
+	message &operator+(message &M) {
 		static message Aux(q);
 
 		for (int i = 0; i < q; i++)
@@ -422,46 +393,37 @@ public:
 		return Aux;
 	}
 
-	message &operator/=(double d)
-		   {
+	message &operator/=(double d) {
 		for (int i = 0; i < q; i++)
 			Probs[i] /= d;
 
 		return *this;
-		   }
+	}
 
-
-	double sum()
-	{
+	double sum() {
 		double aux = 0;
-		for (int i = 0; i < q; aux += Probs[i++]);
+		for (int i = 0; i < q; aux += Probs[i++])
+			;
 		return aux;
 	}
 
-	void Normalize()
-	{
+	void Normalize() {
 		double aux = sum();
 
-		if (aux > 0)
-		{
+		if (aux > 0) {
 			for (int i = 0; i < q; i++)
 				Probs[i] /= aux;
-		}
-		else
-		{
+		} else {
 			for (int i = 0; i < q; i++)
-				Probs[i] = 1./(double)q;
+				Probs[i] = 1. / (double) q;
 		}
 	}
 
-	void Clear()
-	{
-		bzero(Probs, sizeof(double)*q);
+	void Clear() {
+		bzero(Probs, sizeof(double) * q);
 	}
 
-
-	message &Convolve(message &M2)
-	{
+	message &Convolve(message &M2) {
 		message M1(*this);   // Auxiliary
 
 		// Clear this
@@ -477,8 +439,7 @@ public:
 	message &ApproxConvolve(message &M2);
 	void Approximate();
 
-	message &MaxConvolve(message &M2)
-	{     // max-prod version
+	message &MaxConvolve(message &M2) {     // max-prod version
 		message M1(*this);   // Auxiliary
 
 		// Clear this
@@ -486,11 +447,9 @@ public:
 		double max;
 		double candidate;
 
-		for (GFq i(0); i.val < q; i.val++)
-		{
+		for (GFq i(0); i.val < q; i.val++) {
 			max = -1;
-			for (GFq j(0); j.val < q; j.val++)
-			{
+			for (GFq j(0); j.val < q; j.val++) {
 				candidate = M1[j] * M2[i - j];
 				if (candidate > max)
 					max = candidate;
@@ -501,10 +460,7 @@ public:
 		return *this;
 	}
 
-
-
-	void PermutePlus(GFq &g)
-	{
+	void PermutePlus(GFq &g) {
 		message Aux;
 
 		Aux = *this;
@@ -512,9 +468,7 @@ public:
 			Probs[i.val] = Aux[i + g];
 	}
 
-
-	void PermuteTimes(GFq &g)
-	{
+	void PermuteTimes(GFq &g) {
 		message Aux;
 
 		Aux = *this;
@@ -522,9 +476,7 @@ public:
 			Probs[i.val] = Aux[i * g];
 	}
 
-
-	message &Reverse()
-	{
+	message &Reverse() {
 		message Aux;
 
 		Aux = *this;
@@ -534,55 +486,43 @@ public:
 		return *this;
 	}
 
-
-	GFq &Decision()
-	{
+	GFq &Decision() {
 		static GFq Candidate(0);
 		double max = -1;
 		int count_max = 0;
 
-		for (GFq i(0); i.val < q; i.val++)
-		{
-			if (Probs[i.val] > max)
-			{
+		for (GFq i(0); i.val < q; i.val++) {
+			if (Probs[i.val] > max) {
 				max = Probs[i.val];
 				Candidate = i;
 				count_max = 1;
-			}
-			else if (Probs[i.val] == max)
+			} else if (Probs[i.val] == max)
 				count_max++;
 		}
 
-		if (count_max > 1)
-		{     // If more than one maximum - randomly select
-			int selection = uniform_random(count_max) + 1;      // Between 1 and count_max
+		if (count_max > 1) {     // If more than one maximum - randomly select
+			int selection = uniform_random(count_max) + 1; // Between 1 and count_max
 			int found_so_far = 0;
 
 			for (GFq i(0); i.val < q; i.val++)
-				if (Probs[i.val] == max)
-				{
+				if (Probs[i.val] == max) {
 					Candidate = i;
 					found_so_far++;
-					if (found_so_far == selection) break;
+					if (found_so_far == selection)
+						break;
 				}
 		}
 
 		return Candidate;
 	}
 
-
-	double ProbCorrect()
-	{
+	double ProbCorrect() {
 		int count_zero = 1;
 
-		for (int i = 1; i < q; i++)
-		{
-			if (Probs[i] > Probs[0])
-			{
+		for (int i = 1; i < q; i++) {
+			if (Probs[i] > Probs[0]) {
 				return 0;
-			}
-			else if (Probs[i] == Probs[0])
-			{
+			} else if (Probs[i] == Probs[0]) {
 				count_zero++;
 			}
 		}
@@ -590,25 +530,20 @@ public:
 		return 1. / count_zero;
 	}
 
-
-	double Entropy()
-	{
+	double Entropy() {
 		double aux = 0;
 
-		for (int i = 0; i < q; i++)
-		{
-			if (Probs[i] != 0)
-			{
+		for (int i = 0; i < q; i++) {
+			if (Probs[i] != 0) {
 				double aux2 = Probs[i] * log(Probs[i]);
-				aux += - clip(aux2);
+				aux += -clip(aux2);
 			}
 		}
 
 		return aux;
 	}
 
-	message &operator<<(int l)
-	{
+	message &operator<<(int l) {
 		static message Aux;
 
 		Aux.q = q;
@@ -618,8 +553,7 @@ public:
 		return Aux;
 	}
 
-	message &LLRShift(int k)
-	{
+	message &LLRShift(int k) {
 		message Aux = *this;
 
 		for (int i = 0; i < q; i++)
@@ -628,8 +562,7 @@ public:
 		return *this;
 	}
 
-	double AverageD()
-	{
+	double AverageD() {
 		message m = *this;
 
 		m.Clip();
@@ -640,18 +573,15 @@ public:
 		return m.sum() / (GFq::q - 1);
 	}
 
-	void operator<<=(int l)
-		   {
+	void operator<<=(int l) {
 		*this = *this << l;
-		   }
+	}
 
 	//   ~message()
 	//      { if (Probs != NULL) delete Probs; }
 
-	void Clip(double minval = EPSILON, double maxval = INF)
-	{
-		for (int i = 0; i < q; i++)
-		{
+	void Clip(double minval = EPSILON, double maxval = INF) {
+		for (int i = 0; i < q; i++) {
 			clip(Probs[i], maxval);
 			if (Probs[i] < minval)
 				Probs[i] = minval;
@@ -659,13 +589,10 @@ public:
 
 	}
 
-	int RandomSelectIndex();      // Select index at random based on probabilities in message
+	int RandomSelectIndex(); // Select index at random based on probabilities in message
 };
 
-
-
-inline message &Convolve(message &M1, message &M2)
-{
+inline message &Convolve(message &M1, message &M2) {
 	static message Aux;
 
 	Aux = M1;
@@ -673,21 +600,15 @@ inline message &Convolve(message &M1, message &M2)
 	return Aux;
 }
 
-
-
-inline std::ostream &operator<<( std::ostream &s, message &m )
-{
-	s << ceil(m[0]*1000.)/1000.;
+inline std::ostream &operator<<(std::ostream &s, message &m) {
+	s << ceil(m[0] * 1000.) / 1000.;
 	for (int i = 1; i < m.q; i++)
-		s << " " << ceil(m[i]*1000.)/1000.;
+		s << " " << ceil(m[i] * 1000.) / 1000.;
 
 	return s;
 }
 
-
-
-inline message &operator-(message &m1, message &m2)
-{
+inline message &operator-(message &m1, message &m2) {
 	static message aux;
 
 	aux.q = m1.q;
@@ -698,26 +619,18 @@ inline message &operator-(message &m1, message &m2)
 	return aux;
 }
 
-
-
-inline message &operator/(message &m, double d)
-{
+inline message &operator/(message &m, double d) {
 	static message aux;
 
 	aux.q = m.q;
 
 	for (int i = 0; i < m.q; i++)
-		aux[i] = m[i]/d;
+		aux[i] = m[i] / d;
 
 	return aux;
 }
 
-
-
-
-
-inline double pow(message &m, int l)
-{
+inline double pow(message &m, int l) {
 	double f = 0;
 
 	for (int i = 0; i < m.q; i++)
@@ -726,12 +639,7 @@ inline double pow(message &m, int l)
 	return f;
 }
 
-
-
-
-
-inline double fabs(message &m)
-{
+inline double fabs(message &m) {
 	double f = 0;
 
 	for (int i = 0; i < m.q; i++)
@@ -740,12 +648,7 @@ inline double fabs(message &m)
 	return f;
 }
 
-
-
-
-
-inline message &log(message &m)
-{
+inline message &log(message &m) {
 	static message aux;
 
 	aux.q = m.q;
@@ -755,12 +658,7 @@ inline message &log(message &m)
 	return aux;
 }
 
-
-
-
-
-inline message &exp(message &m)
-{
+inline message &exp(message &m) {
 	static message aux;
 
 	aux.q = m.q;
@@ -770,12 +668,7 @@ inline message &exp(message &m)
 	return aux;
 }
 
-
-
-
-
-inline message &LLR(message &m)
-{
+inline message &LLR(message &m) {
 	static message aux;
 
 	aux.q = m.q;
@@ -788,12 +681,7 @@ inline message &LLR(message &m)
 	return aux;
 }
 
-
-
-
-
-inline message &unLLR(message &m)
-{
+inline message &unLLR(message &m) {
 	static message aux;
 
 	aux.q = m.q;
@@ -820,29 +708,23 @@ class ArrayOfMessage {
 	int size;
 public:
 
-	int GetSize()
-	{
+	int GetSize() {
 		return size;
 	}
 
 	ArrayOfMessage() :
-		Messages(NULL), size(0)
-	{}
+			Messages(NULL), size(0) {
+	}
 
-
-	void Allocate(int p_Size)
-	{
-		if (size != p_Size)
-		{
+	void Allocate(int p_Size) {
+		if (size != p_Size) {
 			deAllocate();
 			size = p_Size;
 			Messages = new message[size];
 		}
 	}
 
-
-	void deAllocate()
-	{
+	void deAllocate() {
 		if (Messages != NULL)
 			delete Messages;
 
@@ -850,19 +732,14 @@ public:
 		size = 0;
 	}
 
-
-	~ArrayOfMessage()
-	{
+	~ArrayOfMessage() {
 		deAllocate();
 	}
 
-
-	message &operator[](int i)
-	{
+	message &operator[](int i) {
 		return Messages[i];
 	}
 };
-
 
 /*****************************************************************************
  *
@@ -870,11 +747,10 @@ public:
  *
  *****************************************************************************/
 
-class edge;              // temporary declaration, to enable the use of the class in further declaration
+class edge;
+// temporary declaration, to enable the use of the class in further declaration
 
-
-class node
-{
+class node {
 public:
 	int id;   // number used for identification
 	int degree;
@@ -884,25 +760,29 @@ public:
 
 public:
 
-	void SetID(int p_id) { id = p_id; }
-	int GetID() { return id; }
+	void SetID(int p_id) {
+		id = p_id;
+	}
+	int GetID() {
+		return id;
+	}
 
 	node() :
-		degree(-1),
-		edges(NULL)
-	{ }
-	virtual ~node(void) { } // Virtual destructor
+			degree(-1), edges(NULL) {
+	}
+	virtual ~node(void) {
+	} // Virtual destructor
 	void Disconnect();  // Disconnect all edges
 
-	void DisconnectEdge(edge *e)
-	{
+	void DisconnectEdge(edge *e) {
 		int index = 0;
 		for (; index < degree; index++)
-			if (edges[index] == e) break;
+			if (edges[index] == e)
+				break;
 
-		if (index == degree)
-		{
-			cout << "node::DisconnectEdge: Attempt to disconnect a nonexistent edge\n";
+		if (index == degree) {
+			cout
+					<< "node::DisconnectEdge: Attempt to disconnect a nonexistent edge\n";
 			exit(1);
 		}
 
@@ -912,51 +792,41 @@ public:
 		degree--;
 	}
 
-
-	void add_edge(edge *e)
-	{
-		if (degree == -1)
-		{
+	void add_edge(edge *e) {
+		if (degree == -1) {
 			cout << "Edges not yet allocated, aborting.  \n";
 			exit(1);
 		}
 
 		edges[degree++] = e;
 
-		if (degree > MaxEdges)
-		{
-			cout << "MaxEdges exceeded! "
-					<< " degree = " << degree << " MaxEdges = " << MaxEdges << "\n";
+		if (degree > MaxEdges) {
+			cout << "MaxEdges exceeded! " << " degree = " << degree
+					<< " MaxEdges = " << MaxEdges << "\n";
 		}
 	}
 
-	void AllocateEdges(edge **&EdgeStackPointer, int p_MaxEdges)
-	{
+	void AllocateEdges(edge **&EdgeStackPointer, int p_MaxEdges) {
 		degree = 0;    // Indicate edges have been allocated
 		edges = EdgeStackPointer;
 		EdgeStackPointer += p_MaxEdges;        // Advance allocation pointer
 		MaxEdges = p_MaxEdges;
 	}
 
-	int GetDegree()   { return degree; }
-	edge &GetEdge(int index) { return *edges[index]; }
+	int GetDegree() {
+		return degree;
+	}
+	edge &GetEdge(int index) {
+		return *edges[index];
+	}
 
 	virtual node &AdjacentNode(int index) = 0;
-} ;
+};
 
+message &GenerateChannelMessage(GFq v, channel &TransmitChannel,
+		mapping &MapInUse, double ChannelOut);
 
-
-
-message &GenerateChannelMessage(GFq v,
-		channel &TransmitChannel,
-		mapping &MapInUse,
-		double ChannelOut );
-
-
-
-
-class variable_node : public node
-{
+class variable_node: public node {
 public:
 	GFq Symbol;     // Value - for encoding
 	GFq v;          // coset vector - randomly selected at variable node
@@ -973,55 +843,45 @@ public:
 	message AllImprovementsForChange;       // For use in greedy source coding
 
 public:
-	variable_node()
-{
+	variable_node() {
 		v.val = uniform_random(GFq::q);
-}
+	}
 	void Allocate_LCLP_Constraints(int **ConstraintsStack);
 	int Count_LCLP_Constraints();
 	void Add_LCLP_Constraint(int variable_index);
 
-	message &CalcRightboundMessage( int rightbound_index );
+	message &CalcRightboundMessage(int rightbound_index);
 	void CalcAllRightboundMessages();
 	void CalcFinalMessage();
 	void Initialize(channel &TransmitChannel, double ChannelOut);
-	void SetMapInUse(mapping &p_MapInUse)
-	{ MapInUse = &p_MapInUse; }
-	double GetZeroSignal()
-	{ return MapInUse->map(v);  }
+	void SetMapInUse(mapping &p_MapInUse) {
+		MapInUse = &p_MapInUse;
+	}
+	double GetZeroSignal() {
+		return MapInUse->map(v);
+	}
 
 	// For use in greedy source coding
 
-	BOOLEAN IsRightConnectedTo( node *n );
-	BOOLEAN IsPath3ConnectedTo( node *n );  // Is connected by a path of at most
+	BOOLEAN IsRightConnectedTo(node *n);
+	BOOLEAN IsPath3ConnectedTo(node *n);  // Is connected by a path of at most
 	virtual node &AdjacentNode(int index);
 };
-
 
 class complex_vector;
 
+message &CalcLeftboundMessage(message Vectors[], int left_index, int degree);
 
-message &CalcLeftboundMessage(message Vectors[], 
-		int left_index,
-		int degree);
-
-
-
-class check_node : public node
-{
+class check_node: public node {
 public:
-	void CalcAllLeftboundMessages( );
+	void CalcAllLeftboundMessages();
 	BOOLEAN DoesFinalEstimateViolate();
 	virtual node &AdjacentNode(int index);
-	GFq &Element(int i);         // For use in encoding - treats check like row of matrix
+	GFq &Element(int i); // For use in encoding - treats check like row of matrix
 	GFq &Value();
 };
 
-
-
-
-class edge
-{
+class edge {
 private:
 	variable_node *left_node;
 	check_node *right_node;
@@ -1031,33 +891,35 @@ public:
 	GFq label;
 
 public:
-	variable_node &LeftNode() { return *left_node; }
-	check_node &RightNode() { return *right_node; }
+	variable_node &LeftNode() {
+		return *left_node;
+	}
+	check_node &RightNode() {
+		return *right_node;
+	}
 
-	edge()
-	{ label.RandomSelect();  }
+	edge() {
+		label.RandomSelect();
+	}
 
-	void set_nodes(variable_node *p_left_node, check_node *p_right_node)
-	{
+	void set_nodes(variable_node *p_left_node, check_node *p_right_node) {
 		left_node = p_left_node;
 		right_node = p_right_node;
 		left_node->add_edge(this);
 		right_node->add_edge(this);
 	}
 
-	void Disconnect()
-	{
+	void Disconnect() {
 		left_node->DisconnectEdge(this);
 		right_node->DisconnectEdge(this);
 	}
-} ;
+};
 ////////////////////////////////////////////////////////////////////////////
 //
 // Bipartite graph class
 //
 ////////////////////////////////////////////////////////////////////////////
-class bipartite_graph
-{
+class bipartite_graph {
 public:
 	int N;                                // Number of variable nodes
 	int M;                                // Number of check nodes
@@ -1067,32 +929,37 @@ public:
 	check_node *check_nodes;
 	edge *edges;
 
-	edge **EdgeStack;                // Pointer used to manage allocation of memory to nodes
+	edge **EdgeStack;    // Pointer used to manage allocation of memory to nodes
 	static BOOLEAN ShouldPermuteLDPCVariables;
 public:
-	void Reset(int p_N,              // number of variable nodes
-			int lambda_degs[],
-			double lambda_wts[],
-			int rho_degs[],
-			double rho_wts[],
-			mapping &MapInUse);
+	void Reset(
+			int p_N,              // number of variable nodes
+			int lambda_degs[], double lambda_wts[], int rho_degs[],
+			double rho_wts[], mapping &MapInUse);
 
-	bipartite_graph() :  N(0), M(0), E(0), variable_nodes(NULL), check_nodes(NULL), edges(NULL),
-			EdgeStack(NULL) {}
-
-	~bipartite_graph() { Clear(); }
-
-	void Clear()
-	{
-		if (variable_nodes != NULL) delete variable_nodes;
-		if (check_nodes != NULL) delete check_nodes;
-		if (edges != NULL) delete edges;
-		if (EdgeStack != NULL) delete EdgeStack;
+	bipartite_graph() :
+			N(0), M(0), E(0), variable_nodes(NULL), check_nodes(NULL), edges(
+					NULL), EdgeStack(NULL) {
 	}
 
-	void PrintNodes(char *title = NULL)
-	{
-		if (title != NULL) cout << " --- " << title << "\n";
+	~bipartite_graph() {
+		Clear();
+	}
+
+	void Clear() {
+		if (variable_nodes != NULL)
+			delete variable_nodes;
+		if (check_nodes != NULL)
+			delete check_nodes;
+		if (edges != NULL)
+			delete edges;
+		if (EdgeStack != NULL)
+			delete EdgeStack;
+	}
+
+	void PrintNodes(char *title = NULL) {
+		if (title != NULL)
+			cout << " --- " << title << "\n";
 		cout << "Variable Nodes: ";
 		for (int i = 0; i < N; i++)
 			cout << variable_nodes[i].GetDegree() << " ";
@@ -1104,26 +971,20 @@ public:
 		cout << "\n";
 	}
 
-	void SaveToFile(char *filename)
-	{
+	void SaveToFile(char *filename) {
 		std::ofstream OutFile(filename);
 
-		for (int i = 0; i < M; i++)
-		{
-			for(int j = 0; j < check_nodes[i].GetDegree(); j++)
-			{
-				if (j != 0) OutFile << " ";
+		for (int i = 0; i < M; i++) {
+			for (int j = 0; j < check_nodes[i].GetDegree(); j++) {
+				if (j != 0)
+					OutFile << " ";
 				OutFile << check_nodes[i].GetEdge(j).LeftNode().GetID();
 			}
 			OutFile << "\n";
 		}
 
 	}
-} ;
-
-
-
-
+};
 
 /************************************************************************
  *
@@ -1131,9 +992,7 @@ public:
  *
  ************************************************************************/
 
-
-class TopList
-{
+class TopList {
 public:
 	GFq *BestChange;
 	int *VariableIndex;
@@ -1141,18 +1000,16 @@ public:
 
 	int MaxSize, CurrentSize;
 public:
-	TopList() : MaxSize(-1), CurrentSize(-1)  {}
+	TopList() :
+			MaxSize(-1), CurrentSize(-1) {
+	}
 
-	~TopList()
-	{
+	~TopList() {
 		DeAllocate();
 	}
 
-
-	void DeAllocate()
-	{
-		if (MaxSize > -1)
-		{
+	void DeAllocate() {
+		if (MaxSize > -1) {
 			delete BestChange;
 			delete VariableIndex;
 			delete DistortionImprovement;
@@ -1160,11 +1017,8 @@ public:
 		MaxSize = -1;
 	}
 
-
-	void Init(int p_MaxSize)
-	{
-		if (MaxSize != p_MaxSize)
-		{
+	void Init(int p_MaxSize) {
+		if (MaxSize != p_MaxSize) {
 			DeAllocate();
 
 			BestChange = new GFq[p_MaxSize];
@@ -1176,8 +1030,8 @@ public:
 		CurrentSize = 0;
 	}
 
-	void Add(GFq p_BestChange, int p_VariableIndex, double p_DistortionImprovement)
-	{
+	void Add(GFq p_BestChange, int p_VariableIndex,
+			double p_DistortionImprovement) {
 		// Find place for new distortion
 		int Place;
 		for (Place = 0; Place < CurrentSize; Place++)
@@ -1185,25 +1039,22 @@ public:
 				break;
 
 		// Shift all the rest one place up
-		if (CurrentSize < MaxSize) CurrentSize++;
-		for (int i = CurrentSize - 1; i > Place; i--)
-		{
-			BestChange[i] = BestChange[i-1];
-			VariableIndex[i] = VariableIndex[i-1];
-			DistortionImprovement[i] = DistortionImprovement[i-1];
+		if (CurrentSize < MaxSize)
+			CurrentSize++;
+		for (int i = CurrentSize - 1; i > Place; i--) {
+			BestChange[i] = BestChange[i - 1];
+			VariableIndex[i] = VariableIndex[i - 1];
+			DistortionImprovement[i] = DistortionImprovement[i - 1];
 		}
 
 		// Place new entry
 		if (Place < CurrentSize)      // If not passed last place in TopList
-		{
+				{
 			BestChange[Place] = p_BestChange;
 			VariableIndex[Place] = p_VariableIndex;
 			DistortionImprovement[Place] = p_DistortionImprovement;
 		}
 	}
 };
-
-
-
 
 #endif

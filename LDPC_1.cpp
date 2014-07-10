@@ -9,88 +9,72 @@
 #include <ctype.h>
 #include <wchar.h>
 
-
 /**************************************************************
  *
  * LDPC Constructors
  * 
  **************************************************************/
 
-void LDPC_Code::GetFromFile( std::ifstream &file )
-{ 
-  char dummy_buffer[10000];
-  int rhos_index, lambdas_index;
+void LDPC_Code::GetFromFile(std::ifstream &file) {
+	char dummy_buffer[10000];
+	int rhos_index, lambdas_index;
 
-  rhos_index = lambdas_index = 0;
-  BOOLEAN GotMapInUse = FALSE;
+	rhos_index = lambdas_index = 0;
+	BOOLEAN GotMapInUse = FALSE;
 
-  //----------------------------------------------
-  // Go over file
-  //----------------------------------------------
-  while (!file.eof())
-    {
-      switch (file.peek()) 
-      {
-      case 'r': // Read Rhos from file
-         if (rhos_index >= MAX_RHOS)
-         {
-            cout << "LDPC_Code::GetFromFile: MAX_RHOS exceeded\n";
-            exit(1);
-         }
+	//----------------------------------------------
+	// Go over file
+	//----------------------------------------------
+	while (!file.eof()) {
+		switch (file.peek()) {
+		case 'r': // Read Rhos from file
+			if (rhos_index >= MAX_RHOS) {
+				cout << "LDPC_Code::GetFromFile: MAX_RHOS exceeded\n";
+				exit(1);
+			}
 
-	 file >> rho_degs[rhos_index] >> rho_wts[rhos_index];
-	 file.getline(dummy_buffer, sizeof(dummy_buffer));  // reach eol
-         rhos_index++;
-         break;
-      case 'l': // Read Lambdas From File
-         if (lambdas_index >= MAX_LAMBDAS)
-         {
-            cout << "LDPC_Code::GetFromFile: MAX_LAMBDAS exceeded\n";
-            exit(1);
-         }
+			file >> rho_degs[rhos_index] >> rho_wts[rhos_index];
+			file.getline(dummy_buffer, sizeof(dummy_buffer));  // reach eol
+			rhos_index++;
+			break;
+		case 'l': // Read Lambdas From File
+			if (lambdas_index >= MAX_LAMBDAS) {
+				cout << "LDPC_Code::GetFromFile: MAX_LAMBDAS exceeded\n";
+				exit(1);
+			}
 
-	 file >> lambda_degs[lambdas_index] >> lambda_wts[lambdas_index];
+			file >> lambda_degs[lambdas_index] >> lambda_wts[lambdas_index];
 
-         lambdas_index++;
-	 file.getline(dummy_buffer, sizeof(dummy_buffer));  // reach eol
-         break;
-      case 'm': // Read mapping from file
-		 GotMapInUse = TRUE;
-         MapInUse.GetFromFile( file );
+			lambdas_index++;
+			file.getline(dummy_buffer, sizeof(dummy_buffer));  // reach eol
+			break;
+		case 'm': // Read mapping from file
+			GotMapInUse = TRUE;
+			MapInUse.GetFromFile(file);
 
-         // Initialize GF(q)
-         GFq::Initialize(MapInUse.GetQ());
-         break;
-      default:
-	 file.getline(dummy_buffer, sizeof(dummy_buffer));   // Skip line
-      }
-    }
+			// Initialize GF(q)
+			GFq::Initialize(MapInUse.GetQ());
+			break;
+		default:
+			file.getline(dummy_buffer, sizeof(dummy_buffer));   // Skip line
+		}
+	}
 
-  if (!GotMapInUse)
-  {
-	  cout << "mapping not defined\n";
-	  exit(1);
+	if (!GotMapInUse) {
+		cout << "mapping not defined\n";
+		exit(1);
 
-  }
-  rho_degs[rhos_index] = -1;
-  rho_wts[rhos_index] = -1;
-  lambda_degs[lambdas_index] = -1;
-  lambda_wts[lambdas_index] = -1;
+	}
+	rho_degs[rhos_index] = -1;
+	rho_wts[rhos_index] = -1;
+	lambda_degs[lambdas_index] = -1;
+	lambda_wts[lambdas_index] = -1;
 }
 
-
-
-LDPC_Code::LDPC_Code( 
-	      std::ifstream &File,
-	      int p_BlockLength,
-	      channel *p_Channel )
-  : BlockLength(p_BlockLength),
-    Channel(p_Channel)
-{
-  GetFromFile( File );
+LDPC_Code::LDPC_Code(std::ifstream &File, int p_BlockLength, channel *p_Channel) :
+		BlockLength(p_BlockLength), Channel(p_Channel) {
+	GetFromFile(File);
 }
-
-
 
 /*************************************************************************
  *
@@ -98,46 +82,34 @@ LDPC_Code::LDPC_Code(
  *
  *************************************************************************/
 
-double LDPC_Code::sigma_lambda()
-{
-  double n;
+double LDPC_Code::sigma_lambda() {
+	double n;
 
-  n = 0;
+	n = 0;
 
-  for (int i = 0; lambda_degs[i] != -1; i++)
-    n += lambda_wts[i]/lambda_degs[i];
+	for (int i = 0; lambda_degs[i] != -1; i++)
+		n += lambda_wts[i] / lambda_degs[i];
 
-  return n;
+	return n;
 }
 
+double LDPC_Code::sigma_rho() {
+	double m;
 
+	m = 0;
 
-double LDPC_Code::sigma_rho()
-{
-  double m;
+	for (int i = 0; rho_degs[i] != -1; i++)
+		m += rho_wts[i] / rho_degs[i];
 
-  m = 0;
- 
- for (int i = 0; rho_degs[i] != -1; i++)
-   m += rho_wts[i]/rho_degs[i];
-
-  return m;
+	return m;
 }
 
+double LDPC_Code::Calc_Symbol_Rate() {
+	double SigmaLambda = sigma_lambda();
+	double SigmaRho = sigma_rho();
 
-
-double LDPC_Code::Calc_Symbol_Rate()
-{
-   double SigmaLambda = sigma_lambda();
-   double SigmaRho = sigma_rho();
-
-   return 1 - SigmaRho/SigmaLambda;
+	return 1 - SigmaRho / SigmaLambda;
 }
-
-
-
-
-
 
 /**************************************************************
  *
@@ -145,24 +117,18 @@ double LDPC_Code::Calc_Symbol_Rate()
  * 
  **************************************************************/
 
-
-void mapping::GetFromFile( std::ifstream &file )
+void mapping::GetFromFile(std::ifstream &file)
 // Read the mapping from the current position in the file
-{ 
-  file >> q;
-  
-  if (q > MAX_Q)
-  {
-     cout << "q exceeds MAX_Q in mapping:GetFromFile\n";
-     exit(1);
-  }
+		{
+	file >> q;
 
-  for (int i = 0; i < q; i++)
-  {
-     file >> vals[i];
-  }
-} 
+	if (q > MAX_Q) {
+		cout << "q exceeds MAX_Q in mapping:GetFromFile\n";
+		exit(1);
+	}
 
-
-
+	for (int i = 0; i < q; i++) {
+		file >> vals[i];
+	}
+}
 

@@ -28,14 +28,14 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 			Aux = *this;			// Initialize
 			mask.val = 1 << i;  //Shift left i times to get powers of 2
 
-			//			cout << "mask.val("<<i<<")="<<mask.val<<std::endl; // Just for debugging
+//			cout << "mask.val("<<i<<")="<<mask.val<<std::endl; // Just for debugging
 
 			for (GFq j(0); j.val < q; j.val++) {
 				j_bit = (j.val & mask.val) >> i;// obtain value of j which is i th bit of j
 				n0_index.val = j.val & (~mask.val);	// turn bit off
 				n1_index.val = j.val | mask.val;    // turn bit on
 
-				//cout << (int)j_bit;
+//				cout << (int)j_bit;
 
 				if (j_bit == 0)
 					Probs[j.val] = Aux[n0_index] + Aux[n1_index];
@@ -49,9 +49,9 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 	{
 		Aux = *this;
 		// Create fft variables and a plan
-		fftw_complex *in, *out;
-		in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * q);
-		out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * q);
+
+		static fftw_complex *in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * q);
+		static fftw_complex *out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * q);
 		static fftw_plan p = fftw_plan_dft_1d(q, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
 
 		// Copy the data to input of FFT
@@ -72,19 +72,20 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 
 
 //		fftw_destroy_plan(p);
-		fftw_free(in); fftw_free(out);
+//		fftw_free(in); fftw_free(out);
 
-/////////////// Original DFT implementation /////////////////////////////\
-//		double temp;
-//		for (GFq j(0); j.val < q; j.val++) {
-//			temp = 0;
-//			for (int n = 0; n < q; n++) {
-//				temp += Aux[n] * cos(2 * M_PI * n * j.val / q);
-//				//			cout << "Aux["<< n <<"]="<<Aux[n] << std::endl ;
-//			}
-//			Probs[j.val] = temp;
-//		} //end for j
-
+//  Original DFT implementation
+/*
+		double temp;
+		for (GFq j(0); j.val < q; j.val++) {
+			temp = 0;
+			for (int n = 0; n < q; n++) {
+				temp += Aux[n] * cos(2 * M_PI * n * j.val / q);
+				//			cout << "Aux["<< n <<"]="<<Aux[n] << std::endl ;
+			}
+			Probs[j.val] = temp;
+		} //end for j
+*/
 	}
 }
 

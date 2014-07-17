@@ -10,6 +10,7 @@
 #include "Utils_1.h"
 #include "Utils_2.h"
 #include "Encoding.h"
+#include <fftw3.h>
 
 typedef unsigned char BOOLEAN;
 typedef unsigned char BYTE;

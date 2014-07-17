@@ -7,6 +7,8 @@
 #include "Utils_1.h"
 #include "LDPC_1.h"
 #include "LDPC_2.h"
+// This is a try to fix fft problem.
+#include <fftw3.h>
 
 /*********************************************************************************
  *
@@ -19,7 +21,7 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 	static message Aux;
 	GFq mask, n0_index, n1_index;
 	BYTE j_bit;
-	double temp;
+
 
 	if (!GFq::IsPrimeQ) {
 		for (int i = 0; i < GFq::log_2_q; i++) {
@@ -46,15 +48,43 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 	else if (GFq::IsPrimeQ) // FIXME: this is not a real FFT, here I used normal DFT for prime fields
 	{
 		Aux = *this;
+		// Create fft variables and a plan
+		fftw_complex *in, *out;
+		fftw_plan p;
+		in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * q);
+		out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * q);
+		p = fftw_plan_dft_1d(q, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
 
-		for (GFq j(0); j.val < q; j.val++) {
-			temp = 0;
-			for (int n = 0; n < q; n++) {
-				temp += Aux[n] * cos(2 * M_PI * n * j.val / q);
-				//			cout << "Aux["<< n <<"]="<<Aux[n] << std::endl ;
-			}
-			Probs[j.val] = temp;
-		} //end for j
+		// Copy the data to input of FFT
+		for(int i=0;i<q;i++)
+		{
+			in[i][0] = Aux[i];
+			in[i][1] = 0;
+		}
+
+		// Execute FFT
+		fftw_execute(p); /* repeat as needed */
+
+		// Copy output values Ignoring complex part!
+		for(int i=0;i<q;i++)
+		{
+			Probs[i] = out[i][0];
+		}
+
+
+		fftw_destroy_plan(p);
+		fftw_free(in); fftw_free(out);
+
+/////////////// Original DFT implementation /////////////////////////////\
+//		double temp;
+//		for (GFq j(0); j.val < q; j.val++) {
+//			temp = 0;
+//			for (int n = 0; n < q; n++) {
+//				temp += Aux[n] * cos(2 * M_PI * n * j.val / q);
+//				//			cout << "Aux["<< n <<"]="<<Aux[n] << std::endl ;
+//			}
+//			Probs[j.val] = temp;
+//		} //end for j
 
 	}
 }

@@ -45,15 +45,14 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 			}    //end for j
 		}    //end for i
 	}    //end else
-	else if (GFq::IsPrimeQ) // FIXME: this is not a real FFT, here I used normal DFT for prime fields
+	else if (GFq::IsPrimeQ) // FIXME: There is lots of memory copying and redundant fft generation(plan generation fixed by defining static plan).
 	{
 		Aux = *this;
 		// Create fft variables and a plan
 		fftw_complex *in, *out;
-		fftw_plan p;
 		in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * q);
 		out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * q);
-		p = fftw_plan_dft_1d(q, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
+		static fftw_plan p = fftw_plan_dft_1d(q, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
 
 		// Copy the data to input of FFT
 		for(int i=0;i<q;i++)
@@ -72,7 +71,7 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 		}
 
 
-		fftw_destroy_plan(p);
+//		fftw_destroy_plan(p);
 		fftw_free(in); fftw_free(out);
 
 /////////////// Original DFT implementation /////////////////////////////\

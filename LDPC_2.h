@@ -12,6 +12,7 @@
 #include "Encoding.h"
 #include <fftw3.h>
 
+
 typedef unsigned char BOOLEAN;
 typedef unsigned char BYTE;
 

@@ -111,8 +111,8 @@ int main(int argc, char **argv) {
 	//-------------------------------------------------------------
 	// Handle channel
 	//-------------------------------------------------------------
-	double channel_p;
-	double noise_sigma;
+	double channel_p;  // BSC Channel Parameter
+	double noise_sigma;  // (\sigma)^0.5
 	double SNR_dB, No, SNR;
 
 	switch (ChannelType) {

@@ -23,13 +23,13 @@
 /// LDPC_Code Class definition
 class LDPC_Code {
 public:
-	bipartite_graph Graph;			//!< Bipartite graph of underlying LDPC Code
+	bipartite_graph Graph;					//!< Bipartite graph of underlying LDPC Code
 	int lambda_degs[MAX_LAMBDAS + 1];		//!< Degrees of variable nodes
-	double lambda_wts[MAX_LAMBDAS + 1];	//!< Weights of the variable nodes
-	int rho_degs[MAX_RHOS + 1];			//!< Degrees of check nodes
+	double lambda_wts[MAX_LAMBDAS + 1];		//!< Weights of the variable nodes
+	int rho_degs[MAX_RHOS + 1];				//!< Degrees of check nodes
 	double rho_wts[MAX_RHOS + 1];			//!< Weights of check nodes
-	int BlockLength;  //!< Block Length that is used in monte-carlo simulations
-	mapping MapInUse; 		//!< Mapping from code symbols to channel symbols
+	int BlockLength; 						//!< Block Length that is used in monte-carlo simulations
+	mapping MapInUse; 						//!< Mapping from code symbols to channel symbols
 	channel *Channel; 					//!< Channel in use
 
 	// For use in encoding

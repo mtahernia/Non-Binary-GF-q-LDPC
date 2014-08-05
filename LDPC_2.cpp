@@ -10,6 +10,7 @@
 // This is a try to fix fft problem.
 #include <fftw3.h>
 
+
 /*********************************************************************************
  *
  * MESSAGE
@@ -28,14 +29,14 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 			Aux = *this;			// Initialize
 			mask.val = 1 << i;  //Shift left i times to get powers of 2
 
-//			cout << "mask.val("<<i<<")="<<mask.val<<std::endl; // Just for debugging
+			//			cout << "mask.val("<<i<<")="<<mask.val<<std::endl; // Just for debugging
 
 			for (GFq j(0); j.val < q; j.val++) {
 				j_bit = (j.val & mask.val) >> i;// obtain value of j which is i th bit of j
 				n0_index.val = j.val & (~mask.val);	// turn bit off
 				n1_index.val = j.val | mask.val;    // turn bit on
 
-//				cout << (int)j_bit;
+				//				cout << (int)j_bit;
 
 				if (j_bit == 0)
 					Probs[j.val] = Aux[n0_index] + Aux[n1_index];
@@ -49,6 +50,7 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 	{
 		Aux = *this;
 		// Create fft variables and a plan
+
 
 		static fftw_complex *in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * q);
 		static fftw_complex *out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * q);
@@ -71,11 +73,11 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 		}
 
 
-//		fftw_destroy_plan(p);
-//		fftw_free(in); fftw_free(out);
+		//		fftw_destroy_plan(p);
+		//		fftw_free(in); fftw_free(out);
 
-//  Original DFT implementation
-/*
+		//  Original DFT implementation
+		/*
 		double temp;
 		for (GFq j(0); j.val < q; j.val++) {
 			temp = 0;
@@ -85,7 +87,7 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 			}
 			Probs[j.val] = temp;
 		} //end for j
-*/
+		 */
 	}
 }
 
@@ -162,7 +164,7 @@ void BSC_Channel::PrintChannelData(LDPC_Code &Code) {
 
 double GaussGenerate(double sigma)
 // Simulate the result of passing the zero vector through the AWGN
-		{
+{
 	static const double pi = 3.141592653;
 	double normal_random_number, x1, x2;
 
@@ -197,12 +199,12 @@ void AWGN_Channel::PrintChannelData(LDPC_Code &Code) {
 	SNR = 1. / No;
 	SNR_dB = 10. * log10(SNR);
 
-	cout << "SNR(dB) = " << SNR_dB << " SNR = " << SNR << " Noise Sigma = "
-			<< noise_sigma << "\nCapacity at SNR (symbols per channel use) = "
-			<< 0.5 * log(1. + SNR) / log((double) GFq::q)
-			<< "\nCapacity at SNR (bits per channel use) = "
-			<< 0.5 * log(1. + SNR) / log(2.) << "\nMinimum SNR for rate (dB) = "
-			<< 10. * log(pow(2., 2. * BitRate) - 1.) / log(10.)
+	cout << "SNR(dB) = " << SNR_dB
+			<< " SNR = " << SNR
+			<< " Noise Sigma = "<< noise_sigma
+			<< "\nCapacity at SNR (symbols per channel use) = "<< 0.5 * log(1. + SNR) / log((double) GFq::q)
+			<< "\nCapacity at SNR (bits per channel use) = "   << 0.5 * log(1. + SNR) / log(2.)
+			<< "\nMinimum SNR for rate (dB) = "<< 10. * log(pow(2., 2. * BitRate) - 1.) / log(10.)
 			<< " (absolute value) = " << pow(2., 2. * BitRate) - 1;
 }
 
@@ -214,14 +216,14 @@ double AWGN_Channel::CalcProbForInput(double ChannelOutput,
 	double noise_prob = (1 / (sqrt_2pi * noise_sigma)
 			* exp(
 					-pow(ChannelOutput - ChannelInput, 2.)
-							/ (2. * NoiseVariance())));
+					/ (2. * NoiseVariance())));
 
 	return noise_prob;
 }
 
 double AWGN_Channel::SimulateOutput(double ChannelInput)
 // Simulate the result of passing the zero vector through the AWGN
-		{
+{
 	return ChannelInput + GaussGenerate(noise_sigma);
 }
 
@@ -340,7 +342,7 @@ node &variable_node::AdjacentNode(int index) {
 
 message &variable_node::CalcRightboundMessage(int rightbound_index)
 // rightbound_index is -1 if calculation is meant for final estimate
-		{
+{
 	static message Aux;
 
 	Aux = InitialMessage;
@@ -473,11 +475,11 @@ void bipartite_graph::Reset(int p_N,                 // number of variable nodes
 	node_index = 0;
 	socket_index = 0;
 	for (int i = 0; lambda_degs[i] != -1; i++)  // Loop through all left-degrees
-			{
+	{
 		int count_nodes_of_degree = (int) floor(
 				lambda_wts[i] * E / lambda_degs[i]); // No. nodes of required degree
 		for (int j = 0; j < count_nodes_of_degree; j++) // Number of nodes with required left-degree
-				{
+		{
 			for (int k = 0; k < lambda_degs[i]; k++) // Number of sockets for each degree
 				left_sockets[socket_index++] = &variable_nodes[node_index];
 
@@ -501,7 +503,7 @@ void bipartite_graph::Reset(int p_N,                 // number of variable nodes
 	node_index = 0;
 	socket_index = 0;
 	for (int i = 0; rho_degs[i] != -1; i++)    // Loop through all right-degrees
-			{
+	{
 		int CurrentDegree = rho_degs[i];
 		count_nodes_of_degree = (int) floor(rho_wts[i] * E / CurrentDegree); // No of nodes of required degree
 		for (int j = 0; j < count_nodes_of_degree; j++) {

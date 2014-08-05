@@ -19,7 +19,7 @@ BOOLEAN debug = FALSE;
 
 int main(int argc, char **argv) {
 	//-------------------------------------------------------------------
-	// Command line arguments
+	// Command line arguments and default values
 	//-------------------------------------------------------------------
 	int iterations = 5000;
 	char infilename[100];
@@ -27,13 +27,17 @@ int main(int argc, char **argv) {
 	int count_runs = 100;
 	char ChannelType = 'G';
 	char *CurrentOption;
+	char *CurrentValue;
 	channel *Channel;
 	char *OutputLogFileName = "results.txt";
 	unsigned seed = RandomSeed();
 
-	if (argc < 3) {
+	//-------------------------------------------------------------------
+	// Parsing the input arguements
+	//-------------------------------------------------------------------
+	if (argc < 3) {		// If less
 		ReportBuf.OpenFile(OutputLogFileName);
-		cout << "usage: " << argv[0]
+		cout << "usage: " << argv[0] // argv[0] is always the file name
 				<< " <input file> <SNR (dB)/crossover> {<options>}\n"
 				<< "Options: \n"
 				<< "   -c : Channel (G)aussian, (B)SC default: " << ChannelType
@@ -48,10 +52,12 @@ int main(int argc, char **argv) {
 	}
 
 	sscanf(argv[1], "%s", infilename);/** Get the input file name */
+	// argv indices: 0(file name), 1(input file), 2(channel snr)
 
-	for (int i = 3; i < argc; i++) /** Start checking the input arguments, 0, 1, 2 are already processed */
+	for (int i = 3; i < argc; i+=2) /** Start checking the input arguments which start with dash.*/
 	{
 		CurrentOption = argv[i];
+		CurrentValue  = argv[i+1];
 		if (CurrentOption[0] != '-') /** An Argument should start with "-" */
 		{
 			cout << "Invalid command line parameter #" << i << ": "
@@ -61,25 +67,25 @@ int main(int argc, char **argv) {
 
 		switch (CurrentOption[1]) {
 		case 'c':
-			ChannelType = CurrentOption[2];
+			ChannelType = CurrentValue[0];
 			break;
 		case 'i':
-			sscanf(CurrentOption + 2, "%d", &iterations);
+			sscanf(CurrentValue, "%d", &iterations);
 			break;
 		case 'b':
-			sscanf(CurrentOption + 2, "%d", &BlockLength);
+			sscanf(CurrentValue, "%d", &BlockLength);
 			break;
 		case 'r':
-			sscanf(CurrentOption + 2, "%d", &count_runs);
+			sscanf(CurrentValue, "%d", &count_runs);
 			break;
 		case 's':
-			sscanf(CurrentOption + 2, "%d", &seed);
+			sscanf(CurrentValue, "%d", &seed);
 			break;
 		case 'o':
-			OutputLogFileName = CurrentOption + 2;
+			OutputLogFileName = CurrentValue;
 			break;
 		default:
-			cout << "Invalid option#" << i << ": " << CurrentOption << "\n";
+			cout << "Invalid option#" << i << ": " << CurrentOption << " " << CurrentValue << "\n";
 			exit(1);
 		}
 	}

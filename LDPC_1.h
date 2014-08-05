@@ -11,7 +11,9 @@
 #include "Utils_1.h"
 #include "LDPC_2.h"
 
-#define MAX_LAMBDAS 1000//!< Maximum number of Lambdas#define MAX_RHOS    1000//!< Maximum number of Rhos
+#define MAX_LAMBDAS 1000//!< Maximum number of Lambdas
+#define MAX_RHOS    1000//!< Maximum number of Rhos
+
 ////////////////////////////////////////////////////////////////////////////
 //
 // LDPC Code
@@ -176,4 +178,4 @@ public:
 
 };
 
-#endif // Preprocessor guard ends here
+#endif // Preprocessor guard ends here

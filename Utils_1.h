@@ -86,7 +86,8 @@ extern reportbuf ReportBuf;
 typedef unsigned char BYTE;
 typedef unsigned char BOOLEAN;
 
-#define MAX_Q 	64  // Maximum allowed Q   (to be freely modified)
+#define MAX_Q 	64  // Maximum allowed Q   (to be freely modified)
+
 /************************************************************************
  *
  * Functions

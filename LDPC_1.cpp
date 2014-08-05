@@ -71,6 +71,8 @@ void LDPC_Code::GetFromFile(std::ifstream &file) {
 	lambda_wts[lambdas_index] = -1;
 }
 
+
+// Constructor
 LDPC_Code::LDPC_Code(std::ifstream &File, int p_BlockLength, channel *p_Channel) :
 				BlockLength(p_BlockLength), Channel(p_Channel) {
 	GetFromFile(File);

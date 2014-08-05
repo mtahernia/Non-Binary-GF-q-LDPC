@@ -32,24 +32,23 @@ public:
 	double rho_wts[MAX_RHOS + 1];			//!< Weights of check nodes
 	int BlockLength; 						//!< Block Length that is used in monte-carlo simulations
 	mapping MapInUse; 						//!< Mapping from code symbols to channel symbols
-	channel *Channel; 					//!< Channel in use
+	channel *Channel; 						//!< Channel in use
 
 	// For use in encoding
-	VariableNodeList Variables; //!< List of variable nodes, this is used in encoding
-	CheckNodeList Checks; 	//!< List of check nodes, this is used in encoding
-	int Systematic;	//!< FIXME: I don't know where are these used, in the encoding process
-	int Gap;//!< FIXME: I don't know where are these used, in the encoding process
-	int Triangle;//!< FIXME: I don't know where are these used, in the encoding process
-	matrix GapMatrix;//!< FIXME: I don't know where are these used, in the encoding process
-	matrix MinusPhiInverse; //!< FIXME: I don't know where are these used, in the encoding process
+	VariableNodeList Variables; 			//!< List of variable nodes, this is used in encoding
+	CheckNodeList Checks; 					//!< List of check nodes, this is used in encoding
+	int Systematic;							//!< FIXME: I don't know where are these used, in the encoding process
+	int Gap;								//!< FIXME: I don't know where are these used, in the encoding process
+	int Triangle;							//!< FIXME: I don't know where are these used, in the encoding process
+	matrix GapMatrix;						//!< FIXME: I don't know where are these used, in the encoding process
+	matrix MinusPhiInverse; 				//!< FIXME: I don't know where are these used, in the encoding process
 
 public:
 
 	// General functions ----------------------------------------------------
 
-	/// Constructor for LDPC_Code class
-	LDPC_Code(std::ifstream &File, int p_BlockLength = -1, channel *p_Channel =
-			NULL);
+	/// Constructor declaration for LDPC_Code class with 3 inputs
+	LDPC_Code(std::ifstream &File, int p_BlockLength = -1, channel *p_Channel =	NULL);
 
 	/// Initialization of the constructor is called without any arguements
 	LDPC_Code() : /* After colon, there is initialization of constant variables!
@@ -57,7 +56,7 @@ public:
 			BlockLength(-1), Channel(NULL) {
 	}
 
-	/// Operator overloading function for = . The argument is rhs of the assignment operator
+	/// Operator overloading function declaration for = . The argument is rhs of the assignment operator
 	LDPC_Code &operator=(LDPC_Code &Code); // FIXME: This function should have explicit definition somewhere
 
 	/// Reads the parameters of LDPC code from the input file
@@ -68,7 +67,7 @@ public:
 		Channel = &p_Channel;
 	}
 
-	double sigma_lambda();		//!< \f$ \sum_{i=1}^{c}\frac{\lambda_i}{i} \f$
+	double sigma_lambda();			//!< \f$ \sum_{i=1}^{c}\frac{\lambda_i}{i} \f$
 	double sigma_rho();				//!< \f$ \sum_{j=1}^{c}\frac{\rho_j}{j} \f$
 
 	//double Calc_Energy();				//!< FIXME: This is not used so I commented it

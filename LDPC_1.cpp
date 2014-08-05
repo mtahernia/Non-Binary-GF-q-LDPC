@@ -72,7 +72,7 @@ void LDPC_Code::GetFromFile(std::ifstream &file) {
 }
 
 LDPC_Code::LDPC_Code(std::ifstream &File, int p_BlockLength, channel *p_Channel) :
-		BlockLength(p_BlockLength), Channel(p_Channel) {
+				BlockLength(p_BlockLength), Channel(p_Channel) {
 	GetFromFile(File);
 }
 
@@ -119,7 +119,7 @@ double LDPC_Code::Calc_Symbol_Rate() {
 
 void mapping::GetFromFile(std::ifstream &file)
 // Read the mapping from the current position in the file
-		{
+{
 	file >> q;
 
 	if (q > MAX_Q) {

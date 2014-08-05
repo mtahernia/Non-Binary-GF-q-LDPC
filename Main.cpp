@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
 	unsigned seed = RandomSeed();
 
 	//-------------------------------------------------------------------
-	// Parsing the input arguements
+	// Parsing the input arguments
 	//-------------------------------------------------------------------
 	if (argc < 3) {		// If less
 		ReportBuf.OpenFile(OutputLogFileName);
@@ -52,7 +52,7 @@ int main(int argc, char **argv) {
 	}
 
 	sscanf(argv[1], "%s", infilename);/** Get the input file name */
-	// argv indices: 0(file name), 1(input file), 2(channel snr)
+	// argv indices: 0(file name), 1(input file), 2(channel SNR)
 
 	for (int i = 3; i < argc; i+=2) /** Start checking the input arguments which start with dash.*/
 	{

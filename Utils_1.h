@@ -42,11 +42,11 @@ public:
 				exit(1);
 			}
 
-			putchar(nCh);
-			fputc(nCh, fp);
+			putchar(nCh);	// Display the  output
+			fputc(nCh, fp);	// Write the output to file buffer
 
-			fflush(fp);
-		} else {
+			fflush(fp);		// Flush the buffer to file
+		} else {			// Just write output to stderr
 			fputc(nCh, stderr);
 		}
 
@@ -67,9 +67,9 @@ public:
 
 };
 
-extern std::ostream ReportOut;
-extern reportbuf ReportBuf;
-#define cout ReportOut
+extern std::ostream ReportOut;	// Already defined in .c file
+extern reportbuf ReportBuf;		// Already defined in .c file
+#define cout ReportOut			// Redefine cout to report buffer that we defined
 
 /************************************************************************
  *
@@ -77,8 +77,8 @@ extern reportbuf ReportBuf;
  *
  ************************************************************************/
 
-#define INF             1e10
-#define EPSILON         1e-10
+#define INF             1e10	// Infinity
+#define EPSILON         1e-10	// It's Obvious!
 
 #define TRUE   1
 #define FALSE  0
@@ -86,16 +86,18 @@ extern reportbuf ReportBuf;
 typedef unsigned char BYTE;
 typedef unsigned char BOOLEAN;
 
-#define MAX_Q 	64  // Maximum allowed Q   (to be freely modified)
+#define MAX_Q 	32  // Maximum allowed Q   (to be freely modified)
 
 /************************************************************************
  *
  * Functions
  *
  ************************************************************************/
-
+// Operator Overloading Declaration
 std::ifstream &operator>>(std::ifstream &file, double &d);
 std::ifstream &operator>>(std::ifstream &file, int &num);
+
+// Returns an integer between 0 and p_max - 1
 int uniform_random(int p_max);
 
 // Log-Likelihood Ratio
@@ -151,6 +153,7 @@ inline double log2(double x) {
 		return -INF;
 }
 
+// Integer log2
 inline int Intlog2(int x) {
 	int acc = 0;
 
@@ -162,6 +165,7 @@ inline int Intlog2(int x) {
 	return acc;
 }
 
+// Check whether num is a power of 2 or not
 inline BOOLEAN IsPowerOfTwo(int num) {
 	BOOLEAN Reply = TRUE;
 
@@ -175,14 +179,17 @@ inline BOOLEAN IsPowerOfTwo(int num) {
 	return Reply;
 }
 
+// Checks if char c is a digit or not
 inline BOOLEAN isnumber(char c) {
 	return (('0' <= c) && (c <= '9'));
 }
 
+// X mod Y
 inline double mod(double x, double y) {
 	return x - floor(x / y) * y;
 }
 
+// Minimum of two doubles x and y
 inline double min_double(double x, double y) {
 	return (x < y) ? x : y;
 }

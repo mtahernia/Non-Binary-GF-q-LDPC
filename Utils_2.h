@@ -12,20 +12,20 @@
 
 class GFq {
 public:
-	// General field definition parameter
-	static int q;
-	static int log_2_q;         // If q is not prime
-	static int mask;           // if q is not prime - 1's at first positions
-	static GFq alpha[MAX_Q];
-	static int reverse_alpha[MAX_Q];
-	static GFq inverse[MAX_Q];
-	static BOOLEAN IsPrimeQ;
-	static BOOLEAN IsModuloOperations;
+	static int q;					// General field definition parameter
+	static int log_2_q; 		    // If q is not prime
+	static int mask;		        // if q is not prime - 1's at first positions
+	static GFq alpha[MAX_Q];		// alpha[i] is the ith element of field
+	static int reverse_alpha[MAX_Q];// multiplicative inverse of alphas
+	static GFq inverse[MAX_Q];		// inverse[i] multiplicative inverse of i
+	static BOOLEAN IsPrimeQ;		// is our field prime, extension or invalid
+	static BOOLEAN IsModuloOperations; // when we have a prime field, operations become modular
 
-	// Value of field
+	// Value of field element
 	int val;
-public:
 
+public:
+	// GFq constructor with value g
 	GFq(GFq &g) :
 			val(g.val) {
 	}
@@ -34,11 +34,14 @@ public:
 		return val == 0;
 	}
 
-	BYTE GetVal() {
+	BYTE GetVal() { // Unsigned Char
 		return val;
 	}
+
 	static void Initialize(int p_q);
+
 	static void GenerateAlphas(int m);
+
 	static GFq &One() {
 		if (IsModuloOperations) {
 			static GFq ConstOne(1);

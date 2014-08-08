@@ -23,6 +23,7 @@ GFq GFq::inverse[MAX_Q];
 BOOLEAN GFq::IsPrimeQ = FALSE;
 BOOLEAN GFq::IsModuloOperations = FALSE;
 
+
 BOOLEAN IsPrime(int num) {
 	BOOLEAN Reply = TRUE;
 
@@ -36,8 +37,10 @@ BOOLEAN IsPrime(int num) {
 	return Reply;
 }
 
+// Kind of declaration that these exist
 int GFq::log_2_q;
 int GFq::mask;
+
 
 void GFq::Initialize(int p_q) {
 	if (p_q == GFq::q)         // if already initialized with the same q
@@ -57,7 +60,7 @@ void GFq::Initialize(int p_q) {
 	if ((q > 2) && IsPowerOfTwo(q)) {
 		// Store for use by other utilities
 		log_2_q = Intlog2(q);
-		mask = 0;
+		mask = 0;								// Mask is used to select bits.
 		for (int i = 0; i < log_2_q; i++) {
 			mask <<= 1;
 			mask |= 1;
@@ -99,7 +102,7 @@ void GFq::Initialize(int p_q) {
 	}
 
 	//-----------------------------------------------------------------------
-	// Calc inverse
+	// Calc inverse table for elemets of GF(q)
 	//-----------------------------------------------------------------------
 
 	for (int i = 1; i < q; i++)
@@ -108,19 +111,20 @@ void GFq::Initialize(int p_q) {
 			if ((g1 * g2) == GFq::One())
 				inverse[i] = g2;
 		}
-}
+}  // void GFq::Initialize
 
+
+
+
+// Some predefined generator polynomials for extension fields of 2.
 void GFq::GenerateAlphas(int m) {
 	int generator_polynomial;
 
-	int X0 = 1, X1 = 1 << 1, X2 = 1 << 2, X3 = 1 << 3, X4 = 1 << 4, X5 = 1 << 5,
-			X6 = 1 << 6,
-//      X7 = 1 << 7,
-			X8 = 1 << 8;
+	int X0 = 1, X1 = 1 << 1, X2 = 1 << 2, X3 = 1 << 3, X4 = 1 << 4, X5 = 1 << 5, X6 = 1 << 6,/* X7 = 1 << 7,*/ X8 = 1 << 8; // X7 was not used
 
 	switch (m) {
 	case 2:
-		generator_polynomial = X0 ^ X1 ^ X2;
+		generator_polynomial = X0 ^ X1 ^ X2;  // ^ is Bitwise XOR, it acts like modulo 2 adding here
 		break;
 	case 3:
 		generator_polynomial = X0 ^ X1 ^ X3;
@@ -151,9 +155,9 @@ void GFq::GenerateAlphas(int m) {
 	for (int i = 0; i < (q - 1); i++) {
 		alpha[i].val = x;
 
-		x <<= 1;                // multiply by alpha
+		x <<= 1;                // multiply by alpha FIXME: What!!!!!!!!!!!! it looks like multiplication by 2
 		if (x & overflow)       // if overflowed
-			x ^= generator_polynomial;
+			x ^= generator_polynomial;	// FIXME: I don't understand, why add the generator?
 	}
 
 	//------------------------------------------------
@@ -168,7 +172,7 @@ void GFq::GenerateAlphas(int m) {
  * GF(q) Matrix
  *
  ************************************************************************************/
-
+/// Returns Identity matrix of size N
 matrix &Identity(int N) {
 	static matrix I;
 
@@ -179,6 +183,8 @@ matrix &Identity(int N) {
 	return I;
 }
 
+
+/// Returns the inverse of this matrix using Gauss-Jordan Method in GF(q)
 matrix &matrix::Inverse() {
 	static matrix Result;
 
@@ -235,6 +241,7 @@ matrix &matrix::Inverse() {
 	return Result;
 }
 
+// FIXME: The following functions work on check nodes, the role is not clear to me yet
 void matrix::Add(int row, check_node &Check, GFq Mult) {
 	for (int i = 0; i < Check.GetDegree(); i++) {
 		int VarID = Check.GetEdge(i).LeftNode().GetID();
@@ -242,6 +249,8 @@ void matrix::Add(int row, check_node &Check, GFq Mult) {
 		Element(row, VarID) += Mult * label;
 	}
 }
+
+
 
 void matrix::Set(int row, check_node &Check) {
 	for (int i = 0; i < Check.GetDegree(); i++) {

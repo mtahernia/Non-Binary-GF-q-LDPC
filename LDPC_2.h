@@ -190,25 +190,25 @@ public:
 
 		q = p_q;
 	}
-
+	// Copy mapping from p_MapInUse
 	mapping(mapping &p_MapInUse) :
 			q(p_MapInUse.q) {
 		bcopy( /*from*/p_MapInUse.vals, /*to*/vals, q * sizeof(double));
 	}
 
+	// Determine wether the mapping is a binary mapping or not!
 	BOOLEAN IsBinary() {
 		if (q != 2)
 			return FALSE;
-
-		if (((vals[0] != 0) && (vals[0] != 1))
-				|| ((vals[1] != 0) && (vals[1] != 1)))
+		if (((vals[0] != 0) && (vals[0] != 1)) || ((vals[1] != 0) && (vals[1] != 1)))
 			return FALSE;
-
 		return TRUE;
 	}
 
+	// Read mapping from input file
 	void GetFromFile(std::ifstream &file);
 
+	// Average signal power assuming all constellation points are equiprobable
 	double Average_E() {
 		double sum_E = 0;
 		for (int i = 0; i < q; i++)
@@ -226,30 +226,36 @@ public:
 			vals[i] /= factor;
 	}
 
+	// Operator overlad for division of a mapping
 	void operator/=(double d) {
 		for (int i = 0; i < q; i++)
 			vals[i] /= d;
 	}
 
+	// Operator overload for multiplication of a mapping
 	void operator*=(double d) {
 		for (int i = 0; i < q; i++)
 			vals[i] *= d;
 	}
 
+	// Returns the mapping point for a integer x
 	double map(int x) {
 		return vals[x];
 	}
 
+	// Returns the mapping point for g in GF(q)
 	double map(GFq &g) {
 		return map(g.val);
 	}
 
+	// Return q of mapping
 	int GetQ() {
 		return q;
 	}
 };
 
-inline std::ostream &operator<<(std::ostream &s, mapping &MapInUse) {
+
+inline std::ostream &operator<<(std::ostream &s, mapping &MapInUse) { // for writing MapInUse to s
 	s << "[";
 	for (int i = 0; i < MapInUse.GetQ(); i++) {
 		if (i != 0)
@@ -594,6 +600,7 @@ public:
 	int RandomSelectIndex(); // Select index at random based on probabilities in message
 };
 
+// Convolve two messages
 inline message &Convolve(message &M1, message &M2) {
 	static message Aux;
 
@@ -601,6 +608,7 @@ inline message &Convolve(message &M1, message &M2) {
 	Aux.Convolve(M2);
 	return Aux;
 }
+
 
 inline std::ostream &operator<<(std::ostream &s, message &m) {
 	s << ceil(m[0] * 1000.) / 1000.;
@@ -825,8 +833,7 @@ public:
 	virtual node &AdjacentNode(int index) = 0;
 };
 
-message &GenerateChannelMessage(GFq v, channel &TransmitChannel,
-		mapping &MapInUse, double ChannelOut);
+message &GenerateChannelMessage(GFq v, channel &TransmitChannel, mapping &MapInUse, double ChannelOut);
 
 class variable_node: public node {
 public:
@@ -870,7 +877,7 @@ public:
 	virtual node &AdjacentNode(int index);
 };
 
-class complex_vector;
+class complex_vector;  // FIXME: Where is the definition?
 
 message &CalcLeftboundMessage(message Vectors[], int left_index, int degree);
 

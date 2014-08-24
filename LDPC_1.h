@@ -26,8 +26,8 @@
 class LDPC_Code {
 public:
 	bipartite_graph Graph;					//!< Bipartite graph of underlying LDPC Code
-	int lambda_degs[MAX_LAMBDAS + 1];		//!< Degrees of variable nodes
-	double lambda_wts[MAX_LAMBDAS + 1];		//!< Weights of the variable nodes
+	int lambda_degs[MAX_LAMBDAS + 1];		//!< Nonzero Degrees of variable nodes
+	double lambda_wts[MAX_LAMBDAS + 1];		//!< Weights of the variable nodes with degrees specified above
 	int rho_degs[MAX_RHOS + 1];				//!< Degrees of check nodes
 	double rho_wts[MAX_RHOS + 1];			//!< Weights of check nodes
 	int BlockLength; 						//!< Block Length that is used in monte-carlo simulations
@@ -47,10 +47,10 @@ public:
 
 	// General functions ----------------------------------------------------
 
-	/// Constructor declaration for LDPC_Code class with 3 inputs
+	/// Constructor declaration for LDPC_Code class with 3,2 or 1 input(s). The default extra values should be specified in function call or in input file
 	LDPC_Code(std::ifstream &File, int p_BlockLength = -1, channel *p_Channel =	NULL);
 
-	/// Initialization of the constructor is called without any arguements
+	/// Initialization of the constructor is called without any arguments
 	LDPC_Code() : /* After colon, there is initialization of constant variables!
 	 you can not initialize constant int,... inside the constructor function */
 			BlockLength(-1), Channel(NULL) {
@@ -94,7 +94,7 @@ public:
 	}
 
 	/**
-	 * \f$ Rate = 1- \frac{M}{N}=1 - \frac{ \sum_{j=1}^{d} \rho_j }{ \sum_{i=1}^{c} \lambda_i } \f$
+	 * \f$ Rate = 1- \frac{M}{N}=1 - \frac{ \sum_{j=1}^{d} \rho_j/j }{ \sum_{i=1}^{c} \lambda_i/i } \f$
 	 */
 	double Calc_Symbol_Rate();		//!< Calculate the Symbol rate
 

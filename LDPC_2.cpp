@@ -16,7 +16,7 @@
  * MESSAGE
  *
  *********************************************************************************/
-
+// FIXME: Need to rewrite convolve and this function, currently I'm ignoring the complex part and the whole convolution will be inaccurate
 void message::DFT2()          // A real-valued DFT - also IDFT
 {
 	static message Aux;

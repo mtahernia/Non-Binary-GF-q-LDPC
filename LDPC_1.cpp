@@ -56,7 +56,7 @@ void LDPC_Code::GetFromFile(std::ifstream &file) {
 			GFq::Initialize(MapInUse.GetQ());
 			break;
 		default:
-			file.getline(dummy_buffer, sizeof(dummy_buffer));   // Skip line
+			file.getline(dummy_buffer, sizeof(dummy_buffer));   // Skip line and go to beggining of the next line if nothing maches r l m
 		}
 	}
 
@@ -72,7 +72,7 @@ void LDPC_Code::GetFromFile(std::ifstream &file) {
 }
 
 
-// Constructor
+// Main Constructor of LDPC_Code class
 LDPC_Code::LDPC_Code(std::ifstream &File, int p_BlockLength, channel *p_Channel) :
 				BlockLength(p_BlockLength), Channel(p_Channel) {
 	GetFromFile(File);

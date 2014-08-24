@@ -131,14 +131,15 @@ int main(int argc, char **argv) {
 		SNR = pow(10., SNR_dB / 10.);
 		No = 1. / SNR;
 		noise_sigma = sqrt(No);
-		((AWGN_Channel*) Channel)->SetNoiseSigma(noise_sigma);
+		// Because Channel is from base class channel, we need to cast it to the real thing, which is a child class
+		(dynamic_cast<AWGN_Channel*>(Channel))->SetNoiseSigma(noise_sigma);
 		break;
 	case 'B':
 		Channel = new BSC_Channel;
 
 		sscanf(argv[2], "%lf", &channel_p);
-
-		((BSC_Channel*) Channel)->SetChannel_p(channel_p);
+		// Again dynamic cast to child class
+		(dynamic_cast<BSC_Channel*> (Channel))->SetChannel_p(channel_p);
 		break;
 	default:
 		cout << "Invalid channel selection\n";

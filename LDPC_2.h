@@ -54,8 +54,7 @@ public:
 	void SimulateOutputVector(vector &InVector, vector &OutVector);
 
 	virtual double SimulateOutput(double ChannelInput) = 0;
-	virtual double CalcProbForInput(double ChannelOutput,
-			double ChannelInput) = 0;
+	virtual double CalcProbForInput(double ChannelOutput, double ChannelInput) = 0;
 
 	// Statistical data -------------------------------------------
 	virtual double CapacityInBits() = 0;

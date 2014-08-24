@@ -34,7 +34,7 @@ void LDPC_Code::GetFromFile(std::ifstream &file) {
 			}
 
 			file >> rho_degs[rhos_index] >> rho_wts[rhos_index];
-			file.getline(dummy_buffer, sizeof(dummy_buffer));  // reach eol
+			file.getline(dummy_buffer, sizeof(dummy_buffer));  // reach EoL
 			rhos_index++;
 			break;
 		case 'l': // Read Lambdas From File
@@ -46,7 +46,7 @@ void LDPC_Code::GetFromFile(std::ifstream &file) {
 			file >> lambda_degs[lambdas_index] >> lambda_wts[lambdas_index];
 
 			lambdas_index++;
-			file.getline(dummy_buffer, sizeof(dummy_buffer));  // reach eol
+			file.getline(dummy_buffer, sizeof(dummy_buffer));  // reach EoL
 			break;
 		case 'm': // Read mapping from file
 			GotMapInUse = TRUE;
@@ -56,7 +56,7 @@ void LDPC_Code::GetFromFile(std::ifstream &file) {
 			GFq::Initialize(MapInUse.GetQ());
 			break;
 		default:
-			file.getline(dummy_buffer, sizeof(dummy_buffer));   // Skip line and go to beggining of the next line if nothing maches r l m
+			file.getline(dummy_buffer, sizeof(dummy_buffer));   // Skip line and go to beginning of the next line if nothing matches r l m
 		}
 	}
 

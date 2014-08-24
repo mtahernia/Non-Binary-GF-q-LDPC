@@ -164,6 +164,7 @@ void BSC_Channel::PrintChannelData(LDPC_Code &Code) {
 
 double GaussGenerate(double sigma)
 // Simulate the result of passing the zero vector through the AWGN
+// using "Box–Muller transform"
 {
 	static const double pi = 3.141592653;
 	double normal_random_number, x1, x2;
@@ -209,8 +210,8 @@ void AWGN_Channel::PrintChannelData(LDPC_Code &Code) {
 }
 
 // override virtual functions
-double AWGN_Channel::CalcProbForInput(double ChannelOutput,
-		double ChannelInput) {
+// Gaussian distribution
+double AWGN_Channel::CalcProbForInput(double ChannelOutput, double ChannelInput) {
 	static const double sqrt_2pi = sqrt(2 * 3.141592653);
 
 	double noise_prob = (1 / (sqrt_2pi * noise_sigma)
@@ -223,6 +224,7 @@ double AWGN_Channel::CalcProbForInput(double ChannelOutput,
 
 double AWGN_Channel::SimulateOutput(double ChannelInput)
 // Simulate the result of passing the zero vector through the AWGN
+// Actually pass ChannelInput from a gaussian channel
 {
 	return ChannelInput + GaussGenerate(noise_sigma);
 }

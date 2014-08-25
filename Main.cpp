@@ -148,7 +148,7 @@ int main(int argc, char **argv) {
 
 	// Connect channel with code
 	Code.SetChannel(*Channel);
-	Channel->ProcessMapping(Code);
+	Channel->ProcessMapping(Code); // Calls Normalize function of mapping of the code
 
 	//-------------------------------------------------------------------
 	// Print channel data

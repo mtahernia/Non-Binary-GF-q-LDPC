@@ -128,7 +128,7 @@ public:
  *
  ****************************************************************************/
 
-double GaussGenerate(double sigma);
+double GaussGenerate(double sigma); // Generates a real gaussian
 
 class AWGN_Channel: public channel {
 private:
@@ -140,8 +140,9 @@ public:
 			noise_sigma(p_noise_sigma) {
 	}
 
-	double NoiseVariance();
-	double NoiseStdDev();
+	double NoiseVariance(); // Returns noise_sigma^2
+	double NoiseStdDev();	// Returns noise_sigma
+
 	void SetNoiseSigma(double p_noise_sigma) {
 		noise_sigma = p_noise_sigma;
 	}

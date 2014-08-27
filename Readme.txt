@@ -1,3 +1,11 @@
+Requirements for compilation:
+	1) FFTW
+	2) GCC!
+Requirements for doxygen:
+	sudo apt-get install doxygen doxygen-latex doxygen-gui graphviz
+
+
+
 ***********************************************************************************
 *
 * C++ source code for running Coset GF(q) LDPC simulations 

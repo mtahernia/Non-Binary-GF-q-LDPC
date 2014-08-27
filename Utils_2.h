@@ -243,6 +243,7 @@ public:
 		return *this;
 	}
 
+	// Extract column ColFirst up to ColFirst+CountCols-1
 	matrix &Extract(int ColFirst, int CountCols) {
 		static matrix A;
 
@@ -253,6 +254,7 @@ public:
 
 		return A;
 	}
+
 
 	void Init(int p_M, int p_N) {
 		if ((M != p_M) || (N != p_N)) {
@@ -275,12 +277,14 @@ public:
 		Init(p_M, p_N);
 	}
 
+	// Returns the reference to i,j element
 	GFq &Element(int i, int j)
 	// i in range 0,...,M-1 and j in range 0,...,N-1
 			{
 		return Elements[N * i + j];
 	}
 
+	// Operator overload, returns reference to ith element, assuming the rows are concatenated like a train!
 	GFq &operator[](int i) {
 		return Elements[i];
 	}
@@ -297,6 +301,7 @@ public:
 		}
 	}
 
+	// FIXME:
 	void Add(int row, check_node &Check, GFq Mult);
 	void Set(int row, check_node &Check);
 
@@ -346,16 +351,19 @@ public:
 			Elements[i] = Elements[i].Minus();
 	}
 
+	// Add mult*(i2th row) to i1th row
 	void AddRow(int i1, int i2, GFq mult) {
 		for (int j = 0; j < N; j++)
 			Element(i1, j) += Element(i2, j) * mult;
 	}
 
+	// multiply row i by mult
 	void MultRow(int i, GFq mult) {
 		for (int j = 0; j < N; j++)
 			Element(i, j) *= mult;
 	}
 
+	// return the inverse, using Gauss-Jordan elimination method
 	matrix &Inverse();
 
 	void SetNull() {
@@ -389,6 +397,7 @@ public:
 		return this->Elements[i];
 	}
 
+	// This one is not used in this code
 	column_vector &operator=(long p_Val) {
 		// LSB is first
 		for (int i = 0; i < M; i++) {
@@ -414,6 +423,7 @@ public:
 		return *this;
 	}
 
+	// Not used
 	void Extract(column_vector &p_Source, int RowFirst) {
 		int SourceIndex = RowFirst;
 
@@ -427,6 +437,7 @@ public:
 			(*this)[i] = p_Source[SourceIndex];
 	}
 
+	// Not used
 	void Combine(column_vector &p_Vector1, column_vector &p_Vector2) {
 		if (M != (p_Vector1.M + p_Vector2.M)) {
 			cout << "column_vector::Combine: Incompatible rows\n";

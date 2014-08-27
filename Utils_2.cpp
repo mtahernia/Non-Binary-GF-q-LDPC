@@ -193,13 +193,13 @@ matrix &matrix::Inverse() {
 		exit(1);
 	}
 
-	matrix Aux(*this);               // temporary storage for this
+	matrix Aux(*this);         // temporary storage for this
 	Result = Identity(N);      // temporary result
 
 	//------------------------------------------------------------
 	// Go through each column and eliminate unwanted rows
 	//------------------------------------------------------------
-	for (int j = 0; j < N; j++) {
+	for (int j = 0; j < N; j++) {		// counter for columns --->
 		// find a remaining row where column is non zero
 		int NonZeroRow = -1;
 		for (int i = j; i < N; i++) {

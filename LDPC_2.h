@@ -41,7 +41,7 @@ public:
 	virtual char *GetChannelName() = 0;
 
 	// General functions ------------------------------------------
-	GFq &MaxProbableForOutput(mapping &MapInUse);
+	GFq &MaxProbableForOutput(mapping &MapInUse); // FIXME: Not used or defined in this program
 
 	double ErrorUndefined(char *FuncName) {
 		cout << GetChannelName() << "::" << FuncName << " undefined.\n";
@@ -196,7 +196,7 @@ public:
 		bcopy( /*from*/p_MapInUse.vals, /*to*/vals, q * sizeof(double));
 	}
 
-	// Determine wether the mapping is a binary mapping or not!
+	// Determine whether the mapping is a binary mapping or not!
 	BOOLEAN IsBinary() {
 		if (q != 2)
 			return FALSE;

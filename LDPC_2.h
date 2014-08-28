@@ -11,7 +11,7 @@
 #include "Utils_2.h"
 #include "Encoding.h"
 #include <fftw3.h>
-
+#include <memory.h>
 
 typedef unsigned char BOOLEAN;
 typedef unsigned char BYTE;
@@ -179,7 +179,9 @@ public:
 			Set_Q(p_q);
 
 		if (p_vals != NULL)
-			bcopy( /*from*/p_vals, /*to*/ vals, q * sizeof(double));
+			memcpy( /*to*/ vals, /*from*/p_vals, q * sizeof(double));
+//			bcopy( /*from*/p_vals, /*to*/ vals, q * sizeof(double));
+
 	}
 
 	void Set_Q(int p_q) {
@@ -193,7 +195,8 @@ public:
 	// Copy mapping from p_MapInUse
 	mapping(mapping &p_MapInUse) :
 			q(p_MapInUse.q) {
-		bcopy( /*from*/p_MapInUse.vals, /*to*/vals, q * sizeof(double));
+		memcpy(/*to*/vals,  /*from*/p_MapInUse.vals, q * sizeof(double));
+//		bcopy( /*from*/p_MapInUse.vals, /*to*/vals, q * sizeof(double));
 	}
 
 	// Determine whether the mapping is a binary mapping or not!
@@ -226,7 +229,7 @@ public:
 			vals[i] /= factor;
 	}
 
-	// Operator overlad for division of a mapping
+	// Operator overload for division of a mapping
 	void operator/=(double d) {
 		for (int i = 0; i < q; i++)
 			vals[i] /= d;
@@ -299,6 +302,7 @@ public:
 
 	void DFT2();
 
+	// If all q components of message is smaller than message 2 returns true
 	BOOLEAN operator<(message &m2) {
 		message &m1 = *this;
 
@@ -309,6 +313,8 @@ public:
 		return TRUE;
 	}
 
+
+	// Returns the maximum component of the message
 	double Maximum() {
 		double maximum = -INF;
 		for (int i = 0; i < q; i++)
@@ -318,17 +324,20 @@ public:
 		return maximum;
 	}
 
+	// Operator overloading for getting message values
 	double &operator[](int i) {
 		return Probs[i];
 	}
 	double &operator[](GFq i) {
 		return Probs[i.val];
 	}
+
 	message &operator=(message &M) {
 		if (q != M.q)
 			Set_q(M.q);
 
-		bcopy(/* from */M.Probs, /* to */Probs, sizeof(double) * q);
+//		bcopy(/* from */M.Probs, /* to */Probs, sizeof(double) * q); // TODO: This transition might make some problem if the source and destination are overlapping
+		memcpy(/* to */Probs,/* from */M.Probs, sizeof(double) * q);
 		return *this;
 	}
 

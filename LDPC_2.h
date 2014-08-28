@@ -179,7 +179,7 @@ public:
 			Set_Q(p_q);
 
 		if (p_vals != NULL)
-			bcopy( /*from*/p_vals, /*to*/vals, q * sizeof(double));
+			bcopy( /*from*/p_vals, /*to*/ vals, q * sizeof(double));
 	}
 
 	void Set_Q(int p_q) {

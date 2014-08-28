@@ -210,14 +210,12 @@ void AWGN_Channel::PrintChannelData(LDPC_Code &Code) {
 }
 
 // override virtual functions
-// Gaussian distribution
+// Gaussian distribution P(Y|X)
 double AWGN_Channel::CalcProbForInput(double ChannelOutput, double ChannelInput) {
 	static const double sqrt_2pi = sqrt(2 * 3.141592653);
 
 	double noise_prob = (1 / (sqrt_2pi * noise_sigma)
-			* exp(
-					-pow(ChannelOutput - ChannelInput, 2.)
-					/ (2. * NoiseVariance())));
+			* exp( -pow(ChannelOutput - ChannelInput, 2.)/ (2. * NoiseVariance())) );
 
 	return noise_prob;
 }

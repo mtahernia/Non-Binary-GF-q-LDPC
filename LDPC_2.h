@@ -384,7 +384,7 @@ public:
 
 		return TRUE;
 	}
-
+	// FIXME: this might make a problem
 	BOOLEAN operator==(double d) {
 		for (int i = 0; i < q; i++)
 			//if (fabs(Probs[i] - d) > EPSILON)
@@ -430,7 +430,7 @@ public:
 		if (aux > 0) {
 			for (int i = 0; i < q; i++)
 				Probs[i] /= aux;
-		} else {
+		} else {	// If the message does not sum to something positive, give uniform values to each component TODO: Check why?
 			for (int i = 0; i < q; i++)
 				Probs[i] = 1. / (double) q;
 		}
@@ -440,6 +440,8 @@ public:
 		bzero(Probs, sizeof(double) * q);
 	}
 
+	// Normal convolution! TODO: this can be implemented using FFTW
+	// This convolves this message whith M2 and stores the result in this! this is a somehow circular convolution
 	message &Convolve(message &M2) {
 		message M1(*this);   // Auxiliary
 
@@ -453,9 +455,11 @@ public:
 		return *this;
 	}
 
+	//These two are not defined and not used TODO: Define and use them for fast implementation
 	message &ApproxConvolve(message &M2);
 	void Approximate();
 
+	//
 	message &MaxConvolve(message &M2) {     // max-prod version
 		message M1(*this);   // Auxiliary
 
@@ -476,6 +480,7 @@ public:
 
 		return *this;
 	}
+
 
 	void PermutePlus(GFq &g) {
 		message Aux;
@@ -508,6 +513,7 @@ public:
 		double max = -1;
 		int count_max = 0;
 
+		// find maximum components of message and number of them if there is no unique maximum
 		for (GFq i(0); i.val < q; i.val++) {
 			if (Probs[i.val] > max) {
 				max = Probs[i.val];
@@ -520,7 +526,7 @@ public:
 		if (count_max > 1) {     // If more than one maximum - randomly select
 			int selection = uniform_random(count_max) + 1; // Between 1 and count_max
 			int found_so_far = 0;
-
+			// TODO: this part can be written more efficiently
 			for (GFq i(0); i.val < q; i.val++)
 				if (Probs[i.val] == max) {
 					Candidate = i;
@@ -532,6 +538,7 @@ public:
 
 		return Candidate;
 	}
+
 
 	double ProbCorrect() {
 		int count_zero = 1;

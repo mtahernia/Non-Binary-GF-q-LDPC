@@ -556,10 +556,11 @@ public:
 
 	double Entropy() {
 		double aux = 0;
+		double aux2;
 
 		for (int i = 0; i < q; i++) {
 			if (Probs[i] != 0) {
-				double aux2 = Probs[i] * log(Probs[i]);
+				aux2 = Probs[i] * log(Probs[i]);
 				aux += -clip(aux2);
 			}
 		}

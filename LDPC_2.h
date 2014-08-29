@@ -302,7 +302,7 @@ public:
 
 	void DFT2();
 
-	// If all q components of message is smaller than message 2 returns true
+	// If all q components of this message is smaller than message 2 returns true
 	BOOLEAN operator<(message &m2) {
 		message &m1 = *this;
 

@@ -539,7 +539,7 @@ public:
 		return Candidate;
 	}
 
-
+	// FIXME: Where and why this function is used
 	double ProbCorrect() {
 		int count_zero = 1;
 
@@ -554,6 +554,7 @@ public:
 		return 1. / count_zero;
 	}
 
+	// Gives the entropy of message
 	double Entropy() {
 		double aux = 0;
 		double aux2;
@@ -567,7 +568,7 @@ public:
 
 		return aux;
 	}
-
+	// Left shift the message
 	message &operator<<(int l) {
 		static message Aux;
 
@@ -578,6 +579,7 @@ public:
 		return Aux;
 	}
 
+	// FIXME:
 	message &LLRShift(int k) {
 		message Aux = *this;
 
@@ -587,6 +589,7 @@ public:
 		return *this;
 	}
 
+	// Divide message to m[0] and set m[0] to zero
 	double AverageD() {
 		message m = *this;
 
@@ -602,9 +605,6 @@ public:
 		*this = *this << l;
 	}
 
-	//   ~message()
-	//      { if (Probs != NULL) delete Probs; }
-
 	void Clip(double minval = EPSILON, double maxval = INF) {
 		for (int i = 0; i < q; i++) {
 			clip(Probs[i], maxval);
@@ -615,9 +615,13 @@ public:
 	}
 
 	int RandomSelectIndex(); // Select index at random based on probabilities in message
+
+	//   ~message()
+	//      { if (Probs != NULL) delete Probs; }
+
 };
 
-// Convolve two messages
+// Convolve two messages using traditional convolve function
 inline message &Convolve(message &M1, message &M2) {
 	static message Aux;
 
@@ -626,7 +630,7 @@ inline message &Convolve(message &M1, message &M2) {
 	return Aux;
 }
 
-
+// output message to ostream
 inline std::ostream &operator<<(std::ostream &s, message &m) {
 	s << ceil(m[0] * 1000.) / 1000.;
 	for (int i = 1; i < m.q; i++)
@@ -635,6 +639,7 @@ inline std::ostream &operator<<(std::ostream &s, message &m) {
 	return s;
 }
 
+// subtract two messages
 inline message &operator-(message &m1, message &m2) {
 	static message aux;
 
@@ -646,6 +651,7 @@ inline message &operator-(message &m1, message &m2) {
 	return aux;
 }
 
+// Devide message by d
 inline message &operator/(message &m, double d) {
 	static message aux;
 
@@ -657,6 +663,7 @@ inline message &operator/(message &m, double d) {
 	return aux;
 }
 
+// Raise message components to power l
 inline double pow(message &m, int l) {
 	double f = 0;
 
@@ -666,6 +673,7 @@ inline double pow(message &m, int l) {
 	return f;
 }
 
+// returns sum of absolute values of message component
 inline double fabs(message &m) {
 	double f = 0;
 
@@ -675,6 +683,7 @@ inline double fabs(message &m) {
 	return f;
 }
 
+// returns the log of message components
 inline message &log(message &m) {
 	static message aux;
 
@@ -684,6 +693,7 @@ inline message &log(message &m) {
 
 	return aux;
 }
+
 
 inline message &exp(message &m) {
 	static message aux;

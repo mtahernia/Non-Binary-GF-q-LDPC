@@ -601,10 +601,12 @@ public:
 		return m.sum() / (GFq::q - 1);
 	}
 
+	// Left shift assignment for message
 	void operator<<=(int l) {
 		*this = *this << l;
 	}
 
+	// Clip large and small values to
 	void Clip(double minval = EPSILON, double maxval = INF) {
 		for (int i = 0; i < q; i++) {
 			clip(Probs[i], maxval);

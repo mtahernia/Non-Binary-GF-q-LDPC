@@ -177,6 +177,9 @@ int main(int argc, char **argv) {
 	for (int i = 0; i < count_runs; i++) {
 		Code.ResetGraph();
 		Code.GetZeroCodeword(Codeword);
+		//Code.GenerateEncoder();
+		//Code.GenerateRandomSystematic();
+		//Code.Encode();
 
 		Channel->SimulateOutputVector(Codeword, ChannelOutput);
 		Code.Init_Messages(ChannelOutput);

@@ -994,9 +994,12 @@ public:
 	static BOOLEAN ShouldPermuteLDPCVariables;
 public:
 	void Reset(
-			int p_N,              // number of variable nodes
-			int lambda_degs[], double lambda_wts[], int rho_degs[],
-			double rho_wts[], mapping &MapInUse);
+				int p_N,              // number of variable nodes
+				int lambda_degs[],
+				double lambda_wts[],
+				int rho_degs[],
+				double rho_wts[],
+				mapping &MapInUse);
 
 	bipartite_graph() :
 			N(0), M(0), E(0), variable_nodes(NULL), check_nodes(NULL), edges(
@@ -1052,7 +1055,7 @@ public:
  * TopList - for use in greedy
  *
  ************************************************************************/
-
+// TODO: I don't Understand
 class TopList {
 public:
 	GFq *BestChange;

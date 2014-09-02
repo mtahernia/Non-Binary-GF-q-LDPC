@@ -45,7 +45,8 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 				//				cout << "Aux(" << n0_index << ")= " << Aux[n0_index] << std::endl;
 			}    //end for j
 		}    //end for i
-	}    //end else
+	}    //end if
+
 	else if (GFq::IsPrimeQ) // FIXME: There is lots of memory copying and redundant fft generation(plan generation fixed by defining static plan).
 	{
 		Aux = *this;
@@ -72,11 +73,12 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 			Probs[i] = out[i][0];
 		}
 
-
+		// These lines are commented because we don't want to delete our plan and we want to use it over and over
 		//		fftw_destroy_plan(p);
 		//		fftw_free(in); fftw_free(out);
 
-		//  Original DFT implementation
+
+		//---------------  Original DFT implementation
 		/*
 		double temp;
 		for (GFq j(0); j.val < q; j.val++) {
@@ -251,12 +253,13 @@ GFq &check_node::Value() {
 	return Aux;
 }
 
+// returns the variable node connected to edge specified with index
 node &check_node::AdjacentNode(int index) {
 	return GetEdge(index).LeftNode();
 }
 
-message &FastCalcLeftboundMessage(message AuxLeft[], message AuxRight[],
-		int left_index, int degree) {
+message &FastCalcLeftboundMessage(message AuxLeft[], message AuxRight[],int left_index, int degree)
+{
 	static message Aux;
 
 	// Init to delta pulse
@@ -309,8 +312,7 @@ void check_node::CalcAllLeftboundMessages() {
 
 		// Calc leftbound messages
 		for (int i = 0; i < GetDegree(); i++) {
-			GetEdge(i).LeftBoundMessage = FastCalcLeftboundMessage(AuxLeft,
-					AuxRight, i, GetDegree());
+			GetEdge(i).LeftBoundMessage = FastCalcLeftboundMessage(AuxLeft,	AuxRight, i, GetDegree());
 			GetEdge(i).LeftBoundMessage.PermuteTimes(GetEdge(i).label);
 		}
 	} else {
@@ -651,8 +653,7 @@ double LDPC_Code::Belief_Propagation_Decoder(int Count_Iterations) {
 		Rightbound_Iteration();
 
 		Func_RC = Calc_Rightbound_Symbol_Error_Rate();
-		sprintf(buffer, "%d: Rightbound SER = %1.10f, %s", i + 1, Func_RC,
-				CharTime());
+		sprintf(buffer, "%d: Rightbound SER = %1.10f, %s", i + 1, Func_RC,CharTime());
 		cout << buffer;
 
 		// Stop when Func_RC doesn't fall for some consecutive iterations

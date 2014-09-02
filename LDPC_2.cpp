@@ -373,8 +373,8 @@ void variable_node::CalcAllRightboundMessages() {
 	CalcFinalMessage();
 }
 
-message &GenerateChannelMessage(GFq v, channel &TransmitChannel,
-		mapping &MapInUse, double ChannelOut) {
+// Generates channel message for zero codeword transmission
+message &GenerateChannelMessage(GFq v, channel &TransmitChannel, mapping &MapInUse, double ChannelOut) {
 	static message InitialMessage;
 	int q = MapInUse.GetQ();
 	double CandidateIn, ChannelIn;

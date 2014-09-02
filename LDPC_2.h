@@ -696,7 +696,7 @@ inline message &log(message &m) {
 	return aux;
 }
 
-
+// returns a message which is e^m
 inline message &exp(message &m) {
 	static message aux;
 
@@ -707,6 +707,7 @@ inline message &exp(message &m) {
 	return aux;
 }
 
+// Returns message in LLR form
 inline message &LLR(message &m) {
 	static message aux;
 
@@ -720,6 +721,7 @@ inline message &LLR(message &m) {
 	return aux;
 }
 
+// Does the reverse of LLR
 inline message &unLLR(message &m) {
 	static message aux;
 
@@ -809,22 +811,26 @@ public:
 	node() :
 			degree(-1), edges(NULL) {
 	}
-//	virtual ~node(void) {
+
+	//	virtual ~node(void) {
 //	} // Virtual destructor
+
 	void Disconnect();  // Disconnect all edges
 
 	void DisconnectEdge(edge *e) {
 		int index = 0;
+		// Find the edge with given pointer
 		for (; index < degree; index++)
 			if (edges[index] == e)
 				break;
-
+		// if the above for loop exited normally, not with break, then the node was not found
 		if (index == degree) {
 			cout
 					<< "node::DisconnectEdge: Attempt to disconnect a nonexistent edge\n";
 			exit(1);
 		}
 
+		// Remove e from the list
 		for (int i = index + 1; i < degree; i++)
 			edges[i - 1] = edges[i];
 
@@ -845,8 +851,9 @@ public:
 		}
 	}
 
+	// This pops p_MaxEdges edges from Stack and assigns it to the node
 	void AllocateEdges(edge **&EdgeStackPointer, int p_MaxEdges) {
-		degree = 0;    // Indicate edges have been allocated
+		degree = 0;    							// 	Indicate edges have been allocated
 		edges = EdgeStackPointer;
 		EdgeStackPointer += p_MaxEdges;        // Advance allocation pointer
 		MaxEdges = p_MaxEdges;
@@ -862,8 +869,11 @@ public:
 	virtual node &AdjacentNode(int index) = 0;
 };
 
+
+
 message &GenerateChannelMessage(GFq v, channel &TransmitChannel, mapping &MapInUse, double ChannelOut);
 
+// ----------------- Variable Node ---------------
 class variable_node: public node {
 public:
 	GFq Symbol;     // Value - for encoding
@@ -884,10 +894,15 @@ public:
 	variable_node() {
 		v.val = uniform_random(GFq::q);
 	}
+
 	void Allocate_LCLP_Constraints(int **ConstraintsStack);
+
 	int Count_LCLP_Constraints();
+
 	void Add_LCLP_Constraint(int variable_index);
 
+
+	// TODO
 	message &CalcRightboundMessage(int rightbound_index);
 	void CalcAllRightboundMessages();
 	void CalcFinalMessage();
@@ -895,6 +910,8 @@ public:
 	void SetMapInUse(mapping &p_MapInUse) {
 		MapInUse = &p_MapInUse;
 	}
+
+
 	double GetZeroSignal() {
 		return MapInUse->map(v);
 	}
@@ -910,14 +927,20 @@ class complex_vector;  // FIXME: Where is the definition?
 
 message &CalcLeftboundMessage(message Vectors[], int left_index, int degree);
 
+
+// --------- Check Node ----------------------
 class check_node: public node {
 public:
 	void CalcAllLeftboundMessages();
 	BOOLEAN DoesFinalEstimateViolate();
-	virtual node &AdjacentNode(int index);
+	virtual node &AdjacentNode(int index);  // returnes the adjacent variable  node to edge i
 	GFq &Element(int i); // For use in encoding - treats check like row of matrix
 	GFq &Value();
 };
+
+
+
+
 
 class edge {
 private:

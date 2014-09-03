@@ -421,10 +421,10 @@ BOOLEAN variable_node::IsRightConnectedTo(node *n) {
  *
  **********************************************************************************/
 
-void bipartite_graph::Reset(int p_N,                 // number of variable nodes
-		int lambda_degs[],                  // left-degrees, terminated by -1
+void bipartite_graph::Reset(int p_N,   // number of variable nodes
+		int lambda_degs[],             // left-degrees, terminated by -1
 		double lambda_wts[],           // weights corresponding to above degrees
-		int rho_degs[],       		  // right-degree, terminated by NULL
+		int rho_degs[],       		   // right-degree, terminated by NULL
 		double rho_wts[],              // weights corresponding to above degrees
 		mapping &MapInUse) {
 	//-----------------------------------------------------------------------

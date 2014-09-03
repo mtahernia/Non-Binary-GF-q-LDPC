@@ -161,8 +161,7 @@ public:
 	double Calc_Rightbound_Symbol_Error_Rate();
 
 	void ResetGraph() {
-		Graph.Reset(BlockLength, lambda_degs, lambda_wts, rho_degs, rho_wts,
-				MapInUse);
+		Graph.Reset(BlockLength, lambda_degs, lambda_wts, rho_degs, rho_wts, MapInUse);
 		Variables.Init(Graph.variable_nodes, Graph.N);
 		Checks.Init(Graph.check_nodes, Graph.M);
 	}

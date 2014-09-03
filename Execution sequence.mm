@@ -36,8 +36,7 @@
       ReportBuf.OpenFile(OutputLogFileName);
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 <node CREATED="1409640427863" ID="ID_1638641049" MODIFIED="1409641148849" POSITION="right" TEXT="Initialize Seed">
@@ -48,9 +47,20 @@
 </node>
 <node CREATED="1409638441401" ID="ID_1189177112" MODIFIED="1409641148850" POSITION="right" TEXT="Create LDPC_Code Code from definition file and BlockLength">
 <font NAME="SansSerif" SIZE="12"/>
+<node CREATED="1409713454801" ID="ID_1946364355" MODIFIED="1409713522824" TEXT="Set Block Length"/>
+<node CREATED="1409713523640" ID="ID_979399261" MODIFIED="1409713573329" TEXT="LDPC_Code::GetFromFile">
+<node CREATED="1409713576139" ID="ID_1310065297" MODIFIED="1409714699224" TEXT="rho_degs, rho_wts"/>
+<node CREATED="1409714685935" ID="ID_1634249420" MODIFIED="1409714687932" TEXT="lambda_degs, lambda_wts "/>
+<node CREATED="1409714758682" ID="ID_1940587605" MODIFIED="1409714791349" TEXT="MapInUse.GetFromFile(file)">
+<node CREATED="1409714851814" ID="ID_58836200" MODIFIED="1409714871767" TEXT="MapInUse.q &lt;-- file"/>
+<node CREATED="1409714793358" ID="ID_1151214198" MODIFIED="1409714882719" TEXT="MapInUse.vals &lt;-- file"/>
+</node>
+<node CREATED="1409714700707" ID="ID_804087397" MODIFIED="1409714928104" TEXT="MapInUse.GetQ() --&gt; GFq::q"/>
+</node>
 </node>
 <node CREATED="1409638469125" ID="ID_1762884976" MODIFIED="1409641148850" POSITION="right" TEXT="Create Channel">
 <font NAME="SansSerif" SIZE="12"/>
+<node CREATED="1409715562444" ID="ID_575169700" MODIFIED="1409715588986" TEXT="Channel = new AWGN_Channel"/>
 </node>
 <node CREATED="1409638478005" ID="ID_19250453" MODIFIED="1409641148850" POSITION="right" TEXT="Code.SetChannel(*Channel)">
 <font NAME="SansSerif" SIZE="12"/>

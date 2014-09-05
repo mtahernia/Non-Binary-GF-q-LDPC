@@ -76,26 +76,318 @@
 <node CREATED="1409638550704" ID="ID_101428037" MODIFIED="1409641148850" POSITION="right" TEXT="Print Channel Data">
 <font NAME="SansSerif" SIZE="12"/>
 </node>
-<node CREATED="1409638870710" ID="ID_1767232481" MODIFIED="1409641148850" POSITION="right" TEXT="Code.ResetGrapgh()">
+<node CREATED="1409638870710" ID="ID_1767232481" MODIFIED="1409839159409" POSITION="right" TEXT="Code.ResetGrapgh()">
 <font NAME="SansSerif" SIZE="12"/>
-<node CREATED="1409737184958" ID="ID_658129683" MODIFIED="1409737227508" TEXT="Code.Graph.Reset(BlockLength, lambda_degs, lambda_wts, rho_degs, rho_wts, MapInUse)">
-<node CREATED="1409739308292" FOLDED="true" ID="ID_525258313" MODIFIED="1409739368676" TEXT="Clear()">
+<node CREATED="1409737184958" ID="ID_658129683" MODIFIED="1409839165791" TEXT="Code.Graph.Reset(BlockLength, lambda_degs, lambda_wts, rho_degs, rho_wts, MapInUse)">
+<node CREATED="1409739308292" FOLDED="true" ID="ID_525258313" MODIFIED="1409838272940" TEXT="Clear()">
 <node CREATED="1409739318932" ID="ID_296213944" MODIFIED="1409739337321" TEXT="delete variable_nodes"/>
 <node CREATED="1409739337772" ID="ID_778458636" MODIFIED="1409739344713" TEXT="delete check_nodes"/>
 <node CREATED="1409739345028" ID="ID_1143626073" MODIFIED="1409739354713" TEXT="delete edges"/>
 <node CREATED="1409739356820" ID="ID_156939020" MODIFIED="1409739363809" TEXT="delete EdgeStack"/>
 </node>
-<node CREATED="1409740000559" ID="ID_1155715655" MODIFIED="1409740009332" TEXT="Calculate parameters">
+<node CREATED="1409740000559" FOLDED="true" ID="ID_1155715655" MODIFIED="1409838272212" TEXT="Calculate parameters">
 <node CREATED="1409739372308" ID="ID_1774552626" MODIFIED="1409739484984" TEXT="Calculate Ratio=M/N=\frac{\sum\rho_i/i}{\sum\lambda_j/j}"/>
 <node CREATED="1409739485899" ID="ID_998731944" MODIFIED="1409739513164" TEXT="N = Block length"/>
 <node CREATED="1409739514623" ID="ID_1717638499" MODIFIED="1409739551863" TEXT="M = (int) ceil (ratio*N)"/>
 <node CREATED="1409739553151" ID="ID_1857642677" MODIFIED="1409739596471" TEXT="E = (int) floor(N / \sum\lambda_j/j);"/>
 </node>
-<node CREATED="1409739954972" ID="ID_1713172958" MODIFIED="1409739968184" TEXT="Generate nodes and edges">
+<node CREATED="1409739954972" FOLDED="true" ID="ID_1713172958" MODIFIED="1409838271468" TEXT="Generate nodes and edges">
 <node CREATED="1409739605622" ID="ID_523893888" MODIFIED="1409739853449" TEXT="edges = new edge[E]"/>
 <node CREATED="1409739858444" ID="ID_506456160" MODIFIED="1409739882505" TEXT="variable_nodes = new variable_node[N]"/>
 <node CREATED="1409739883260" ID="ID_631993653" MODIFIED="1409739905125" TEXT="check_nodes = new check_node[M]"/>
 <node CREATED="1409739907256" ID="ID_704320825" MODIFIED="1409739942656" TEXT="EdgeStack = new edge*[E*2]"/>
+</node>
+<node CREATED="1409827815116" FOLDED="true" ID="ID_782592006" MODIFIED="1409838270714" TEXT="Generate Sockets">
+<node CREATED="1409828690520" ID="ID_269435030" MODIFIED="1409828696067" TEXT="variable_node **left_sockets = new variable_node*[E];"/>
+<node CREATED="1409828697180" ID="ID_1135651317" MODIFIED="1409828711452" TEXT="check_node **right_sockets = new check_node*[E];"/>
+<node CREATED="1409828712400" ID="ID_1409184111" MODIFIED="1409828727448" TEXT="edge **EdgeStackPointer = EdgeStack;         // Auxiliary pointer to stack"/>
+</node>
+<node CREATED="1409834835273" FOLDED="true" ID="ID_924262990" MODIFIED="1409838269603" TEXT="Assign sockets to Variable Nodes">
+<richcontent TYPE="NOTE"><html>
+  <head>
+    
+  </head>
+  <body>
+    <p>
+      &#160;&#160;&#160;&#160;for (int i = 0; lambda_degs[i] != -1; i++)&#160;&#160;// Loop through all left-degrees
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;{
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;int count_nodes_of_degree = (int) floor( lambda_wts[i] * E / lambda_degs[i] ); // No. nodes of required degree
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;for (int j = 0; j &lt; count_nodes_of_degree; j++) // Number of nodes with required left-degree
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;{
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;for (int k = 0; k &lt; lambda_degs[i]; k++) // Number of sockets for each degree
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;left_sockets[socket_index++] = &amp;variable_nodes[node_index];
+    </p>
+    <p>
+      
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;variable_nodes[node_index].AllocateEdges(EdgeStackPointer, lambda_degs[i]);
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;variable_nodes[node_index].SetMapInUse(MapInUse);
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;variable_nodes[node_index].SetID(node_index);
+    </p>
+    <p>
+      
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;node_index++;
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;}
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;}
+    </p>
+  </body>
+</html>
+</richcontent>
+<node CREATED="1409834848322" ID="ID_211635836" MODIFIED="1409837298082" TEXT="loop trough all left degrees lamda_degs[i]">
+<node CREATED="1409834935244" ID="ID_582378038" MODIFIED="1409834950797" TEXT="Count the number of nodes with that degree"/>
+<node CREATED="1409837184703" ID="ID_706028592" MODIFIED="1409837260072" TEXT="for j=0;j&lt; number of nodes with that degree">
+<node CREATED="1409837311083" ID="ID_1293005225" MODIFIED="1409837337162" TEXT="for k=0;k&lt;lambda_degs[i]">
+<node CREATED="1409837348309" ID="ID_719006995" MODIFIED="1409837411622" TEXT="left_sockets[socket_index++] = &amp;variable_node[node_index]"/>
+</node>
+<node CREATED="1409837462950" ID="ID_960389010" MODIFIED="1409837472150" TEXT="variable_nodes[node_index].AllocateEdges(EdgeStackPointer, lambda_degs[i]);">
+<node CREATED="1409837523350" ID="ID_142146997" MODIFIED="1409837613710" TEXT="degree=0"/>
+<node CREATED="1409837617147" ID="ID_777093449" MODIFIED="1409837628501" TEXT="edges = EdgeStackPointer"/>
+<node CREATED="1409837629195" ID="ID_1422364986" MODIFIED="1409837661942" TEXT="EdgeStackPointer += lambda_degs[i]"/>
+<node CREATED="1409837664783" ID="ID_10096230" MODIFIED="1409837686840" TEXT="Max_Edges = lambda_degs[i]"/>
+</node>
+<node CREATED="1409837472316" ID="ID_1485081173" MODIFIED="1409837479844" TEXT="variable_nodes[node_index].SetMapInUse(MapInUse);"/>
+<node CREATED="1409837489844" ID="ID_946165112" MODIFIED="1409837499762" TEXT="variable_nodes[node_index].SetID(node_index);"/>
+<node CREATED="1409837480433" ID="ID_1955189272" MODIFIED="1409837518688" TEXT="node_index++;"/>
+</node>
+</node>
+<node CREATED="1409834951868" ID="ID_1517226459" MODIFIED="1409837832483" TEXT="Record no. of left sockets, may be different than E due to the fact that lambda * E may not be whole numbers ">
+<richcontent TYPE="NOTE"><html>
+  <head>
+    
+  </head>
+  <body>
+    <p>
+      int count_left_sockets = socket_index;
+    </p>
+  </body>
+</html>
+</richcontent>
+</node>
+<node CREATED="1409837833898" ID="ID_869698779" MODIFIED="1409837863213" TEXT="Modify N for same reason ">
+<richcontent TYPE="NOTE"><html>
+  <head>
+    
+  </head>
+  <body>
+    <p>
+      &#160;&#160;&#160;&#160;N = node_index;
+    </p>
+  </body>
+</html>
+</richcontent>
+</node>
+</node>
+<node CREATED="1409837936822" FOLDED="true" ID="ID_1096899693" MODIFIED="1409838275701" TEXT="Assign sockets to Check Nodes">
+<node CREATED="1409837964493" ID="ID_796208261" MODIFIED="1409837995988" TEXT="Loop trough all right degrees rho_degs[i]">
+<node CREATED="1409838020209" ID="ID_1547729814" MODIFIED="1409838033569" TEXT="Count number of nodes with that degree"/>
+<node CREATED="1409837184703" ID="ID_10033044" MODIFIED="1409837260072" TEXT="for j=0;j&lt; number of nodes with that degree">
+<node CREATED="1409837311083" ID="ID_1667995872" MODIFIED="1409838096529" TEXT="for k=0;k&lt;rho_degs[i]">
+<node CREATED="1409837348309" ID="ID_1500731863" MODIFIED="1409838090155" TEXT="right_sockets[socket_index++] = &amp;check_node[node_index]"/>
+</node>
+<node CREATED="1409837462950" ID="ID_120355186" MODIFIED="1409838123830" TEXT="check_nodes[node_index].AllocateEdges(EdgeStackPointer, rho_degs[i]);">
+<node CREATED="1409837523350" ID="ID_67727746" MODIFIED="1409837613710" TEXT="degree=0"/>
+<node CREATED="1409837617147" ID="ID_1739915208" MODIFIED="1409837628501" TEXT="edges = EdgeStackPointer"/>
+<node CREATED="1409837629195" ID="ID_704546071" MODIFIED="1409838130932" TEXT="EdgeStackPointer += rho_degs[i]"/>
+<node CREATED="1409837664783" ID="ID_1427334084" MODIFIED="1409838141376" STYLE="fork" TEXT="Max_Edges = rho_degs[i]"/>
+</node>
+<node CREATED="1409837489844" ID="ID_680581346" MODIFIED="1409838155926" TEXT="check_nodes[node_index].SetID(node_index);"/>
+<node CREATED="1409837480433" ID="ID_525908423" MODIFIED="1409837518688" TEXT="node_index++;"/>
+</node>
+</node>
+<node CREATED="1409838163226" ID="ID_83827051" MODIFIED="1409838192839" TEXT="Record no. of right sockets, may be different than E due to the fact that rho * E may not be whole numbers "/>
+<node CREATED="1409838242743" ID="ID_1882613622" MODIFIED="1409838260319" TEXT="Modify M,E for same reason">
+<richcontent TYPE="NOTE"><html>
+  <head>
+    
+  </head>
+  <body>
+    <p>
+      M = node_index;
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;E = min(count_left_sockets, count_right_sockets);
+    </p>
+  </body>
+</html>
+</richcontent>
+</node>
+</node>
+<node CREATED="1409838276700" ID="ID_316327796" MODIFIED="1409839169545" TEXT="Generate permutations">
+<richcontent TYPE="NOTE"><html>
+  <head>
+    
+  </head>
+  <body>
+    <p>
+      &#160;&#160;&#160;&#160;srand(time(NULL)); // Init random seed so that each call to function returns different set of values
+    </p>
+    <p>
+      
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;cout &lt;&lt; &quot;Starting bipartite graph...&quot;;
+    </p>
+    <p>
+      
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;int left_index, right_index;
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;for (int i = 0; i &lt; E; i++) {
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;// Randomly select socket from first E - left_index (last left_index sockets represent
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;// sockets that have already been selected)
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;//&#160;&#160;&#160;&#160;&#160;&#160;cout &lt;&lt; &quot; i = &quot; &lt;&lt; i &lt;&lt; &quot; E = &quot; &lt;&lt; E;
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;int attempts = 0;
+    </p>
+    <p>
+      
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;do {
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;// It is important to select left_index randomly and not only right_index,
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;// because there is a significance to the order of bits within a code, sometimes with
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;// first or last bits better protected.&#160;&#160;If left_index is not selected randomly,
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;// the result would be a random tree, but in which lower degree left-nodes are of
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;// lower index within each constituent code, contrary to complete randomness.
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;left_index = uniform_random(E - i);
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;//left_index = i;
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;right_index = uniform_random(E - i);
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;if ((attempts++) &gt; 100) {
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;cout &lt;&lt; &quot;Warning: cycles\n&quot;;
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;break;
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;}
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;} while (left_sockets[left_index]-&gt;IsRightConnectedTo(
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;right_sockets[right_index]));
+    </p>
+    <p>
+      
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;if (right_index &gt;= (E - i)) {
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;cout &lt;&lt; &quot;right index or left_index exceed range\n&quot;
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&lt;&lt; &quot;right_index = &quot; &lt;&lt; right_index &lt;&lt; &quot; left_index = &quot;
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&lt;&lt; left_index &lt;&lt; &quot; E = &quot; &lt;&lt; E &lt;&lt; &quot; left_index = &quot;
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&lt;&lt; left_index &lt;&lt; &quot;\n&quot;;
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;exit(1);
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;}
+    </p>
+    <p>
+      
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;edges[i].set_nodes(left_sockets[left_index],
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;right_sockets[right_index]);
+    </p>
+    <p>
+      
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;// Overwrite current sockets with last sockets, so that they are not selected again
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;right_sockets[right_index] = right_sockets[E - i - 1];
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;left_sockets[left_index] = left_sockets[E - i - 1];
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;}
+    </p>
+    <p>
+      
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;cout &lt;&lt; &quot;Done\n&quot;;
+    </p>
+    <p>
+      
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;// Clean-up
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;delete left_sockets;
+    </p>
+    <p>
+      &#160;&#160;&#160;&#160;delete right_sockets;
+    </p>
+  </body>
+</html>
+</richcontent>
 </node>
 </node>
 <node CREATED="1409737247588" ID="ID_808911292" MODIFIED="1409737249688" TEXT="Variables.Init(Graph.variable_nodes, Graph.N);"/>

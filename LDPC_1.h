@@ -157,6 +157,7 @@ public:
 	void FinalIteration();
 	double Belief_Propagation_Decoder(int Count_Iterations);
 	void GetZeroCodeword(vector &Codeword);
+	void GetCodeword(vector &Codeword);
 	double Calc_Symbol_Error_Rate();
 	double Calc_Rightbound_Symbol_Error_Rate();
 

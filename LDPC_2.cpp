@@ -381,7 +381,7 @@ message &GenerateChannelMessage(GFq v, channel &TransmitChannel, mapping &MapInU
 	int q = MapInUse.GetQ();
 	double CandidateIn, ChannelIn;
 
-	ChannelIn = MapInUse.map(v);        // mapping of (0 + v) % q;
+	ChannelIn = MapInUse.map(v);        // mapping of (0 + v) % q; This is not used
 
 	// Generate InitialMessage
 	InitialMessage.Set_q(q);
@@ -605,6 +605,14 @@ void LDPC_Code::GetZeroCodeword(vector &Codeword) {
 	for (int i = 0; i < Variables.GetLength(); i++)
 		Codeword[i] = Variables[i].GetZeroSignal();
 }
+
+void LDPC_Code::GetCodeword(vector &Codeword) {
+	Codeword.Allocate(Variables.GetLength());
+
+	for (int i = 0; i < Variables.GetLength(); i++)
+		Codeword[i] = Variables[i].GetSignal();
+}
+
 
 void LDPC_Code::Leftbound_Iteration() {
 	for (int i = 0; i < Checks.GetLength(); i++)

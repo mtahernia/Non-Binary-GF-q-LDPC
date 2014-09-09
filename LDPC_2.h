@@ -916,6 +916,10 @@ public:
 		return MapInUse->map(v);
 	}
 
+	double GetSignal() {
+		return MapInUse->map(v+Symbol);
+	}
+
 	// For use in greedy source coding
 
 	BOOLEAN IsRightConnectedTo(node *n);

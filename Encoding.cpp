@@ -100,8 +100,8 @@ void EraseKnown(node &KnownColumn, NodeListWithoutID &DegreeOneRows)
  *********************************************************************************/
 
 // If gap ends up too big, it might be necessary to modify the following 3 to 300 or larger
-#define MIN_GAP   30
-#define MAX_GAP   100
+#define MIN_GAP   3
+#define MAX_GAP   10
 
 void UrbankeAlgorithmAH(NodeListWithID &Columns, NodeListWithID &Rows) {
 	//------------------------------------------------------

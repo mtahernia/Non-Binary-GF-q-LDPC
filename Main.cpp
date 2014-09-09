@@ -163,8 +163,7 @@ int main(int argc, char **argv) {
 			<< " Channel = " << ChannelType << "\nSeed = " << seed << "\n";
 
 	Channel->PrintChannelData(Code);
-	cout
-			<< "\n----------------------------------------------------------------------------\n";
+	cout<< "\n----------------------------------------------------------------------------\n";
 
 	//------------------------------------------------------------------------
 	// Go
@@ -176,13 +175,13 @@ int main(int argc, char **argv) {
 
 	for (int i = 0; i < count_runs; i++) {
 		Code.ResetGraph();
+//		Code.GenerateEncoder_WithoutGap();
+		Code.GenerateEncoder();
+		Code.GenerateRandomSystematic();
+		Code.Encode();
 		Code.GetZeroCodeword(Codeword);
 
 
-//		Code.ResetGraph();
-//		Code.GenerateRandomSystematic();
-		Code.GenerateEncoder_WithoutGap();
-		Code.Encode();
 
 		Channel->SimulateOutputVector(Codeword, ChannelOutput);
 		Code.Init_Messages(ChannelOutput);

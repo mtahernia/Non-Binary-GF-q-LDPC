@@ -793,9 +793,9 @@ class edge;
 
 class node {
 public:
-	int id;   // number used for identification
-	int degree;
-	int AuxDegree;        // Auxiliary variable for use in encoder generator
+	int id;   			// number used for identification
+	int degree;			// FIXME:
+	int AuxDegree;      // Auxiliary variable for use in encoder generator
 	edge **edges;
 	int MaxEdges;
 
@@ -853,7 +853,7 @@ public:
 
 	// This pops p_MaxEdges edges from Stack and assigns it to the node
 	void AllocateEdges(edge **&EdgeStackPointer, int p_MaxEdges) {
-		degree = 0;    							// 	Indicate edges have been allocated
+		degree = 0;    							// FIXME:Why? Indicate edges have been allocated
 		edges = EdgeStackPointer;
 		EdgeStackPointer += p_MaxEdges;        // Advance allocation pointer
 		MaxEdges = p_MaxEdges;

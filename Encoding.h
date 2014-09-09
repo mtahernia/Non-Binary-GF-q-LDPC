@@ -38,7 +38,7 @@ public:
 		}
 		Nodes[CurrentLength++] = &Node;
 	}
-
+	// Extract the last node from the list
 	node &ExtractAnyNode() {
 		if (CurrentLength <= 0) {
 			cout
@@ -64,6 +64,7 @@ public:
 		return *Nodes[i];
 	}
 };
+
 
 class NodeListWithID: public NodeListWithoutID {
 public:

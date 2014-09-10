@@ -877,6 +877,7 @@ message &GenerateChannelMessage(GFq v, channel &TransmitChannel, mapping &MapInU
 class variable_node: public node {
 public:
 	GFq Symbol;     // Value - for encoding
+	GFq DecSymbol;     // Value - for decoding
 	GFq v;          // coset vector - randomly selected at variable node
 	double SourceData;
 	mapping *MapInUse;

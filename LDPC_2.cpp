@@ -50,9 +50,9 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 	else if (GFq::IsPrimeQ) // FIXME: There is lots of memory copying and redundant fft generation(plan generation fixed by defining static plan).
 	{
 		Aux = *this;
+
+
 		// Create fft variables and a plan
-
-
 		static fftw_complex *in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * q);
 		static fftw_complex *out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * q);
 		static fftw_plan p = fftw_plan_dft_1d(q, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
@@ -78,18 +78,18 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 		//		fftw_free(in); fftw_free(out);
 
 
-		//---------------  Original DFT implementation
-		/*
-		double temp;
-		for (GFq j(0); j.val < q; j.val++) {
-			temp = 0;
-			for (int n = 0; n < q; n++) {
-				temp += Aux[n] * cos(2 * M_PI * n * j.val / q);
-				//			cout << "Aux["<< n <<"]="<<Aux[n] << std::endl ;
-			}
-			Probs[j.val] = temp;
-		} //end for j
-		 */
+//		//---------------  Original DFT implementation
+//
+//		double temp;
+//		for (GFq j(0); j.val < q; j.val++) {
+//			temp = 0;
+//			for (int n = 0; n < q; n++) {
+//				temp += Aux[n] * cos(2 * M_PI * n * j.val / q);
+//				//			cout << "Aux["<< n <<"]="<<Aux[n] << std::endl ;
+//			}
+//			Probs[j.val] = temp;
+//		} //end for j
+
 	}
 }
 
@@ -364,13 +364,12 @@ message &variable_node::CalcRightboundMessage(int rightbound_index)
 
 void variable_node::CalcFinalMessage() {
 	FinalEstimate = CalcRightboundMessage( /* NO rightbound index */-1);
-	Symbol = FinalEstimate.Decision();
+	DecSymbol = FinalEstimate.Decision();
 }
 
 void variable_node::CalcAllRightboundMessages() {
 	for (int i = 0; i < GetDegree(); i++)
-		GetEdge(i).RightBoundMessage = CalcRightboundMessage(
-				/* rightbound index */i);
+		GetEdge(i).RightBoundMessage = CalcRightboundMessage(/* rightbound index */i);
 
 	CalcFinalMessage();
 }
@@ -633,8 +632,8 @@ double LDPC_Code::Calc_Symbol_Error_Rate() {
 	double acc_correct = 0;
 
 	for (int i = 0; i < Variables.GetLength(); i++)
-		acc_correct += Variables[i].FinalEstimate.Decision().IsZero();
-
+//		acc_correct += Variables[i].FinalEstimate.Decision().IsZero();
+		acc_correct += Variables[i].DecSymbol == Variables[i].Symbol;
 	return 1.0 - acc_correct / (double) Variables.GetLength();
 }
 
@@ -660,7 +659,8 @@ double LDPC_Code::Belief_Propagation_Decoder(int Count_Iterations) {
 		Leftbound_Iteration();
 		Rightbound_Iteration();
 
-		Func_RC = Calc_Rightbound_Symbol_Error_Rate();
+//		Func_RC = Calc_Rightbound_Symbol_Error_Rate();
+		Func_RC = Calc_Symbol_Error_Rate();
 		sprintf(buffer, "%d: Rightbound SER = %1.10f, %s", i + 1, Func_RC,CharTime());
 		cout << buffer;
 

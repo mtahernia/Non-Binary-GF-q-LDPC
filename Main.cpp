@@ -179,7 +179,8 @@ int main(int argc, char **argv) {
 		Code.GenerateEncoder();
 		Code.GenerateRandomSystematic();
 		Code.Encode();
-		Code.GetZeroCodeword(Codeword);
+//		Code.GetZeroCodeword(Codeword);
+		Code.GetCodeword(Codeword);
 
 
 

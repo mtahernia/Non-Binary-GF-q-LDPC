@@ -47,22 +47,26 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 		}    //end for i
 	}    //end if
 
+
+
+
+
+
 	else if (GFq::IsPrimeQ) // FIXME: There is lots of memory copying and redundant fft generation(plan generation fixed by defining static plan).
 	{
-
-
 		Aux = *this;
 
 
 		// Create fft variables and a plan
-		static double *in  = new double[q];
-		static double *out = new double[q];//malloc(sizeof(double) * q);
-		static fftw_plan p = fftw_plan_r2r_1d(q, in, out, FFTW_R2HC, FFTW_ESTIMATE);
+		static fftw_complex *in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * q);
+		static fftw_complex *out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * q);
+		static fftw_plan p = fftw_plan_dft_1d(q, in, out, FFTW_FORWARD, FFTW_PATIENT);
 
 		// Copy the data to input of FFT
 		for(int i=0;i<q;i++)
 		{
-			in[i] = Aux[i];
+			in[i][0] = Aux[i];
+			in[i][1] = 0;
 		}
 
 		// Execute FFT
@@ -71,76 +75,13 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 		// Copy output values Ignoring complex part!
 		for(int i=0;i<q;i++)
 		{
-			Probs[i] = out[i];
+			Probs[i] = out[i][0] ;
 		}
 
-//		delete in;
-//		delete out;
-
 		// These lines are commented because we don't want to delete our plan and we want to use it over and over
-		//				fftw_destroy_plan(p);
+		//		fftw_destroy_plan(p);
 		//		fftw_free(in); fftw_free(out);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//		Aux = *this;
-//
-//
-//		// Create fft variables and a plan
-//		static fftw_complex *in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * q);
-//		static fftw_complex *out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * q);
-//		static fftw_plan p = fftw_plan_dft_1d(q, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
-//
-//		// Copy the data to input of FFT
-//		for(int i=0;i<q;i++)
-//		{
-//			in[i][0] = Aux[i];
-//			in[i][1] = 0;
-//		}
-//
-//		// Execute FFT
-//		fftw_execute(p); /* repeat as needed */
-//
-//		// Copy output values Ignoring complex part!
-//		for(int i=0;i<q;i++)
-//		{
-//			Probs[i] = out[i][0];
-//		}
-//
-//		// These lines are commented because we don't want to delete our plan and we want to use it over and over
-//		//		fftw_destroy_plan(p);
-//		//		fftw_free(in); fftw_free(out);
-//
 
 //		//---------------  Original DFT implementation
 //
@@ -340,6 +281,7 @@ message &FastCalcLeftboundMessage(message AuxLeft[], message AuxRight[],int left
 
 void check_node::CalcAllLeftboundMessages() {
 	static message Vectors[MAX_DEGREE];
+
 	static message AuxLeft[MAX_DEGREE];
 	static message AuxRight[MAX_DEGREE];
 	static GFq ZERO(0);
@@ -353,7 +295,7 @@ void check_node::CalcAllLeftboundMessages() {
 	//-------------------------------------------------------------
 	// If power of two - use DFT2
 	//-------------------------------------------------------------
-	if (true)	//(!GFq::IsPrimeQ) FIXME
+	if (!GFq::IsPrimeQ)
 	{
 		for (int i = 0; i < GetDegree(); i++) {
 			Vectors[i].DFT2();
@@ -381,6 +323,34 @@ void check_node::CalcAllLeftboundMessages() {
 		}
 	} else {
 		cout << "FIXME!!!" << std::endl;
+
+		for (int i = 0; i < GetDegree(); i++) {
+			Vectors[i].DFT2();
+		}
+
+		// Calc auxiliary values
+		AuxLeft[0].Set_q(GFq::q);
+		AuxLeft[0] = 1.;
+		for (int i = 1; i < GetDegree(); i++) {
+			AuxLeft[i] = AuxLeft[i - 1];
+			AuxLeft[i] *= Vectors[i - 1];
+		}
+
+		AuxRight[GetDegree() - 1].Set_q(GFq::q);
+		AuxRight[GetDegree() - 1] = 1.;
+		for (int i = GetDegree() - 2; i >= 0; i--) {
+			AuxRight[i] = AuxRight[i + 1];
+			AuxRight[i] *= Vectors[i + 1];
+		}
+
+		// Calc leftbound messages
+		for (int i = 0; i < GetDegree(); i++) {
+			GetEdge(i).LeftBoundMessage = FastCalcLeftboundMessage(AuxLeft,	AuxRight, i, GetDegree());
+			GetEdge(i).LeftBoundMessage.PermuteTimes(GetEdge(i).label);
+
+
+		}
+
 	}
 }
 

@@ -204,7 +204,7 @@ void LDPC_Code::GenerateRandomSystematic() {
 	// Randomly select values for systematic digits
 	//------------------------------------------------------
 	for (int i = 0; i < Systematic; i++)
-		Variables[i].Symbol.val = uniform_random(GFq::q);
+		Variables[i].Symbol.val = 0;//uniform_random(GFq::q);
 }
 
 void LDPC_Code::Encode() {

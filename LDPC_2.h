@@ -281,6 +281,7 @@ class message {
 public:
 	signed int q;
 	double Probs[MAX_Q];
+	double ProbsI[MAX_Q];
 public:
 	message(int p_q = -1) :
 			q(p_q) {
@@ -291,6 +292,9 @@ public:
 		*this = M;
 	}
 
+	double ABS(int i){
+		return sqrt(Probs[i]*Probs[i]+ProbsI[i]*ProbsI[i]);
+	}
 	void HardMessage(GFq &g) {
 		*this = 0;
 		(*this)[g] = 1;
@@ -301,8 +305,10 @@ public:
 	}
 
 	void DFT2();
+	void IDFT2();
 
 	// If all q components of this message is smaller than message 2 returns true
+
 	BOOLEAN operator<(message &m2) {
 		message &m1 = *this;
 
@@ -338,19 +344,27 @@ public:
 
 //		bcopy(/* from */M.Probs, /* to */Probs, sizeof(double) * q); // TODO: This transition might make some problem if the source and destination are overlapping
 		memcpy(/* to */Probs,/* from */M.Probs, sizeof(double) * q);
+		memcpy(/* to */ProbsI,/* from */M.ProbsI, sizeof(double) * q);
 		return *this;
 	}
 
 	message &operator=(double d) {
-		for (int i = 0; i < q; i++)
+		for (int i = 0; i < q; i++){
+			ProbsI[i] = 0;
 			Probs[i] = d;
+		}
 		return *this;
 	}
 
 	message &operator*=(message &M) {
-		for (int i = 0; i < q; i++)
-			Probs[i] *= M.Probs[i];
+		double x,y;
+		for (int i = 0; i < q; i++){
 
+			x = Probs[i] * M.Probs[i] - ProbsI[i] * M.ProbsI[i];
+			y = Probs[i] * M.ProbsI[i]+ ProbsI[i] * M.Probs[i];
+			Probs[i] = x;
+			ProbsI[i] = y;
+		}
 		return *this;
 	}
 
@@ -358,21 +372,25 @@ public:
 		static message Aux(q);
 		message &M1 = *this;
 
-		for (int i = 0; i < q; i++)
-			Aux.Probs[i] = M1.Probs[i] * M2.Probs[i];
-
+		for (int i = 0; i < q; i++){
+			Aux.Probs[i] = M1.Probs[i] * M2.Probs[i]-M1.ProbsI[i] * M2.ProbsI[i];
+			Aux.ProbsI[i] = M1.Probs[i] * M2.ProbsI[i]+M1.ProbsI[i] * M2.Probs[i];
+		}
 		return Aux;
 	}
 
 	message &operator*(double d) {
 		static message Aux(q);
 
-		for (int i = 0; i < q; i++)
+		for (int i = 0; i < q; i++){
 			Aux[i] = Probs[i] * d;
-
+			Aux.ProbsI[i] = ProbsI[i] * d;
+		}
 		return Aux;
 	}
 
+
+	// TODO: Not compatible with complex
 	BOOLEAN operator==(message &m) {
 		if (q != m.q)
 			return FALSE;
@@ -384,7 +402,9 @@ public:
 
 		return TRUE;
 	}
-	// FIXME: this might make a problem
+
+	// TODO: Not compatible with complex
+	// FIXME: this might make a problem because of decimation error
 	BOOLEAN operator==(double d) {
 		for (int i = 0; i < q; i++)
 			//if (fabs(Probs[i] - d) > EPSILON)
@@ -395,32 +415,38 @@ public:
 	}
 
 	message &operator+=(message &M) {
-		for (int i = 0; i < q; i++)
+		for (int i = 0; i < q; i++){
 			Probs[i] += M.Probs[i];
-
+			ProbsI[i] += M.ProbsI[i];
+		}
 		return *this;
 	}
 
 	message &operator+(message &M) {
 		static message Aux(q);
 
-		for (int i = 0; i < q; i++)
+		for (int i = 0; i < q; i++){
 			Aux[i] = Probs[i] + M.Probs[i];
-
+			Aux.ProbsI[i] = ProbsI[i] + M.ProbsI[i];
+		}
 		return Aux;
 	}
 
 	message &operator/=(double d) {
-		for (int i = 0; i < q; i++)
+		for (int i = 0; i < q; i++){
 			Probs[i] /= d;
+			ProbsI[i] /= d;
+		}
 
 		return *this;
 	}
 
 	double sum() {
 		double aux = 0;
-		for (int i = 0; i < q; aux += Probs[i++])
-			;
+		for (int i = 0; i < q; i++){
+			aux += sqrt(Probs[i]*Probs[i]+ProbsI[i]*ProbsI[i]);
+		}
+
 		return aux;
 	}
 
@@ -428,29 +454,39 @@ public:
 		double aux = sum();
 
 		if (aux > 0) {
-			for (int i = 0; i < q; i++)
-				Probs[i] /= aux;
-		} else {	// If the message does not sum to something positive, give uniform values to each component TODO: Check why?
-			for (int i = 0; i < q; i++)
+			for (int i = 0; i < q; i++){
+				Probs[i] = sqrt(Probs[i]*Probs[i]+ProbsI[i]*ProbsI[i])/aux;
+				ProbsI[i] = 0;
+			}
+		}
+		else {	// If the message does not sum to something positive, give uniform values to each component TODO: Check why?
+			for (int i = 0; i < q; i++){
 				Probs[i] = 1. / (double) q;
+				ProbsI[i] = 0;
+			}
 		}
 	}
 
 	void Clear() {
 		bzero(Probs, sizeof(double) * q);
+		bzero(ProbsI, sizeof(double) * q);
 	}
 
 	// Normal convolution! TODO: this can be implemented using FFTW
 	// This convolves this message whith M2 and stores the result in this! this is a somehow circular convolution
 	message &Convolve(message &M2) {
 		message M1(*this);   // Auxiliary
-
+		GFq t;
 		// Clear this
 		Clear();
 
 		for (GFq i(0); i.val < q; i.val++)
-			for (GFq j(0); j.val < q; j.val++)
-				Probs[i.val] += M1[j] * M2[i - j];
+			for (GFq j(0); j.val < q; j.val++){
+				t = i - j;
+				Probs[i.val] += M1.Probs[j.val] * M2.Probs[t.val] - M1.ProbsI[j.val] * M2.ProbsI[t.val];
+				ProbsI[i.val] += M1.Probs[j.val] * M2.ProbsI[t.val] + M1.ProbsI[j.val] * M2.Probs[t.val];
+			}
+//				Probs[i.val] += M1[j] * M2[i - j];
 
 		return *this;
 	}
@@ -459,7 +495,7 @@ public:
 	message &ApproxConvolve(message &M2);
 	void Approximate();
 
-	//
+	//TODO : This function is not used and it is not compatible for complex message
 	message &MaxConvolve(message &M2) {     // max-prod version
 		message M1(*this);   // Auxiliary
 
@@ -482,32 +518,46 @@ public:
 	}
 
 
+
+
 	void PermutePlus(GFq &g) {
 		message Aux;
-
+		GFq t;
 		Aux = *this;
-		for (GFq i(0); i.val < q; i.val++)
-			Probs[i.val] = Aux[i + g];
+		for (GFq i(0); i.val < q; i.val++){
+			t = i+g;
+			Probs[i.val] = Aux.Probs[t.val];
+			ProbsI[i.val] = Aux.ProbsI[t.val];
+//			Probs[i.val] = Aux[i + g];
+		}
 	}
 
 	void PermuteTimes(GFq &g) {
 		message Aux;
-
+		GFq t;
 		Aux = *this;
-		for (GFq i(0); i.val < q; i.val++)
-			Probs[i.val] = Aux[i * g];
+		for (GFq i(0); i.val < q; i.val++){
+			t = i * g;
+			Probs[i.val] = Aux.Probs[t.val];
+			ProbsI[i.val] = Aux.ProbsI[t.val];
+		}
 	}
 
 	message &Reverse() {
 		message Aux;
-
+		GFq t;
 		Aux = *this;
-		for (GFq i(0); i.val < q; i.val++)
-			Probs[i.val] = Aux[i.Minus()];
+		for (GFq i(0); i.val < q; i.val++){
+			t = i.Minus();
+			Probs[i.val] = Aux.Probs[t.val];
+			ProbsI[i.val] = Aux.ProbsI[t.val];
+		}
+
 
 		return *this;
 	}
 
+	// Used in Rightbound messages and thus does not need to support complex
 	GFq &Decision() {
 		static GFq Candidate(0);
 		double max = -1;
@@ -539,7 +589,7 @@ public:
 		return Candidate;
 	}
 
-	// FIXME: Where and why this function is used
+	// FIXME: Where and why this function is used, it is not called anywhere
 	double ProbCorrect() {
 		int count_zero = 1;
 
@@ -568,14 +618,16 @@ public:
 
 		return aux;
 	}
+
 	// Left shift the message
 	message &operator<<(int l) {
 		static message Aux;
 
 		Aux.q = q;
-		for (int i = 0; i < q; i++)
+		for (int i = 0; i < q; i++){
 			Aux.Probs[i] = Probs[(i + l) % q];
-
+			Aux.ProbsI[i] = ProbsI[(i + l) % q];
+		}
 		return Aux;
 	}
 
@@ -583,9 +635,10 @@ public:
 	message &LLRShift(int k) {
 		message Aux = *this;
 
-		for (int i = 0; i < q; i++)
+		for (int i = 0; i < q; i++){
 			Probs[i] = Aux[(i + k) % q] - Aux[k % q];
-
+			ProbsI[i] = Aux.ProbsI[(i + k) % q] - Aux.ProbsI[k % q];
+		}
 		return *this;
 	}
 
@@ -610,8 +663,11 @@ public:
 	void Clip(double minval = EPSILON, double maxval = INF) {
 		for (int i = 0; i < q; i++) {
 			clip(Probs[i], maxval);
+			clip(ProbsI[i], maxval);
 			if (Probs[i] < minval)
 				Probs[i] = minval;
+			if (ProbsI[i] < minval)
+				ProbsI[i] = minval;
 		}
 
 	}
@@ -647,8 +703,10 @@ inline message &operator-(message &m1, message &m2) {
 
 	aux.q = m1.q;
 
-	for (int i = 0; i < m1.q; i++)
-		aux[i] = m1[i] - m2[i];
+	for (int i = 0; i < m1.q; i++){
+		aux.Probs[i]  = m1.Probs[i]  - m2.Probs[i];
+		aux.ProbsI[i] = m1.ProbsI[i] - m2.ProbsI[i];
+	}
 
 	return aux;
 }
@@ -659,13 +717,15 @@ inline message &operator/(message &m, double d) {
 
 	aux.q = m.q;
 
-	for (int i = 0; i < m.q; i++)
-		aux[i] = m[i] / d;
-
+	for (int i = 0; i < m.q; i++){
+		aux.Probs[i] = m.Probs[i] / d;
+		aux.ProbsI[i] = m.ProbsI[i] / d;
+	}
 	return aux;
 }
 
 // Raise message components to power l
+// FIXME,TODO: This is not used and does not support complex message
 inline double pow(message &m, int l) {
 	double f = 0;
 
@@ -675,12 +735,13 @@ inline double pow(message &m, int l) {
 	return f;
 }
 
+
 // returns sum of absolute values of message component
 inline double fabs(message &m) {
 	double f = 0;
 
 	for (int i = 0; i < m.q; i++)
-		f += fabs(m[i]);
+		f += fabs(m.ABS(i));
 
 	return f;
 }
@@ -690,8 +751,10 @@ inline message &log(message &m) {
 	static message aux;
 
 	aux.q = m.q;
-	for (int i = 0; i < m.q; i++)
-		aux[i] = mylog(m[i]);
+	for (int i = 0; i < m.q; i++){
+		aux[i] = mylog(m.ABS(i));
+		aux.ProbsI[i] = 0;
+	}
 
 	return aux;
 }
@@ -701,22 +764,29 @@ inline message &exp(message &m) {
 	static message aux;
 
 	aux.q = m.q;
-	for (int i = 0; i < m.q; i++)
-		aux[i] = exp(m[i]);
+	for (int i = 0; i < m.q; i++){
+		aux[i] = exp(m.ABS(i));
+		aux.ProbsI[i] = 0;
+	}
 
 	return aux;
 }
+
 
 // Returns message in LLR form
 inline message &LLR(message &m) {
 	static message aux;
 
 	aux.q = m.q;
-	double log_m0 = mylog(m[0]);
+	double log_m0 = mylog(m.ABS(0));
 
 	aux[0] = 0;
-	for (int i = 1; i < m.q; i++)
-		aux[i] = log_m0 - mylog(m[i]);
+	aux.ProbsI[0] = 0;
+
+	for (int i = 1; i < m.q; i++){
+		aux[i] = log_m0 - mylog(m.ABS(i));
+		aux.ProbsI[i] = 0;
+	}
 
 	return aux;
 }
@@ -729,7 +799,7 @@ inline message &unLLR(message &m) {
 
 	aux[0] = 1;
 	for (int i = 1; i < m.q; i++)
-		aux[i] = exp(-m[i]);
+		aux[i] = exp(-m.ABS(i));
 
 	aux.Clip();
 	aux.Normalize();

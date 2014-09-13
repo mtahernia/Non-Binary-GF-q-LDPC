@@ -66,7 +66,7 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 		for(int i=0;i<q;i++)
 		{
 			in[i][0] = Aux[i];
-			in[i][1] = 0;
+			in[i][1] = Aux.ProbsI[i];
 		}
 
 		// Execute FFT
@@ -76,6 +76,7 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 		for(int i=0;i<q;i++)
 		{
 			Probs[i] = out[i][0] ;
+			ProbsI[i] = out[i][1] ;
 		}
 
 		// These lines are commented because we don't want to delete our plan and we want to use it over and over
@@ -83,17 +84,76 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 		//		fftw_free(in); fftw_free(out);
 
 
-//		//---------------  Original DFT implementation
-//
-//		double temp;
-//		for (GFq j(0); j.val < q; j.val++) {
-//			temp = 0;
-//			for (int n = 0; n < q; n++) {
-//				temp += Aux[n] * cos(2 * M_PI * n * j.val / q);
-//				//			cout << "Aux["<< n <<"]="<<Aux[n] << std::endl ;
-//			}
-//			Probs[j.val] = temp;
-//		} //end for j
+	} // Else if prime Q
+}
+
+
+void message::IDFT2()          // A real-valued DFT - also IDFT
+{
+	static message Aux;
+	GFq mask, n0_index, n1_index;
+	BYTE j_bit;
+
+
+	if (!GFq::IsPrimeQ) {
+		for (int i = 0; i < GFq::log_2_q; i++) {
+			Aux = *this;			// Initialize
+			mask.val = 1 << i;  //Shift left i times to get powers of 2
+
+			//			cout << "mask.val("<<i<<")="<<mask.val<<std::endl; // Just for debugging
+
+			for (GFq j(0); j.val < q; j.val++) {
+				j_bit = (j.val & mask.val) >> i;// obtain value of j which is i th bit of j
+				n0_index.val = j.val & (~mask.val);	// turn bit off
+				n1_index.val = j.val | mask.val;    // turn bit on
+
+				//				cout << (int)j_bit;
+
+				if (j_bit == 0)
+					Probs[j.val] = Aux[n0_index] + Aux[n1_index];
+				else
+					Probs[j.val] = Aux[n0_index] - Aux[n1_index];
+				//				cout << "Aux(" << n0_index << ")= " << Aux[n0_index] << std::endl;
+			}    //end for j
+		}    //end for i
+	}    //end if
+
+
+
+
+
+
+	else if (GFq::IsPrimeQ) // FIXME: There is lots of memory copying and redundant fft generation(plan generation fixed by defining static plan).
+	{
+		Aux = *this;
+
+
+		// Create fft variables and a plan
+		static fftw_complex *in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * q);
+		static fftw_complex *out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * q);
+		static fftw_plan p = fftw_plan_dft_1d(q, in, out, FFTW_BACKWARD, FFTW_PATIENT);
+
+		// Copy the data to input of FFT
+		for(int i=0;i<q;i++)
+		{
+			in[i][0] = Aux[i];
+			in[i][1] = Aux.ProbsI[i];
+		}
+
+		// Execute FFT
+		fftw_execute(p); /* repeat as needed */
+
+		// Copy output values Ignoring complex part!
+		for(int i=0;i<q;i++)
+		{
+			Probs[i] = out[i][0] ;
+			ProbsI[i] = out[i][1] ;
+		}
+
+		// These lines are commented because we don't want to delete our plan and we want to use it over and over
+		//		fftw_destroy_plan(p);
+		//		fftw_free(in); fftw_free(out);
+
 
 	} // Else if prime Q
 }
@@ -272,7 +332,12 @@ message &FastCalcLeftboundMessage(message AuxLeft[], message AuxRight[],int left
 
 	Aux = AuxLeft[left_index];
 	Aux *= AuxRight[left_index];
-	Aux.DFT2();
+
+//	if (GFq::IsPrimeQ)
+//		Aux /= (double) GFq::q;
+
+
+	Aux.IDFT2();
 
 	Aux.Reverse();	// estimate of symbol value = (- sum of others)
 
@@ -321,8 +386,11 @@ void check_node::CalcAllLeftboundMessages() {
 			GetEdge(i).LeftBoundMessage = FastCalcLeftboundMessage(AuxLeft,	AuxRight, i, GetDegree());
 			GetEdge(i).LeftBoundMessage.PermuteTimes(GetEdge(i).label);
 		}
-	} else {
-		cout << "FIXME!!!" << std::endl;
+	}
+
+	else {
+
+//		cout << "FIXME!!!" << std::endl;
 
 		for (int i = 0; i < GetDegree(); i++) {
 			Vectors[i].DFT2();
@@ -330,14 +398,15 @@ void check_node::CalcAllLeftboundMessages() {
 
 		// Calc auxiliary values
 		AuxLeft[0].Set_q(GFq::q);
-		AuxLeft[0] = 1.;
+		AuxLeft[0] = 1.0;
 		for (int i = 1; i < GetDegree(); i++) {
+			AuxLeft[i] = AuxLeft[i - 1];
 			AuxLeft[i] = AuxLeft[i - 1];
 			AuxLeft[i] *= Vectors[i - 1];
 		}
 
 		AuxRight[GetDegree() - 1].Set_q(GFq::q);
-		AuxRight[GetDegree() - 1] = 1.;
+		AuxRight[GetDegree() - 1] = 1.0;
 		for (int i = GetDegree() - 2; i >= 0; i--) {
 			AuxRight[i] = AuxRight[i + 1];
 			AuxRight[i] *= Vectors[i + 1];

@@ -1,4 +1,4 @@
-LIBS = -lm -lfftw3
+LIBS = -lm -lfftw3 -static -static-libgcc -static-libstdc++
 CCC = g++ -O3 -Wall -Wno-deprecated -DLINUX_C
 OBJ_FILES = Utils_1.o Utils_2.o LDPC_1.o LDPC_2.o Encoding.o Main.o
 H_FILES = Utils_1.h Utils_2.h LDPC_1.h LDPC_2.h Encoding.h Portability.h

@@ -54,7 +54,9 @@ X0 = zeros(1, count_rhos);
 X0(I) = 1;
 
 % Linear programming
-x = linprog(f, A, b, Aeq, beq, LB, UB, X0);
+disp('RhoLinProgDesign')
+options = optimoptions(@linprog,'Algorithm','active-set');
+x = linprog(f, A, b, Aeq, beq, LB, UB, X0,options);
 
 % Store results
 rho_wts = x';

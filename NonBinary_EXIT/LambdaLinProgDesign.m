@@ -58,7 +58,9 @@ X0 = zeros(1, count_lambdas);
 X0(I) = 1;
 
 % Linear programming
-x = linprog(f, A, b, Aeq, beq, LB, UB, X0);
+disp('LambdaLinProgDesign')
+options = optimoptions(@linprog,'Algorithm','active-set');
+x = linprog(f, A, b, Aeq, beq, LB, UB, X0,options);
 
 % Store results
 lambda_wts = x';

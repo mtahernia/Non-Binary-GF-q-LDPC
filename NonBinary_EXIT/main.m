@@ -18,7 +18,7 @@ Mapping = [-2.0701 -1.7096 -1.473 -1.2896 -1.1362 -1.0022 -0.88161 -0.77061 -0.6
 SNR_dB = 18.5;
 lambda_degs = 2:80;
 rho_degs = 3:20; 
-rho_wts = zeros(size(rho_degs)); rho_wts(find(rho_degs == 7)) = 1;
+rho_wts = zeros(size(rho_degs)); rho_wts(rho_degs == 7) = 1;
 
 %-------------------------------------------------------------------------------
 % Initialization
@@ -34,18 +34,18 @@ end;
 [Pol_J, Pol_J_Minus] = Load_J_Pols(q);
 [IFirst, Poly_J_R, Poly_J_R_Minus, Poly_CND] = Load_CND_and_JR_Data_From_File(SNR_dB, Mapping);
 
-if (isempty(Pol_J) | isempty(Pol_J_Minus) | ...
-    isempty(IFirst) | isempty(Poly_J_R) | isempty(Poly_J_R_Minus) | isempty(Poly_CND))
+if (isempty(Pol_J) || isempty(Pol_J_Minus) || ...
+    isempty(IFirst) || isempty(Poly_J_R) || isempty(Poly_J_R_Minus) || isempty(Poly_CND))
     Answer = input(sprintf('Polynomial approximation of J, J_R or I_CND does not exist for requested SNR, mapping or alphabet size (q).  Create? (Y/N) ', q), 's');
     if (Answer ~= 'Y')
         return;
     end;
     
-    if (isempty(Pol_J) | isempty(Pol_J_Minus))
+    if (isempty(Pol_J) || isempty(Pol_J_Minus))
         [Pol_J, Pol_J_Minus] = Compute_J_Approximation(q);
     end;
     
-    if (isempty(IFirst) | isempty(Poly_J_R) | isempty(Poly_J_R_Minus))
+    if (isempty(IFirst) || isempty(Poly_J_R) || isempty(Poly_J_R_Minus))
         [Poly_J_R, Poly_J_R_Minus, IFirst] = Compute_J_R_Approximation(SNR_dB, Mapping);
     end;
     
@@ -85,12 +85,12 @@ end;
 DesignIterations = 3;
 IA = 0.01:0.01:0.9;   
 Lambdas_gap = zeros(size(IA));
-Lambdas_gap(find(IA < 0.5)) = 0.005;
-Lambdas_gap(find((0.5 <= IA) & (IA < 0.6))) = 0.004;
+Lambdas_gap(IA < 0.5) = 0.005;
+Lambdas_gap((0.5 <= IA) & (IA < 0.6)) = 0.004;
 
 IE = (IFirst + 0.04):0.01:0.9;   
 Rhos_gap = zeros(size(IE));
-Rhos_gap(find(IE < 0.95)) = 0.005;
+Rhos_gap(IE < 0.95) = 0.005;
 
 for i = 1:DesignIterations
     lambda_wts = LambdaLinProgDesign(lambda_degs, rho_degs, rho_wts, SNR_dB, Mapping, Lambdas_gap, IA);
@@ -121,10 +121,10 @@ legend('VND curve', 'CND curve');
 % Statistics
 %-------------------------------------------------------------------------------
 
-ldegs = lambda_degs(find(lambda_wts > 2e-6));
-lwts  = lambda_wts(find(lambda_wts > 2e-6));
-rdegs = rho_degs(find(rho_wts > 2e-5));
-rwts  = rho_wts(find(rho_wts > 2e-5));
+ldegs = lambda_degs(lambda_wts > 2e-6);
+lwts  = lambda_wts(lambda_wts > 2e-6);
+rdegs = rho_degs(rho_wts > 2e-5);
+rwts  = rho_wts(rho_wts > 2e-5);
 rwts = rwts / sum(rwts); 
 lwts = lwts / sum(lwts);
 TestRate = 1 - sum(rwts./rdegs) / sum(lwts./ldegs);

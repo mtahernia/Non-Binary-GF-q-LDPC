@@ -41,12 +41,12 @@ public:
 				printf("Reportbuf::overflow:  file not opened\n");
 				exit(1);
 			}
-
-			putchar(nCh);	// Display the  output
+			putchar(nCh);	// Display the output
 			fputc(nCh, fp);	// Write the output to file buffer
-
 			fflush(fp);		// Flush the buffer to file
-		} else {			// Just write output to stderr
+		}
+		else
+		{			// Just write output to stderr
 			fputc(nCh, stderr);
 		}
 
@@ -56,7 +56,6 @@ public:
 	virtual int underflow() {
 		if (!IsDirectedToErr)
 			fflush(fp);
-
 		return 0;
 	}
 
@@ -66,9 +65,9 @@ public:
 	}
 
 };
-
-extern std::ostream ReportOut;	// Already defined in .c file
 extern reportbuf ReportBuf;		// Already defined in .c file
+extern std::ostream ReportOut;	// Already defined in .c file
+
 #define cout ReportOut			// Redefine cout to report buffer that we defined
 
 /************************************************************************

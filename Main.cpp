@@ -94,7 +94,6 @@ int main(int argc, char **argv) {
 	// Log file
 	//-------------------------------------------------------------
 	ReportBuf.OpenFile(OutputLogFileName);
-
 	//-------------------------------------------------------------
 	// Init seed
 	//-------------------------------------------------------------
@@ -104,6 +103,7 @@ int main(int argc, char **argv) {
 	// Code
 	//-------------------------------------------------------------------
 	std::ifstream DefinitionFile;
+	// Open the input file to read the definitions
 	DefinitionFile.open(infilename);
 
 	if (!DefinitionFile) {
@@ -111,29 +111,32 @@ int main(int argc, char **argv) {
 		exit(1);
 	}
 
-	// Define the LDPC code based on information provided in the DefinitionFile
-	LDPC_Code Code(DefinitionFile, BlockLength);
 
 	//-------------------------------------------------------------
 	// Handle channel
 	//-------------------------------------------------------------
-	double channel_p;  // BSC Channel Parameter
-	double noise_sigma;  // (\sigma)^0.5
+	double channel_p = 0;  // BSC Channel Parameter
+	double noise_sigma = 0;  // (\sigma)^0.5
 	double SNR_dB, No, SNR;
 
+	// Parse ChannelType input
 	switch (ChannelType) {
 	case 'G':
-		noise_sigma = 0;         // To avoid compiler warning
+
+//		noise_sigma = 0;         // To avoid compiler warning (moved it to above)
 		Channel = new AWGN_Channel;
 
+		// If channel is gaussian, the next input will be SNR in dB
 		sscanf(argv[2], "%lf", &SNR_dB);
-
 		SNR = pow(10., SNR_dB / 10.);
 		No = 1. / SNR;
 		noise_sigma = sqrt(No);
+
 		// Because Channel is from base class channel, we need to cast it to the real thing, which is a child class
+		// Now to cast between different classes, and to be safe, we use dynamic_cast. if the casting is not safe, it will return false.
 		(dynamic_cast<AWGN_Channel*>(Channel))->SetNoiseSigma(noise_sigma);
 		break;
+
 	case 'B':
 		Channel = new BSC_Channel;
 
@@ -141,15 +144,18 @@ int main(int argc, char **argv) {
 		// Again dynamic cast to child class
 		(dynamic_cast<BSC_Channel*> (Channel))->SetChannel_p(channel_p);
 		break;
+
 	default:
 		cout << "Invalid channel selection\n";
 		exit(1);
 	}
 
+	// Define the LDPC code based on information provided in the DefinitionFile
+	LDPC_Code Code(DefinitionFile, BlockLength);
+
 	// Connect channel with code
 	Code.SetChannel(*Channel);
-	Channel->ProcessMapping(Code); // Calls Normalize function of mapping of the code
-
+	Channel->ProcessMapping(Code); // Calls Normalize function of mapping of the code, looks ridiculous, we could just called: Code.MapInUse.Normalize();
 	//-------------------------------------------------------------------
 	// Print channel data
 	//-------------------------------------------------------------------

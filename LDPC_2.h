@@ -31,7 +31,8 @@ class LDPC_Code;
 class mapping;
 
 // Channel types
-//! Channel Class
+
+/// Channel Class
 /**
  * General Channel Class
  * More specific channel classes will be defined as children of this classes
@@ -132,7 +133,7 @@ double GaussGenerate(double sigma); // Generates a real gaussian
 
 class AWGN_Channel: public channel {
 private:
-	double source_sigma;
+//	double source_sigma;
 	double noise_sigma;
 public:
 	// Specialized functions ----------------------------
@@ -161,6 +162,50 @@ public:
 	// Statistical data ---------------------------------
 	virtual double CapacityInBits();
 
+};
+
+/****************************************************************************
+ *
+ * PNC Channel
+ *
+ ****************************************************************************/
+class PNC_Channel: public channel {
+private:
+	double noise_sigma;
+	double h_A, h_B;
+	int alpha, beta;
+public:
+	// Specialized functions ----------------------------
+	PNC_Channel(double p_noise_sigma = -1) :
+			noise_sigma(p_noise_sigma),
+			h_A(1),
+			h_B(1),
+			alpha(1),
+			beta(1){
+	}
+
+	double NoiseVariance(); // Returns noise_sigma^2
+	double NoiseStdDev();	// Returns noise_sigma
+
+	void SetNoiseSigma(double p_noise_sigma) {
+		noise_sigma = p_noise_sigma;
+	}
+
+	// General functions --------------------------------
+	virtual char *GetChannelName() {
+		return "PNC_Channel";
+	}
+
+	virtual void PrintChannelData(LDPC_Code &Code);
+	virtual void ProcessMapping(LDPC_Code &Code);
+
+	// Channel coding functions -------------------------
+//	virtual double SimulateOutput(double ChannelInput);
+//	virtual double CalcProbForInput(double ChannelOutput, double ChannelInput);
+//
+//	// Statistical data ---------------------------------
+//	virtual double CapacityInBits();
+//
 };
 
 /***************************************************************************
@@ -222,9 +267,7 @@ public:
 
 	void Normalize() {
 		// Normalize average energy to 1
-
 		double factor = sqrt(Average_E());
-
 		for (int i = 0; i < q; i++)
 			vals[i] /= factor;
 	}

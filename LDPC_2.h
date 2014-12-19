@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 #include <ctype.h>
 #include "Utils_1.h"
 #include "Utils_2.h"
@@ -228,14 +229,9 @@ public:
 			Set_Q(p_q);
 
 		if (p_vals != NULL)
-//			memcpy( /*to*/ vals, /*from*/p_vals, q * sizeof(double));
-//			bcopy( /*from*/p_vals, /*to*/ vals, q * sizeof(double));
-//FIXME: memcpy and bcopy cause some overflow apparently. and copying this way is very slow
-			for (int i = 0; i < q; i++)
-			{
-				vals[i] = p_vals[i];
-			}
-	}
+			std::copy(p_vals, p_vals+q, vals);
+
+	} // end of constructor
 
 	void Set_Q(int p_q) {
 		if (p_q > MAX_Q) {
@@ -248,13 +244,7 @@ public:
 	// Copy mapping from p_MapInUse
 	mapping(mapping &p_MapInUse) :
 			q(p_MapInUse.q) {
-//		memcpy(/*to*/vals,  /*from*/p_MapInUse.vals, q * sizeof(double));
-//		bcopy( /*from*/p_MapInUse.vals, /*to*/vals, q * sizeof(double));
-//FIXME: memcpy and bcopy cause some overflow apparently. and copying this way is very slow
-		for (int i = 0; i < q; i++)
-		{
-			vals[i] = p_MapInUse.vals[i];
-		}
+		std::copy(p_MapInUse.vals, p_MapInUse.vals+q, vals);
 	}
 
 	// Determine whether the mapping is a binary mapping or not!
@@ -397,21 +387,27 @@ public:
 	message &operator=(message &M) {
 		if (q != M.q)
 			Set_q(M.q);
-
-//		bcopy(/* from */M.Probs, /* to */Probs, sizeof(double) * q); // TODO: This transition might make some problem if the source and destination are overlapping
+//======================================================================
+// memcpy and bcopy cause some overflow apparently. and copying this way is very slow
+//		for (int i = 0; i < q; i++)
+//		{
+//			Probs[i] = M.Probs[i];
+//			ProbsI[i] = M.ProbsI[i];
+//		}
+//======================================================================
+//		bcopy(/* from */M.Probs, /* to */Probs, sizeof(double) * q); // This transition might make some problem if the source and destination are overlapping
 //		bcopy(/* from */M.ProbsI, /* to */ProbsI, sizeof(double) * q);
-//
+//======================================================================
 //		memcpy(/* to */Probs,/* from */M.Probs, sizeof(double) * q);
 //		memcpy(/* to */ProbsI,/* from */M.ProbsI, sizeof(double) * q);
+//======================================================================
 //		memmove(/* to */Probs,/* from */M.Probs, sizeof(double) * q);
 //		memmove(/* to */ProbsI,/* from */M.ProbsI, sizeof(double) * q);
+//======================================================================
+// This finally works like a charm!
 
-//FIXME: memcpy and bcopy cause some overflow apparently. and copying this way is very slow
-		for (int i = 0; i < q; i++)
-		{
-			Probs[i] = M.Probs[i];
-			ProbsI[i] = M.ProbsI[i];
-		}
+		std::copy(M.Probs, M.Probs+q, Probs);
+		std::copy(M.ProbsI, M.ProbsI+q, ProbsI);
 
 		return *this;
 	}

@@ -66,7 +66,7 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 		// Execute FFT
 		fftw_execute(p); /* repeat as needed */
 
-		// Copy output values Ignoring complex part!
+
 		for(int i=0;i<q;i++)
 		{
 			Probs[i] = out[i][0] ;

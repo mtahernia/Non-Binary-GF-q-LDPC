@@ -4,88 +4,14 @@
 #include <math.h>
 #include <iostream>
 #include <string.h>
-
+#include <ctype.h>
+#include "Report.h"
+#include "Definitions.h"
 /************************************************************************
- *
- * Cout
- *
+ * Portability include file
  ************************************************************************/
+#include "Portability.h"
 
-class reportbuf: public std::streambuf {
-public:
-	int IsDirectedToErr; // BOOLEAN has not yet been defined at this stage of compilation
-	FILE *fp;
-public:
-	reportbuf() :
-			IsDirectedToErr(/*FALSE*/0), fp(NULL) {
-	}
-
-	void OpenFile(char *FileName) {
-		// Make lowercase copy of FileName
-		char buffer[1000];
-		int i;
-		for (i = 0; FileName[i] != '\0'; i++)
-			buffer[i] = tolower(FileName[i]);
-		buffer[i] = '\0';
-
-		// If Filename is "err"
-		if (strcmp(buffer, "err") == 0)
-			IsDirectedToErr = /*TRUE*/1;
-		else
-			fp = fopen(FileName, "w");
-	}
-
-	virtual int overflow(int nCh) {
-		if (!IsDirectedToErr) {
-			if (fp == NULL) {
-				printf("Reportbuf::overflow:  file not opened\n");
-				exit(1);
-			}
-			putchar(nCh);	// Display the output
-			fputc(nCh, fp);	// Write the output to file buffer
-			fflush(fp);		// Flush the buffer to file
-		}
-		else
-		{			// Just write output to stderr
-			fputc(nCh, stderr);
-		}
-
-		return 0;
-	}
-
-	virtual int underflow() {
-		if (!IsDirectedToErr)
-			fflush(fp);
-		return 0;
-	}
-
-	~reportbuf() {
-		if (!IsDirectedToErr)
-			fclose(fp);
-	}
-
-};
-extern reportbuf ReportBuf;		// Already defined in .c file
-extern std::ostream ReportOut;	// Already defined in .c file
-
-#define cout ReportOut			// Redefine cout to report buffer that we defined
-
-/************************************************************************
- *
- * Definitions
- *
- ************************************************************************/
-
-#define INF             1e10	// Infinity
-#define EPSILON         1e-10	// It's Obvious!
-
-#define TRUE   1
-#define FALSE  0
-
-typedef unsigned char BYTE;
-typedef unsigned char BOOLEAN;
-
-#define MAX_Q 	32  // Maximum allowed Q   (to be freely modified)
 
 /************************************************************************
  *
@@ -98,6 +24,12 @@ std::ifstream &operator>>(std::ifstream &file, int &num);
 
 // Returns an integer between 0 and p_max - 1
 int uniform_random(int p_max);
+// Returns an integer between 0 and p_max - 1
+inline int uniform_random(int p_max)
+{
+	return (int) floor(my_rand() * (double) p_max);
+}
+
 
 // Log-Likelihood Ratio
 inline double LLR(double x) {
@@ -193,12 +125,8 @@ inline double min_double(double x, double y) {
 	return (x < y) ? x : y;
 }
 
-/************************************************************************
- *
- * Portability include file
- *
- ************************************************************************/
 
-#include "Portability.h"
-
+inline BOOLEAN is_double_digit(int c) {
+	return (isdigit(c) || (c == '.') || (c == '-') || (c == '+') || (c == 'e'));
+}
 #endif /*for the if in the start of this file*/

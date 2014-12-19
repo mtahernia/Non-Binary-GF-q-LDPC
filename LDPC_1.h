@@ -174,6 +174,7 @@ public:
 	void Encode();							//!< Encode using Urbanke method
 	void GenerateEncoder();				//!< Generate encoder with gap (FIXME: )
 	void GenerateEncoder_WithoutGap();//!< Generate encoder without gap (FIXME:)
+	~LDPC_Code(){cout <<"LDPC_Code Destructor called\n";}
 
 };
 

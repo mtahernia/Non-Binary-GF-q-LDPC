@@ -12,6 +12,7 @@
 #include "Encoding.h"
 #include <fftw3.h>
 #include <memory.h>
+//#include "Channel.h"
 
 typedef unsigned char BOOLEAN;
 typedef unsigned char BYTE;
@@ -59,8 +60,9 @@ public:
 
 	// Statistical data -------------------------------------------
 	virtual double CapacityInBits() = 0;
-//	virtual ~channel(void) {
-//	} // Virtual destructor
+
+	virtual ~channel(void) {cout << "channel destructor called\n"; }
+	// Virtual destructor
 };
 
 /****************************************************************************
@@ -162,6 +164,8 @@ public:
 	// Statistical data ---------------------------------
 	virtual double CapacityInBits();
 
+
+	~AWGN_Channel(){cout << "AWGN_Channel Destructor Called\n";}
 };
 
 /****************************************************************************
@@ -925,8 +929,6 @@ public:
 			degree(-1), edges(NULL) {
 	}
 
-	//	virtual ~node(void) {
-//	} // Virtual destructor
 
 	void Disconnect();  // Disconnect all edges
 
@@ -938,8 +940,7 @@ public:
 				break;
 		// if the above for loop exited normally, not with break, then the node was not found
 		if (index == degree) {
-			cout
-					<< "node::DisconnectEdge: Attempt to disconnect a nonexistent edge\n";
+			cout << "node::DisconnectEdge: Attempt to disconnect a nonexistent edge\n";
 			exit(1);
 		}
 
@@ -980,8 +981,10 @@ public:
 	}
 
 	virtual node &AdjacentNode(int index) = 0;
-};
 
+	virtual ~node() {
+		cout << "node destructor called\n";}
+};
 
 
 message &GenerateChannelMessage(GFq v, channel &TransmitChannel, mapping &MapInUse, double ChannelOut);
@@ -1039,6 +1042,8 @@ public:
 	BOOLEAN IsRightConnectedTo(node *n);
 	BOOLEAN IsPath3ConnectedTo(node *n);  // Is connected by a path of at most
 	virtual node &AdjacentNode(int index);
+//	~variable_node(){cout<<"variable_node destructor called\n";}
+
 };
 
 class complex_vector;  // FIXME: Where is the definition?
@@ -1054,6 +1059,8 @@ public:
 	virtual node &AdjacentNode(int index);  // returnes the adjacent variable  node to edge i
 	GFq &Element(int i); // For use in encoding - treats check like row of matrix
 	GFq &Value();
+
+//	~check_node(){cout<<"check_node destructor called\n";}
 };
 
 
@@ -1129,10 +1136,10 @@ public:
 	}
 
 	void Clear() {
-		if (variable_nodes != NULL)
-			delete variable_nodes;
-		if (check_nodes != NULL)
-			delete check_nodes;
+//		if (variable_nodes != NULL)
+//			delete variable_nodes;
+//		if (check_nodes != NULL)
+//			delete check_nodes;
 		if (edges != NULL)
 			delete edges;
 		if (EdgeStack != NULL)

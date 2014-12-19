@@ -1,20 +1,8 @@
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
-#include <iostream>
-#include <fstream>
-#include <ctype.h>
-#include <wchar.h>
 #include "Utils_1.h"
 
-////////////////////////////////////////////////////////////////////////////
-//
-// Cout
-//
-////////////////////////////////////////////////////////////////////////////
+#include <stdlib.h>
 
-reportbuf ReportBuf;
-std::ostream ReportOut(&ReportBuf);
+
 
 ////////////////////////////////////////////////////////////////////////////
 //
@@ -22,9 +10,7 @@ std::ostream ReportOut(&ReportBuf);
 //
 ////////////////////////////////////////////////////////////////////////////
 
-inline BOOLEAN is_double_digit(int c) {
-	return (isdigit(c) || (c == '.') || (c == '-') || (c == '+') || (c == 'e'));
-}
+
 
 // Operator Overload for >> (reads the first number in file and writes it in d)
 std::ifstream &operator>>(std::ifstream &file, double &d) {
@@ -66,8 +52,4 @@ std::ifstream &operator>>(std::ifstream &file, int &num) {
 	return file;
 }
 
-// Returns an integer between 0 and p_max - 1
-int uniform_random(int p_max)
-{
-	return (int) floor(my_rand() * (double) p_max);
-}
+

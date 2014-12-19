@@ -10,7 +10,7 @@
 // This is a try to fix fft problem.
 #include <fftw3.h>
 #include <memory.h>
-
+//#include "Channel.h"
 /*********************************************************************************
  *
  * MESSAGE

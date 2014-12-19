@@ -46,12 +46,6 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 			}    //end for j
 		}    //end for i
 	}    //end if
-
-
-
-
-
-
 	else if (GFq::IsPrimeQ) // FIXME: There is lots of memory copying and redundant fft generation(plan generation fixed by defining static plan).
 	{
 		Aux = *this;
@@ -117,11 +111,6 @@ void message::IDFT2()          // A real-valued DFT - also IDFT
 			}    //end for j
 		}    //end for i
 	}    //end if
-
-
-
-
-
 
 	else if (GFq::IsPrimeQ) // FIXME: There is lots of memory copying and redundant fft generation(plan generation fixed by defining static plan).
 	{
@@ -421,7 +410,8 @@ void check_node::CalcAllLeftboundMessages() {
 	//-------------------------------------------------------------
 	// If power of two - use DFT2
 	//-------------------------------------------------------------
-	if (!GFq::IsPrimeQ)
+//	if (!GFq::IsPrimeQ)
+	if (true)
 	{
 		for (int i = 0; i < GetDegree(); i++) {
 			Vectors[i].DFT2();
@@ -429,14 +419,14 @@ void check_node::CalcAllLeftboundMessages() {
 
 		// Calc auxiliary values
 		AuxLeft[0].Set_q(GFq::q);
-		AuxLeft[0] = 1.;
+		AuxLeft[0] = 1.0;
 		for (int i = 1; i < GetDegree(); i++) {
 			AuxLeft[i] = AuxLeft[i - 1];
 			AuxLeft[i] *= Vectors[i - 1];
 		}
 
 		AuxRight[GetDegree() - 1].Set_q(GFq::q);
-		AuxRight[GetDegree() - 1] = 1.;
+		AuxRight[GetDegree() - 1] = 1.0;
 		for (int i = GetDegree() - 2; i >= 0; i--) {
 			AuxRight[i] = AuxRight[i + 1];
 			AuxRight[i] *= Vectors[i + 1];
@@ -448,11 +438,9 @@ void check_node::CalcAllLeftboundMessages() {
 			GetEdge(i).LeftBoundMessage.PermuteTimes(GetEdge(i).label);
 		}
 	}
-
+/*
 	else {
-
 //		cout << "FIXME!!!" << std::endl;
-
 		for (int i = 0; i < GetDegree(); i++) {
 			Vectors[i].DFT2();
 		}
@@ -461,7 +449,6 @@ void check_node::CalcAllLeftboundMessages() {
 		AuxLeft[0].Set_q(GFq::q);
 		AuxLeft[0] = 1.0;
 		for (int i = 1; i < GetDegree(); i++) {
-			AuxLeft[i] = AuxLeft[i - 1];
 			AuxLeft[i] = AuxLeft[i - 1];
 			AuxLeft[i] *= Vectors[i - 1];
 		}
@@ -481,7 +468,7 @@ void check_node::CalcAllLeftboundMessages() {
 
 		}
 
-	}
+	} */
 }
 
 /*************************************************************************
@@ -542,9 +529,10 @@ void variable_node::CalcAllRightboundMessages() {
 message &GenerateChannelMessage(GFq v, channel &TransmitChannel, mapping &MapInUse, double ChannelOut) {
 	static message InitialMessage;
 	int q = MapInUse.GetQ();
-	double CandidateIn, ChannelIn;
+	double CandidateIn;
+//	double ChannelIn;
 
-	ChannelIn = MapInUse.map(v);        // mapping of (0 + v) % q; FIXME: This is not used
+//	ChannelIn = MapInUse.map(v);        // mapping of (0 + v) % q; FIXME: This is not used
 
 	// Generate InitialMessage
 	InitialMessage.Set_q(q);
@@ -693,7 +681,7 @@ void bipartite_graph::Reset(int p_N,   // number of variable nodes
 	//----------------------------------------------------------------------------------------
 	srand(time(NULL)); // Init random seed so that each call to function returns different set of values
 
-	cout << "Starting bipartite graph...";
+	cout << "Starting bipartite graph..." << time(NULL) ;
 
 	int left_index, right_index;
 	for (int i = 0; i < E; i++) {
@@ -737,8 +725,8 @@ void bipartite_graph::Reset(int p_N,   // number of variable nodes
 	cout << "Done\n";
 
 	// Clean-up
-	delete left_sockets;
-	delete right_sockets;
+	delete [] left_sockets;
+	delete [] right_sockets;
 }
 
 /************************************************************************

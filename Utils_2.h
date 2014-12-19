@@ -295,7 +295,7 @@ public:
 
 	void deAllocate() {
 		if (TotalSize > 0) {
-			delete Elements;
+			delete [] Elements;
 			TotalSize = M = N = 0;
 			Elements = NULL;
 		}
@@ -497,7 +497,7 @@ public:
 		M = 0;
 		N = 0;
 		if (Elements != NULL)
-			delete Elements;
+			delete [] Elements;
 		Elements = NULL;
 	}
 
@@ -551,7 +551,7 @@ public:
 	// Deallocate Elements to avoid memory leak
 	void deAllocate() {
 		if (Elements != NULL)
-			delete Elements;
+			delete [] Elements;
 		Elements = NULL;
 		CountElements = 0;
 	}

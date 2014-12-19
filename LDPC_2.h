@@ -40,7 +40,7 @@ class mapping;
  */
 class channel {
 public:
-	virtual char *GetChannelName() = 0;
+	virtual const char *GetChannelName() = 0;
 
 	// General functions ------------------------------------------
 	GFq &MaxProbableForOutput(mapping &MapInUse); // FIXME: Not used or defined in this program
@@ -93,7 +93,7 @@ public:
 	int Flip(double prob) {
 		return (my_rand() < prob);
 	}
-	virtual char *GetChannelName() {
+	const char *GetChannelName() {
 		return "BSC_Channel";
 	}
 
@@ -151,7 +151,7 @@ public:
 	}
 
 	// General functions --------------------------------
-	virtual char *GetChannelName() {
+	const char *GetChannelName() {
 		return "AWGN_Channel";
 	}
 	virtual void PrintChannelData(LDPC_Code &Code);
@@ -196,7 +196,7 @@ public:
 	}
 
 	// General functions --------------------------------
-	virtual char *GetChannelName() {
+	const char *GetChannelName() {
 		return "PNC_Channel";
 	}
 
@@ -228,9 +228,13 @@ public:
 			Set_Q(p_q);
 
 		if (p_vals != NULL)
-			memcpy( /*to*/ vals, /*from*/p_vals, q * sizeof(double));
+//			memcpy( /*to*/ vals, /*from*/p_vals, q * sizeof(double));
 //			bcopy( /*from*/p_vals, /*to*/ vals, q * sizeof(double));
-
+//FIXME: memcpy and bcopy cause some overflow apparently. and copying this way is very slow
+			for (int i = 0; i < q; i++)
+			{
+				vals[i] = p_vals[i];
+			}
 	}
 
 	void Set_Q(int p_q) {
@@ -244,8 +248,13 @@ public:
 	// Copy mapping from p_MapInUse
 	mapping(mapping &p_MapInUse) :
 			q(p_MapInUse.q) {
-		memcpy(/*to*/vals,  /*from*/p_MapInUse.vals, q * sizeof(double));
+//		memcpy(/*to*/vals,  /*from*/p_MapInUse.vals, q * sizeof(double));
 //		bcopy( /*from*/p_MapInUse.vals, /*to*/vals, q * sizeof(double));
+//FIXME: memcpy and bcopy cause some overflow apparently. and copying this way is very slow
+		for (int i = 0; i < q; i++)
+		{
+			vals[i] = p_MapInUse.vals[i];
+		}
 	}
 
 	// Determine whether the mapping is a binary mapping or not!
@@ -390,15 +399,27 @@ public:
 			Set_q(M.q);
 
 //		bcopy(/* from */M.Probs, /* to */Probs, sizeof(double) * q); // TODO: This transition might make some problem if the source and destination are overlapping
-		memcpy(/* to */Probs,/* from */M.Probs, sizeof(double) * q);
-		memcpy(/* to */ProbsI,/* from */M.ProbsI, sizeof(double) * q);
+//		bcopy(/* from */M.ProbsI, /* to */ProbsI, sizeof(double) * q);
+//
+//		memcpy(/* to */Probs,/* from */M.Probs, sizeof(double) * q);
+//		memcpy(/* to */ProbsI,/* from */M.ProbsI, sizeof(double) * q);
+//		memmove(/* to */Probs,/* from */M.Probs, sizeof(double) * q);
+//		memmove(/* to */ProbsI,/* from */M.ProbsI, sizeof(double) * q);
+
+//FIXME: memcpy and bcopy cause some overflow apparently. and copying this way is very slow
+		for (int i = 0; i < q; i++)
+		{
+			Probs[i] = M.Probs[i];
+			ProbsI[i] = M.ProbsI[i];
+		}
+
 		return *this;
 	}
 
 	message &operator=(double d) {
 		for (int i = 0; i < q; i++){
-			ProbsI[i] = 0;
 			Probs[i] = d;
+			ProbsI[i] = 0;
 		}
 		return *this;
 	}
@@ -474,7 +495,7 @@ public:
 
 		for (int i = 0; i < q; i++){
 			Aux[i] = Probs[i] + M.Probs[i];
-			Aux.ProbsI[i] = ProbsI[i] + M.ProbsI[i];
+			Aux.ProbsI[i] = ProbsI[i] + M.ProbsI[i]; //FIXME
 		}
 		return Aux;
 	}
@@ -982,8 +1003,10 @@ public:
 
 	virtual node &AdjacentNode(int index) = 0;
 
-	virtual ~node() {
-		cout << "node destructor called\n";}
+	virtual ~node()
+		{
+			//cout << "node destructor called\n";
+		}
 };
 
 
@@ -1042,7 +1065,10 @@ public:
 	BOOLEAN IsRightConnectedTo(node *n);
 	BOOLEAN IsPath3ConnectedTo(node *n);  // Is connected by a path of at most
 	virtual node &AdjacentNode(int index);
-//	~variable_node(){cout<<"variable_node destructor called\n";}
+	~variable_node()
+		{
+			//cout<<"variable_node destructor called\n";
+		}
 
 };
 
@@ -1060,7 +1086,10 @@ public:
 	GFq &Element(int i); // For use in encoding - treats check like row of matrix
 	GFq &Value();
 
-//	~check_node(){cout<<"check_node destructor called\n";}
+	~check_node()
+		{
+			//cout<<"check_node destructor called\n";
+		}
 };
 
 
@@ -1136,14 +1165,14 @@ public:
 	}
 
 	void Clear() {
-//		if (variable_nodes != NULL)
-//			delete variable_nodes;
-//		if (check_nodes != NULL)
-//			delete check_nodes;
+		if (variable_nodes != NULL)
+			delete [] variable_nodes;
+		if (check_nodes != NULL)
+			delete [] check_nodes;
 		if (edges != NULL)
-			delete edges;
+			delete [] edges;
 		if (EdgeStack != NULL)
-			delete EdgeStack;
+			delete [] EdgeStack;
 	}
 
 	void PrintNodes(char *title = NULL) {

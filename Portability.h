@@ -181,7 +181,8 @@ inline double Q(double x) {
 #ifdef LINUX_C
 
 // This function is already defined in my math.h file FIXME: I may need to comment it and adapt the original function
-#undef isfinite(x)
+#undef isfinite
+
 inline BOOLEAN isfinite(double d)
 {
 	if (isnan(d))

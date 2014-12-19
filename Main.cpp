@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
 	char *CurrentOption;
 	char *CurrentValue;
 	channel *Channel;
-	char *OutputLogFileName = "results.txt";
+	char *OutputLogFileName = (char *)"results.txt";
 	unsigned seed = RandomSeed();
 
 	//-------------------------------------------------------------------
@@ -181,8 +181,8 @@ int main(int argc, char **argv) {
 
 	for (int i = 0; i < count_runs; i++) {
 		Code.ResetGraph();
-//		Code.GenerateEncoder_WithoutGap();
-		Code.GenerateEncoder();
+		Code.GenerateEncoder_WithoutGap();
+//		Code.GenerateEncoder();
 		Code.GenerateRandomSystematic();
 		Code.Encode();
 //		Code.GetZeroCodeword(Codeword);

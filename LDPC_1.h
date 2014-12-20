@@ -8,7 +8,7 @@
 #include <fstream>
 #include <ctype.h>
 #include <wchar.h>
-#include "Utils_1.h"
+#include "Functions.h" // Apparently not used
 #include "LDPC_2.h"
 
 #define MAX_LAMBDAS 1000//!< Maximum number of Lambdas

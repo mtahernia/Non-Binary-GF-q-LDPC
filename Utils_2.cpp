@@ -5,7 +5,7 @@
 #include <fstream>
 #include <ctype.h>
 #include <wchar.h>
-#include "Utils_1.h"
+#include "Functions.h"
 #include "Utils_2.h"
 #include "LDPC_2.h"
 

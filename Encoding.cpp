@@ -15,7 +15,7 @@
 #include <wchar.h>
 #include "LDPC_1.h"
 #include "LDPC_2.h"
-#include "Utils_1.h"
+#include "Functions.h"
 #include "Encoding.h"
 
 /*********************************************************************************

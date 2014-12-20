@@ -2,7 +2,7 @@
 #define UTILS_2
 
 #include <math.h>
-#include "Utils_1.h"
+#include "Functions.h"
 
 /************************************************************************
  *

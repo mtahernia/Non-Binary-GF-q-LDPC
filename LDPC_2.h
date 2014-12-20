@@ -8,7 +8,7 @@
 #include <fstream>
 #include <algorithm>
 #include <ctype.h>
-#include "Utils_1.h"
+#include "Functions.h"
 #include "Utils_2.h"
 #include "Encoding.h"
 #include <fftw3.h>

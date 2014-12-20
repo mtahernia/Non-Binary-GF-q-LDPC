@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <ctype.h>
-#include "Utils_1.h"
+#include "Functions.h"
 #include "LDPC_1.h"
 #include "LDPC_2.h"
 // This is a try to fix fft problem.

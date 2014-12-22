@@ -1,10 +1,10 @@
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
-#include <iostream>
-#include <fstream>
-#include <ctype.h>
-#include <wchar.h>
+//#include <stdio.h>
+//#include <math.h>
+//#include <stdlib.h>
+//#include <iostream>
+//#include <fstream>
+//#include <ctype.h>
+//#include <wchar.h>
 #include "Functions.h"
 #include "Utils_2.h"
 #include "LDPC_2.h"

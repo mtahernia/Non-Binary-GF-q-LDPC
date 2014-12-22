@@ -1,7 +1,7 @@
 #ifndef UTILS_2
 #define UTILS_2
 
-#include <math.h>
+//#include <math.h>
 #include "Functions.h"
 
 /************************************************************************

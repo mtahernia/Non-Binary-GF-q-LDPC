@@ -8,13 +8,11 @@
 #include "Functions.h"
 #include <stdlib.h>
 ////////////////////////////////////////////////////////////////////////////
-//
 // Cout
-//
 ////////////////////////////////////////////////////////////////////////////
-
 reportbuf ReportBuf;
 std::ostream ReportOut(&ReportBuf);
+
 //=========================================================================================
 void reportbuf::OpenFile(char *FileName) {
 		// Make lowercase copy of FileName

@@ -12,15 +12,14 @@
 #include <iostream>
 #include <fstream>
 #include <string.h>
-#include "Functions.h"
+
 /************************************************************************
- *
  * Cout
- *
  ************************************************************************/
 // Operator Overloading Declaration
 std::ifstream &operator>>(std::ifstream &file, double &d);
 std::ifstream &operator>>(std::ifstream &file, int &num);
+
 //=========================================================================================
 class reportbuf: public std::streambuf {
 public:

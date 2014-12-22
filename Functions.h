@@ -3,16 +3,17 @@
  *
  *  Created on: 20 Dec, 2014
  *      Author: Mehrdad Tahernia
+ *  Here are the simple functions used through program. They are currently inline to increase performance
  */
 
 #ifndef FUNCTIONS_H_
 #define FUNCTIONS_H_
 
 
-#include <math.h>
-#include <iostream>
-#include <string.h>
-#include <ctype.h>
+//#include <math.h>
+//#include <iostream>
+//#include <string.h>
+//#include <ctype.h>
 #include "Report.h"
 #include "Definitions.h"
 /************************************************************************

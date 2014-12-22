@@ -9,8 +9,8 @@
 #ifndef MATRIX_H_
 #define MATRIX_H_
 
-#include "GFq.h"
-
+// it will be included in Matrix.cpp
+class GFq;
 /************************************************************************
  *
  * GF(q) matrix

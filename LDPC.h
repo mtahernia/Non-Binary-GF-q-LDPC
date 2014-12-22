@@ -1,14 +1,14 @@
-#ifndef LDPC_1
-#define LDPC_1
+/*
+ * LDPC.h
+ *
+ *  Created on: 22 Dec, 2014
+ *      Author: Mehrdad Tahernia
+ *		  User: mehrdad
+ */
 
-//#include <stdio.h>
-//#include <math.h>
-//#include <stdlib.h>
-//#include <iostream>
-//#include <fstream>
-//#include <ctype.h>
-//#include <wchar.h>
-//#include "Functions.h" // Apparently not used or called within LDPC_2.h
+#ifndef LDPC_H_
+#define LDPC_H_
+
 #include "LDPC_2.h"
 
 #define MAX_LAMBDAS 1000//!< Maximum number of Lambdas
@@ -178,4 +178,4 @@ public:
 
 };
 
-#endif // Preprocessor guard ends here
+#endif /* LDPC_H_ */

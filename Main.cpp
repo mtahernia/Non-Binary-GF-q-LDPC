@@ -1,17 +1,18 @@
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
-#include <iostream>
-#include <fstream>
-#include <ctype.h>
-#include "LDPC_1.h"
-#include "LDPC_2.h"
-#include "Functions.h"
+#include <cstdio> // sscanf
+#include <cmath>  //pow sqrt ...
+#include <cstdlib> // exit
+//#include <iostream>
+//#include <fstream>
+//#include <ctype.h>
+#include "Definitions.h"
+#include "Portability.h" // my_srand
+#include "LDPC.h"
+
 
 BOOLEAN debug = FALSE;
 
 /**
- * ***************************************************************************
+ *****************************************************************************
  *
  * MAIN
  *
@@ -36,7 +37,7 @@ int main(int argc, char **argv) {
 	// Parsing the input arguments
 	//-------------------------------------------------------------------
 	if (argc < 3) {		// If less
-		ReportBuf.OpenFile(OutputLogFileName);
+		ReportBuf.OpenFile(OutputLogFileName);  // Reportbuf is defined in Report.h
 		cout << "usage: " << argv[0] // argv[0] is always the file name
 				<< " <input file> <SNR (dB)/crossover> {<options>}\n"
 				<< "Options: \n"
@@ -188,13 +189,11 @@ int main(int argc, char **argv) {
 //		Code.GetZeroCodeword(Codeword);
 		Code.GetCodeword(Codeword);
 
-
-
 		Channel->SimulateOutputVector(Codeword, ChannelOutput);
 		Code.Init_Messages(ChannelOutput);
 		AccumulatedSER += Code.Belief_Propagation_Decoder(iterations);
 	}
-
+	cout << "Accumulated SER = " << AccumulatedSER << "\n";
 	//------------------------------------------------------------------------
 	// return OK
 	//------------------------------------------------------------------------

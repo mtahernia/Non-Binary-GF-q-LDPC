@@ -1,33 +1,19 @@
 #ifndef LDPC_2
 #define LDPC_2
 
-//#include <stdio.h>
-//#include <math.h>
-//#include <stdlib.h>
-//#include <iostream>
-//#include <fstream>
-//#include <ctype.h>
-//#include <fftw3.h>
-//#include <memory.h>
+#include <cstring>  // bzero
+//#include <algorithm>  // std::copy needs this but it works without it. It must have been included in other heades
 
-//#include "Channel.h"
-//#include "Functions.h"
 #include "GFq.h"
 #include "Matrix.h" // matrix, column vector
 #include "Utils_2.h" // vector, array
 
+//#include "Channel.h"
 #include "Encoding.h" // Node lists
-#include <string.h>  // bzero
-//#include <algorithm>  // std::copy needs this but it works without it. It must have been included in other heades
 
-typedef unsigned char BOOLEAN;
-typedef unsigned char BYTE;
 
-#define TRUE   1
-#define FALSE  0
 
 #define MAX_DEGREE	1000
-
 /****************************************************************************
  *
  * Channel
@@ -357,8 +343,8 @@ public:
 		q = p_q;
 	}
 
-	void DFT2();
-	void IDFT2();
+	void DFT();
+	void IDFT();
 
 	// If all q components of this message is smaller than message 2 returns true
 

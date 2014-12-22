@@ -6,21 +6,47 @@
 //#include <ctype.h>
 //#include <memory.h> // bcopy memcopy memmove
 
-//#include "Functions.h"
-//#include "Utils_2.h" // vector, array
-//#include "GFq.h"
-//#include "Matrix.h"
-#include "LDPC_1.h" // these two heades both contain parts of LDPC class
-#include "LDPC_2.h"
 #include <fftw3.h> // This is a try to fix fft problem.
+
+//#include "Functions.h"
+#include "GFq.h"
+#include "Matrix.h"
+#include "Utils_2.h" // vector, array
+#include "LDPC.h" // these two heades both contain parts of LDPC class
+#include "LDPC_2.h"
+
+
 //#include "Channel.h"
+
+
+
+
+void mapping::GetFromFile(std::ifstream &file)
+// Read the mapping from the current position in the file
+{
+	file >> q;
+
+	if (q > MAX_Q) {
+		cout << "q exceeds MAX_Q in mapping:GetFromFile\n";
+		exit(1);
+	}
+
+	for (int i = 0; i < q; i++) {
+		file >> vals[i];
+	}
+}
+
+
+
+
+
 /*********************************************************************************
  *
  * MESSAGE
  *
  *********************************************************************************/
 // FIXME: Need to rewrite convolve and this function, currently I'm ignoring the complex part and the whole convolution will be inaccurate
-void message::DFT2()          // A real-valued DFT - also IDFT
+void message::DFT()          // A real-valued DFT - also IDFT
 {
 	static message Aux;
 	GFq mask, n0_index, n1_index;
@@ -85,7 +111,7 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 }
 
 
-void message::IDFT2()          // A real-valued DFT - also IDFT
+void message::IDFT()          // A real-valued DFT - also IDFT
 {
 	static message Aux;
 	GFq mask, n0_index, n1_index;
@@ -386,12 +412,11 @@ message &FastCalcLeftboundMessage(message AuxLeft[], message AuxRight[],int left
 	Aux = AuxLeft[left_index];
 	Aux *= AuxRight[left_index];
 
+// FIXME: Why is this normalization not important?
 //	if (GFq::IsPrimeQ)
 //		Aux /= (double) GFq::q;
 
-
-	Aux.IDFT2();
-
+	Aux.IDFT();
 	Aux.Reverse();	// estimate of symbol value = (- sum of others)
 
 	return Aux;
@@ -417,7 +442,7 @@ void check_node::CalcAllLeftboundMessages() {
 	if (true)
 	{
 		for (int i = 0; i < GetDegree(); i++) {
-			Vectors[i].DFT2();
+			Vectors[i].DFT();
 		}
 
 		// Calc auxiliary values

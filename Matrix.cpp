@@ -6,10 +6,10 @@
  *		  User: mehrdad
  */
 
-#include "Functions.h"
+//#include "Functions.h"
 #include "GFq.h"
-#include "LDPC_2.h" // Class check node
 #include "Matrix.h"
+#include "LDPC_2.h" // Class check node
 /************************************************************************************
  *
  * GF(q) Matrix

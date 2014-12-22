@@ -7,10 +7,10 @@
 #include <float.h>
 #else
 //#include <strings.h>
-//#include <unistd.h>
-#include <stdlib.h>
-#include <time.h>
-#include <math.h>
+//#include <unistd.h> //provides access to the POSIX operating system API, apparently not used
+#include <cstdlib> // srand,drand
+#include <ctime>
+#include <cmath>
 #endif
 
 /************************************************************************

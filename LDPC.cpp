@@ -1,18 +1,16 @@
-//#include <stdio.h>
-//#include <math.h>
-//#include <stdlib.h>
-//#include <iostream>
-//#include <fstream>
-#include "LDPC_1.h"
-//#include "LDPC_2.h"
-//#include "Functions.h"
-//#include <ctype.h>
-//#include <wchar.h>
+/*
+ * LDPC.cpp
+ *
+ *  Created on: 22 Dec, 2014
+ *      Author: Mehrdad Tahernia
+ *		  User: mehrdad
+ */
+#include "LDPC.h"
 
 /**************************************************************
  *
  * LDPC Constructors
- * 
+ *
  **************************************************************/
 
 void LDPC_Code::GetFromFile(std::ifstream &file) {
@@ -112,25 +110,3 @@ double LDPC_Code::Calc_Symbol_Rate() {
 
 	return 1 - SigmaRho / SigmaLambda;
 }
-
-/**************************************************************
- *
- * mapping read from file
- * 
- **************************************************************/
-
-void mapping::GetFromFile(std::ifstream &file)
-// Read the mapping from the current position in the file
-{
-	file >> q;
-
-	if (q > MAX_Q) {
-		cout << "q exceeds MAX_Q in mapping:GetFromFile\n";
-		exit(1);
-	}
-
-	for (int i = 0; i < q; i++) {
-		file >> vals[i];
-	}
-}
-

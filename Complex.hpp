@@ -359,9 +359,6 @@ inline bool operator!=(double d, complex c){
 }
 
 
-
-
-
 inline std::ostream &operator<<(std::ostream &s, complex c) {
 	if (c.i>=0 )
 		s << c.r << "+"<< c.i << "i ";

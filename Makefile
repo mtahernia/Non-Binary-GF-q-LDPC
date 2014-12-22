@@ -24,8 +24,7 @@ q_LDPC: ${OBJ_FILES}
 
 doxygen:
 	doxygen conf.dox
-latex:
-	make doxygen
+latex: doxygen
 	cd doxygen/latex;make
 clean:
 	rm -rf *o q_LDPC doxygen

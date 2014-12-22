@@ -1,94 +1,12 @@
 #ifndef UTILS_2
 #define UTILS_2
 
-// works even without this
+// works even without this because it is called in GFq.h
 #include "Functions.h" //uniform_random
-#include "GFq.h"
-#include "Matrix.h"
+//#include "GFq.h"
+//#include "Matrix.h"
 
 
-class column_vector: public matrix {
-public:
-	column_vector() :
-			matrix() {
-	}
-	column_vector(int p_M) :
-			matrix(p_M, 1) {
-	}
-
-	void Init(int p_M) {
-		matrix::Init(p_M, 1);
-	}
-
-//   ~column_vector()
-//   {
-//      deAllocate();
-//   }
-
-	GFq &operator[](int i) {
-		return this->Elements[i];
-	}
-
-	// This one is not used in this code
-	column_vector &operator=(long p_Val) {
-		// LSB is first
-		for (int i = 0; i < M; i++) {
-			(*this)[i].val = p_Val & GFq::mask;
-			p_Val >>= GFq::log_2_q;
-		}
-
-		return *this;
-	}
-
-	column_vector &operator=(matrix &Matrix) {
-		if (Matrix.N != 1) {
-			cout
-					<< "column_vector::operator= : Incompatible rows/columns in assignment\n";
-			exit(1);
-		}
-
-		Init(Matrix.M);
-
-		for (int i = 0; i < M; i++)
-			(*this)[i] = Matrix.Element(i, 0);
-
-		return *this;
-	}
-
-	// Not used
-	void Extract(column_vector &p_Source, int RowFirst) {
-		int SourceIndex = RowFirst;
-
-		// If attempting to extract more elements than exist in source
-		if (M > (p_Source.M - RowFirst)) {
-			cout << "column_vector::Extract : Incompatible rows\n";
-			exit(1);
-		}
-
-		for (int i = 0; i < M; i++, SourceIndex++)
-			(*this)[i] = p_Source[SourceIndex];
-	}
-
-	// Not used
-	void Combine(column_vector &p_Vector1, column_vector &p_Vector2) {
-		if (M != (p_Vector1.M + p_Vector2.M)) {
-			cout << "column_vector::Combine: Incompatible rows\n";
-			exit(1);
-		}
-
-		int index = 0;
-		for (int i = 0; i < p_Vector1.M; index++, i++)
-			(*this)[index] = p_Vector1[i];
-		for (int i = 0; i < p_Vector2.M; index++, i++)
-			(*this)[index] = p_Vector2[i];
-	}
-};
-
-std::ostream &operator<<(std::ostream &s, matrix &m);
-
-#define MAX_BUF 10000
-
-std::istream &operator>>(std::istream &s, matrix &m);
 
 /************************************************************************
  *
@@ -220,6 +138,6 @@ inline std::ostream &operator<<(std::ostream &s, vector &v) {
 	s << "]";
 
 	return s;
-}
+};
 
 #endif

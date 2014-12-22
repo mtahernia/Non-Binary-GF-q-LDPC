@@ -6,16 +6,17 @@
  *
  *********************************************************************************/
 
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
-#include <iostream>
-#include <fstream>
-#include <ctype.h>
-#include <wchar.h>
+//#include <stdio.h>
+//#include <math.h>
+//#include <stdlib.h>
+//#include <iostream>
+//#include <fstream>
+//#include <ctype.h>
+//#include <wchar.h>
 #include "LDPC_1.h"
 #include "LDPC_2.h"
 #include "Functions.h"
+#include "GFq.h"
 #include "Encoding.h"
 
 /*********************************************************************************
@@ -159,8 +160,7 @@ void UrbankeAlgorithmAH(NodeListWithID &Columns, NodeListWithID &Rows) {
 
 		if (NewColumnToBeKnown == -1) // Assertion - an unknown column must be found
 				{
-			cout
-					<< "LDPC_Code::GenerateEncoder(): No unknown column was found, while "
+			cout	<< "LDPC_Code::GenerateEncoder(): No unknown column was found, while "
 					<< "because degree of row = 1, by definition one should have been found\n";
 			exit(1);
 		}

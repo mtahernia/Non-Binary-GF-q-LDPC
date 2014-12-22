@@ -26,5 +26,7 @@ typedef unsigned char BOOLEAN;
 
 #define MAX_Q 	32  // Maximum allowed Q   (to be freely modified)
 
+// It is apparently not used
+#define MAX_BUF 10000
 
 #endif /* DEFINITIONS_H_ */

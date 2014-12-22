@@ -6,7 +6,10 @@
 //#include <ctype.h>
 //#include <memory.h> // bcopy memcopy memmove
 
-#include "Functions.h"
+//#include "Functions.h"
+//#include "Utils_2.h" // vector, array
+//#include "GFq.h"
+//#include "Matrix.h"
 #include "LDPC_1.h" // these two heades both contain parts of LDPC class
 #include "LDPC_2.h"
 #include <fftw3.h> // This is a try to fix fft problem.
@@ -56,7 +59,7 @@ void message::DFT2()          // A real-valued DFT - also IDFT
 		static fftw_complex *out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * q);
 		static fftw_plan p = fftw_plan_dft_1d(q, in, out, FFTW_FORWARD, FFTW_PATIENT);
 
-		// Copy the data to input of FFT
+		// Copy the data to input of FFT TODO: make use of copy or other faster method
 		for(int i=0;i<q;i++)
 		{
 			in[i][0] = Aux[i];

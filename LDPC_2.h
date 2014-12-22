@@ -6,17 +6,19 @@
 //#include <stdlib.h>
 //#include <iostream>
 //#include <fstream>
-//#include <algorithm>
 //#include <ctype.h>
 //#include <fftw3.h>
 //#include <memory.h>
 
 //#include "Channel.h"
 //#include "Functions.h"
-#include "Utils_2.h" // GFq
+#include "GFq.h"
+#include "Matrix.h" // matrix, column vector
+#include "Utils_2.h" // vector, array
+
 #include "Encoding.h" // Node lists
 #include <string.h>  // bzero
-
+//#include <algorithm>  // std::copy needs this but it works without it. It must have been included in other heades
 
 typedef unsigned char BOOLEAN;
 typedef unsigned char BYTE;
@@ -34,7 +36,9 @@ typedef unsigned char BYTE;
 
 class LDPC_Code;
 class mapping;
-
+class vector;
+class matrix;
+class GFq;
 // Channel types
 
 /// Channel Class

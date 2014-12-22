@@ -110,3 +110,105 @@ double LDPC_Code::Calc_Symbol_Rate() {
 
 	return 1 - SigmaRho / SigmaLambda;
 }
+
+/************************************************************************
+ *
+ * LDPC code
+ *
+ ************************************************************************/
+
+/**
+ * Initialize Variable nodes with channel output
+ */
+void LDPC_Code::Init_Messages(vector &ChannelOutput) {
+	if (ChannelOutput.GetSize() != Variables.GetLength()) {
+		cout << "LDPC_Code::Init_Messages: Incompatible sizes\n";
+		exit(1);
+	}
+
+	for (int i = 0; i < Variables.GetLength(); i++)
+		Variables[i].Initialize(*Channel, ChannelOutput[i]);
+}
+
+void LDPC_Code::GetZeroCodeword(vector &Codeword) {
+	Codeword.Allocate(Variables.GetLength());
+
+	for (int i = 0; i < Variables.GetLength(); i++)
+		Codeword[i] = Variables[i].GetZeroSignal();
+}
+
+void LDPC_Code::GetCodeword(vector &Codeword) {
+	Codeword.Allocate(Variables.GetLength());
+
+	for (int i = 0; i < Variables.GetLength(); i++)
+		Codeword[i] = Variables[i].GetSignal();
+}
+
+
+void LDPC_Code::Leftbound_Iteration() {
+	for (int i = 0; i < Checks.GetLength(); i++)
+		Checks[i].CalcAllLeftboundMessages();
+}
+
+void LDPC_Code::Rightbound_Iteration() {
+	for (int i = 0; i < Variables.GetLength(); i++)
+		Variables[i].CalcAllRightboundMessages();
+}
+
+void LDPC_Code::FinalIteration() {
+	for (int i = 0; i < Variables.GetLength(); i++)
+		Variables[i].CalcFinalMessage();
+}
+
+double LDPC_Code::Calc_Symbol_Error_Rate() {
+	double acc_correct = 0;
+
+	for (int i = 0; i < Variables.GetLength(); i++)
+//		acc_correct += Variables[i].FinalEstimate.Decision().IsZero();
+		acc_correct += Variables[i].DecSymbol == Variables[i].Symbol;
+	return 1.0 - acc_correct / (double) Variables.GetLength();
+}
+
+double LDPC_Code::Calc_Rightbound_Symbol_Error_Rate() {
+	double acc_correct = 0;
+
+	for (int i = 0; i < Graph.E; i++)
+		acc_correct += Graph.edges[i].RightBoundMessage.Decision().IsZero();
+
+	return 1.0 - acc_correct / Graph.E;
+}
+
+double LDPC_Code::Belief_Propagation_Decoder(int Count_Iterations) {
+	static char buffer[500];
+	double Func_RC = 0; //=0 is for initialization of the variable so the compiler won't give warnings
+	double LastMin = INF;
+	int CountIncreaseIterations = 0;
+
+	cout << "Initial symbol error rate = " << Calc_Symbol_Error_Rate() << "\n";
+
+	for (int i = 0; i < Count_Iterations; i++) {
+
+		Leftbound_Iteration();
+		Rightbound_Iteration();
+
+//		Func_RC = Calc_Rightbound_Symbol_Error_Rate();
+		Func_RC = Calc_Symbol_Error_Rate();
+		sprintf(buffer, "%d: Rightbound SER = %1.10f, %s", i + 1, Func_RC,CharTime());
+		cout << buffer;
+
+		// Stop when Func_RC doesn't fall for some consecutive iterations
+		if (Func_RC < LastMin) {
+			LastMin = Func_RC;
+			CountIncreaseIterations = 0;
+		} else {
+			CountIncreaseIterations++;
+			if (CountIncreaseIterations > 50)
+				break;
+		}
+
+		if (Func_RC < 1e-7)
+			break;
+	}
+
+	return Func_RC;
+}

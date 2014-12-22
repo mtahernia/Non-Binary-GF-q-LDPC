@@ -1,15 +1,15 @@
-//#include <stdio.h>
-//#include <math.h>
-//#include <stdlib.h>
-//#include <iostream>
-//#include <fstream>
-//#include <ctype.h>
-//#include <wchar.h>
-#include "Functions.h"
-#include "Utils_2.h" //includes functions.h
-#include "LDPC_2.h" // Class check node
-#include "GFq.h"
+/*
+ * Matrix.cpp
+ *
+ *  Created on: 22 Dec, 2014
+ *      Author: Mehrdad Tahernia
+ *		  User: mehrdad
+ */
 
+#include "Functions.h"
+#include "GFq.h"
+#include "LDPC_2.h" // Class check node
+#include "Matrix.h"
 /************************************************************************************
  *
  * GF(q) Matrix
@@ -102,3 +102,7 @@ void matrix::Set(int row, check_node &Check) {
 		Element(row, VarID) = label;
 	}
 }
+
+
+
+

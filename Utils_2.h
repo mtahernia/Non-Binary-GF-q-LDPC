@@ -1,8 +1,8 @@
 #ifndef UTILS_2
 #define UTILS_2
 
-//#include <math.h>
-#include "Functions.h"
+// works even without this
+#include "Functions.h" //uniform_random
 
 /************************************************************************
  *
@@ -26,9 +26,7 @@ public:
 
 public:
 	// GFq constructor with value g
-	GFq(GFq &g) :
-			val(g.val) {
-	}
+	GFq(GFq &g) : val(g.val) {	}
 
 	BOOLEAN IsZero() {
 		return val == 0;
@@ -100,8 +98,7 @@ public:
 		else {
 			if (IsModuloOperations) {
 				if (!IsPrimeQ) {
-					cout
-							<< "GFq::operator*=: Invalid multiplication (q is not prime)\n";
+					cout << "GFq::operator*=: Invalid multiplication (q is not prime)\n";
 					exit(1);
 				}
 

@@ -1,15 +1,15 @@
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
-#include <iostream>
-#include <fstream>
-#include <ctype.h>
+//#include <stdio.h>
+//#include <math.h>
+//#include <stdlib.h>
+//#include <iostream>
+//#include <fstream>
+//#include <ctype.h>
+//#include <memory.h> // bcopy memcopy memmove
+
 #include "Functions.h"
-#include "LDPC_1.h"
+#include "LDPC_1.h" // these two heades both contain parts of LDPC class
 #include "LDPC_2.h"
-// This is a try to fix fft problem.
-#include <fftw3.h>
-#include <memory.h>
+#include <fftw3.h> // This is a try to fix fft problem.
 //#include "Channel.h"
 /*********************************************************************************
  *

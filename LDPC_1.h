@@ -1,14 +1,14 @@
 #ifndef LDPC_1
 #define LDPC_1
 
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
-#include <iostream>
-#include <fstream>
-#include <ctype.h>
-#include <wchar.h>
-#include "Functions.h" // Apparently not used
+//#include <stdio.h>
+//#include <math.h>
+//#include <stdlib.h>
+//#include <iostream>
+//#include <fstream>
+//#include <ctype.h>
+//#include <wchar.h>
+//#include "Functions.h" // Apparently not used or called within LDPC_2.h
 #include "LDPC_2.h"
 
 #define MAX_LAMBDAS 1000//!< Maximum number of Lambdas

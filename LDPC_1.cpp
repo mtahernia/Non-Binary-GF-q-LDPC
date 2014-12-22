@@ -1,13 +1,13 @@
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
-#include <iostream>
-#include <fstream>
+//#include <stdio.h>
+//#include <math.h>
+//#include <stdlib.h>
+//#include <iostream>
+//#include <fstream>
 #include "LDPC_1.h"
-#include "LDPC_2.h"
-#include "Functions.h"
-#include <ctype.h>
-#include <wchar.h>
+//#include "LDPC_2.h"
+//#include "Functions.h"
+//#include <ctype.h>
+//#include <wchar.h>
 
 /**************************************************************
  *

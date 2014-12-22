@@ -4,9 +4,10 @@
  *  Created on: 18 Dec, 2014
  *      Author: Mehrdad Tahernia
  */
-#include "Report.h"
-#include "Functions.h"
-#include <stdlib.h>
+
+#include "Report.h"		//reportbuf
+#include "Functions.h" //isdoubledigit
+#include <string.h>   //strcmp
 ////////////////////////////////////////////////////////////////////////////
 // Cout
 ////////////////////////////////////////////////////////////////////////////

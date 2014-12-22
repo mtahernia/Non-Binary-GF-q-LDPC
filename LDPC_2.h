@@ -1,19 +1,22 @@
 #ifndef LDPC_2
 #define LDPC_2
 
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
-#include <iostream>
-#include <fstream>
-#include <algorithm>
-#include <ctype.h>
-#include "Functions.h"
-#include "Utils_2.h"
-#include "Encoding.h"
-#include <fftw3.h>
-#include <memory.h>
+//#include <stdio.h>
+//#include <math.h>
+//#include <stdlib.h>
+//#include <iostream>
+//#include <fstream>
+//#include <algorithm>
+//#include <ctype.h>
+//#include <fftw3.h>
+//#include <memory.h>
+
 //#include "Channel.h"
+//#include "Functions.h"
+#include "Utils_2.h" // GFq
+#include "Encoding.h" // Node lists
+#include <string.h>  // bzero
+
 
 typedef unsigned char BOOLEAN;
 typedef unsigned char BYTE;

@@ -8,10 +8,8 @@
 #ifndef REPORT_H_
 #define REPORT_H_
 
-#include <math.h>
-#include <iostream>
 #include <fstream>
-#include <string.h>
+
 
 /************************************************************************
  * Cout

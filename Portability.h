@@ -6,8 +6,8 @@
 #include <time.h>
 #include <float.h>
 #else
-#include <strings.h>
-#include <unistd.h>
+//#include <strings.h>
+//#include <unistd.h>
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
@@ -42,7 +42,7 @@ inline void bzero(void *x, int len)
 	char *str_x = (char *)x;
 
 	for (int i=0; i<len; i++)
-	*str_x++ = 0;
+		*str_x++ = 0;
 }
 
 inline void bcopy(void *from, void *to, int len)
@@ -55,12 +55,12 @@ inline void bcopy(void *from, void *to, int len)
 		str_to += len-1;
 		str_from += len-1;
 		for (int i = 0; i < len; i++)
-		*str_to-- = *str_from--;
+			*str_to-- = *str_from--;
 	}
 	else
 	{
 		for (int i = 0; i < len; i++)
-		*str_to++ = *str_from++;
+			*str_to++ = *str_from++;
 	}
 }
 
@@ -68,13 +68,13 @@ inline BOOLEAN isfinite(double &d)
 {
 	switch(_fpclass(d))
 	{
-		case _FPCLASS_SNAN:
-		case _FPCLASS_QNAN:
-		case _FPCLASS_NINF:
-		case _FPCLASS_PINF:
+	case _FPCLASS_SNAN:
+	case _FPCLASS_QNAN:
+	case _FPCLASS_NINF:
+	case _FPCLASS_PINF:
 		return FALSE;
 		break;
-		default:
+	default:
 		return TRUE;
 	}
 }
@@ -83,23 +83,23 @@ inline double clip(double &d, double MAXVAL = INF)
 {
 	switch(_fpclass(d))
 	{
-		case _FPCLASS_SNAN:
-		case _FPCLASS_QNAN:
+	case _FPCLASS_SNAN:
+	case _FPCLASS_QNAN:
 		d = 0;  // not a number 
 		break;
-		case _FPCLASS_NINF:
+	case _FPCLASS_NINF:
 		d = -MAXVAL;
 		break;
-		case _FPCLASS_PINF:
+	case _FPCLASS_PINF:
 		d = MAXVAL;
 		break;
-		default:
+	default:
 		if (d > MAXVAL)
-		d = MAXVAL;
+			d = MAXVAL;
 		else if (d < -MAXVAL)
-		d = -MAXVAL;
-//            else if (fabs(d) < EPSILON)
-//               d = 0;
+			d = -MAXVAL;
+		//            else if (fabs(d) < EPSILON)
+		//               d = 0;
 		break;
 	}
 	return d;
@@ -177,7 +177,6 @@ inline double Q(double x) {
  *  Linux
  *
  ************************************************************************/
-
 #ifdef LINUX_C
 
 // This function is already defined in my math.h file FIXME: I may need to comment it and adapt the original function
@@ -186,16 +185,16 @@ inline double Q(double x) {
 inline BOOLEAN isfinite(double d)
 {
 	if (isnan(d))
-	return FALSE;
+		return FALSE;
 	else
 	{
 		switch(isinf(d))
 		{
-			case -1:
-			case 1:
+		case -1:
+		case 1:
 			return FALSE;
 			break;
-			default:
+		default:
 			return TRUE;
 			break;
 		}
@@ -205,22 +204,22 @@ inline BOOLEAN isfinite(double d)
 inline double clip(double &d, double MAXVAL = INF)
 {
 	if (isnan(d))
-	d = 0;
+		d = 0;
 	else
 	{
 		switch(isinf(d))
 		{
-			case -1:
+		case -1:
 			d = -MAXVAL;
 			break;
-			case 1:
+		case 1:
 			d = MAXVAL;
 			break;
-			default:
+		default:
 			if (d > MAXVAL)
-			d = MAXVAL;
+				d = MAXVAL;
 			else if (d < -MAXVAL)
-			d = -MAXVAL;
+				d = -MAXVAL;
 			break;
 		}
 	}

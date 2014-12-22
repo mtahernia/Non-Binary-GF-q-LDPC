@@ -131,7 +131,17 @@ inline BOOLEAN is_double_digit(int c) {
 	return (isdigit(c) || (c == '.') || (c == '-') || (c == '+') || (c == 'e'));
 }
 //=========================================================================================
+inline BOOLEAN IsPrime(int num) {
+	BOOLEAN Reply = TRUE;
 
-
+	for (int i = 2; i < num; i++) {
+		if ((num % i) == 0) {
+			Reply = FALSE;
+			break;
+		}
+	}
+	return Reply;
+}
+//=========================================================================================
 
 #endif /* FUNCTIONS_H_ */

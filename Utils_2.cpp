@@ -6,8 +6,8 @@
 //#include <ctype.h>
 //#include <wchar.h>
 #include "Functions.h"
-#include "Utils_2.h"
-#include "LDPC_2.h"
+#include "Utils_2.h" //includes functions.h
+#include "LDPC_2.h" // Class check node
 
 /************************************************************************
  *
@@ -24,20 +24,7 @@ BOOLEAN GFq::IsPrimeQ = FALSE;
 BOOLEAN GFq::IsModuloOperations = FALSE;
 
 
-BOOLEAN IsPrime(int num) {
-	BOOLEAN Reply = TRUE;
-
-	for (int i = 2; i < num; i++) {
-		if ((num % i) == 0) {
-			Reply = FALSE;
-			break;
-		}
-	}
-
-	return Reply;
-}
-
-// Kind of declaration that these exist
+// Forward declerations
 int GFq::log_2_q;
 int GFq::mask;
 

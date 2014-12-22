@@ -7,17 +7,14 @@
 
 #ifndef CHANNEL_H_
 #define CHANNEL_H_
+
 #include "GFq.h"
 #include "Matrix.h" // matrix, column vector
 #include "Utils_2.h" // vector, array
 
 class LDPC_Code; //defined in LDPC.h, but header is not needed so we use forward declerations
 class mapping; // defined down in this file
-/****************************************************************************
- *
- * Channel
- *
- ****************************************************************************/
+
 /// Channel Class
 /**
  * General Channel Class
@@ -49,7 +46,5 @@ public:
 	virtual ~channel(void) {cout << "channel destructor called\n"; }
 	// Virtual destructor
 };
-
-
 
 #endif /* CHANNEL_H_ */

@@ -15,21 +15,7 @@
 #include "LDPC.h" // these two heades both contain parts of LDPC class
 #include "LDPC_2.h"
 #include "Channel.h"
-
-void mapping::GetFromFile(std::ifstream &file)
-// Read the mapping from the current position in the file
-{
-	file >> q;
-
-	if (q > MAX_Q) {
-		cout << "q exceeds MAX_Q in mapping:GetFromFile\n";
-		exit(1);
-	}
-
-	for (int i = 0; i < q; i++) {
-		file >> vals[i];
-	}
-}
+#include "Mapping.h"
 
 /*********************************************************************************
  *
@@ -48,16 +34,12 @@ void message::DFT()          // A real-valued DFT - also IDFT
 		for (int i = 0; i < GFq::log_2_q; i++) {
 			Aux = *this;			// Initialize
 			mask.val = 1 << i;  //Shift left i times to get powers of 2
-
 			//			cout << "mask.val("<<i<<")="<<mask.val<<std::endl; // Just for debugging
-
 			for (GFq j(0); j.val < q; j.val++) {
 				j_bit = (j.val & mask.val) >> i;// obtain value of j which is i th bit of j
 				n0_index.val = j.val & (~mask.val);	// turn bit off
 				n1_index.val = j.val | mask.val;    // turn bit on
-
 				//				cout << (int)j_bit;
-
 				if (j_bit == 0)
 					Probs[j.val] = Aux[n0_index] + Aux[n1_index];
 				else
@@ -69,7 +51,6 @@ void message::DFT()          // A real-valued DFT - also IDFT
 	else if (GFq::IsPrimeQ) // FIXME: There is lots of memory copying and redundant fft generation(plan generation fixed by defining static plan).
 	{
 		Aux = *this;
-
 
 		// Create fft variables and a plan
 		static fftw_complex *in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * q);

@@ -6,6 +6,7 @@
  */
 #include "Message.h"
 #include "LDPC_2.h"
+//#include "Edge.h"
 #include "Variable_Node.h"
 
 

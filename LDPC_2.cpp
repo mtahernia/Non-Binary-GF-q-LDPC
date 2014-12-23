@@ -18,7 +18,7 @@ class mapping;  //#include "Mapping.h"
 #include "Node.h"
 #include "Variable_Node.h"
 #include "Check_Node.h"
-
+#include "Edge.h"
 
 
 /**********************************************************************************

@@ -7,8 +7,8 @@
 
 #ifndef MESSAGE_H_
 #define MESSAGE_H_
-#include "GFq.h"
 #include <cstring>  // bzero
+#include "GFq.h"
 
 /***************************************************************************
  *
@@ -25,218 +25,40 @@ public:
 	message(int p_q = -1) :	q(p_q) {}
 	message(message &M)   :	q(M.q) {*this = M;}
 
-	double ABS(int i){
-		return sqrt(Probs[i]*Probs[i]+ProbsI[i]*ProbsI[i]);
-	}
-
-	void HardMessage(GFq &g) {*this = 0; (*this)[g] = 1;	}
-
+	double ABS(int i);
+	void HardMessage(GFq &g);
 	void Set_q(int p_q) {q = p_q;}
-
 	void DFT();
 	void IDFT();
-
 	// If all q components of this message is smaller than message 2 returns true
-
-	BOOLEAN operator<(message &m2) {
-		message &m1 = *this;
-
-		for (int i = 0; i <= m1.q; i++)
-			if (m1[i] >= m2[i])
-				return FALSE;
-
-		return TRUE;
-	}
-
-
+	BOOLEAN operator<(message &m2);
 	// Returns the maximum component of the message
-	double Maximum() {
-		double maximum = -INF;
-		for (int i = 0; i < q; i++)
-			if (Probs[i] > maximum)
-				maximum = Probs[i];
-
-		return maximum;
-	}
-
+	double Maximum();
 	// Operator overloading for getting message values
-	double &operator[](int i) {
-		return Probs[i];
-	}
-	double &operator[](GFq i) {
-		return Probs[i.val];
-	}
+	double &operator[](int i) {	return Probs[i];}
+	double &operator[](GFq i) {	return Probs[i.val];}
 
-	message &operator=(message &M) {
-		if (q != M.q)
-			Set_q(M.q);
-//======================================================================
-// memcpy and bcopy cause some overflow apparently. and copying this way is very slow
-//		for (int i = 0; i < q; i++)
-//		{
-//			Probs[i] = M.Probs[i];
-//			ProbsI[i] = M.ProbsI[i];
-//		}
-//======================================================================
-//		bcopy(/* from */M.Probs, /* to */Probs, sizeof(double) * q); // This transition might make some problem if the source and destination are overlapping
-//		bcopy(/* from */M.ProbsI, /* to */ProbsI, sizeof(double) * q);
-//======================================================================
-//		memcpy(/* to */Probs,/* from */M.Probs, sizeof(double) * q);
-//		memcpy(/* to */ProbsI,/* from */M.ProbsI, sizeof(double) * q);
-//======================================================================
-//		memmove(/* to */Probs,/* from */M.Probs, sizeof(double) * q);
-//		memmove(/* to */ProbsI,/* from */M.ProbsI, sizeof(double) * q);
-//======================================================================
-// This finally works like a charm!
-
-		std::copy(M.Probs, M.Probs+q, Probs);
-		std::copy(M.ProbsI, M.ProbsI+q, ProbsI);
-
-		return *this;
-	}
-
-	message &operator=(double d) {
-		for (int i = 0; i < q; i++){
-			Probs[i] = d;
-			ProbsI[i] = 0;
-		}
-		return *this;
-	}
-
-	message &operator*=(message &M) {
-		double x,y;
-		for (int i = 0; i < q; i++){
-
-			x = Probs[i] * M.Probs[i] - ProbsI[i] * M.ProbsI[i];
-			y = Probs[i] * M.ProbsI[i]+ ProbsI[i] * M.Probs[i];
-			Probs[i] = x;
-			ProbsI[i] = y;
-		}
-		return *this;
-	}
-
-	message &operator*(message &M2) {
-		static message Aux(q);
-		message &M1 = *this;
-
-		for (int i = 0; i < q; i++){
-			Aux.Probs[i] = M1.Probs[i] * M2.Probs[i]-M1.ProbsI[i] * M2.ProbsI[i];
-			Aux.ProbsI[i] = M1.Probs[i] * M2.ProbsI[i]+M1.ProbsI[i] * M2.Probs[i];
-		}
-		return Aux;
-	}
-
-	message &operator*(double d) {
-		static message Aux(q);
-
-		for (int i = 0; i < q; i++){
-			Aux[i] = Probs[i] * d;
-			Aux.ProbsI[i] = ProbsI[i] * d;
-		}
-		return Aux;
-	}
-
+	message &operator=(message &M);
+	message &operator=(double d);
+	message &operator*=(message &M);
+	message &operator*(message &M2);
+	message &operator*(double d);
 
 	// TODO: Not compatible with complex
-	BOOLEAN operator==(message &m) {
-		if (q != m.q)
-			return FALSE;
-
-		for (int i = 0; i < q; i++)
-			//         if (Probs[i] != m[i])
-			if (fabs(Probs[i] - m[i]) > EPSILON)
-				return FALSE;
-
-		return TRUE;
-	}
-
+	BOOLEAN operator==(message &m);
 	// TODO: Not compatible with complex
 	// FIXME: this might make a problem because of decimation error
-	BOOLEAN operator==(double d) {
-		for (int i = 0; i < q; i++)
-			//if (fabs(Probs[i] - d) > EPSILON)
-			if (Probs[i] != d)
-				return FALSE;
-
-		return TRUE;
-	}
-
-	message &operator+=(message &M) {
-		for (int i = 0; i < q; i++){
-			Probs[i] += M.Probs[i];
-			ProbsI[i] += M.ProbsI[i];
-		}
-		return *this;
-	}
-
-	message &operator+(message &M) {
-		static message Aux(q);
-
-		for (int i = 0; i < q; i++){
-			Aux[i] = Probs[i] + M.Probs[i];
-			Aux.ProbsI[i] = ProbsI[i] + M.ProbsI[i]; //FIXME
-		}
-		return Aux;
-	}
-
-	message &operator/=(double d) {
-		for (int i = 0; i < q; i++){
-			Probs[i] /= d;
-			ProbsI[i] /= d;
-		}
-
-		return *this;
-	}
-
-	double sum() {
-		double aux = 0;
-		for (int i = 0; i < q; i++){
-			aux += sqrt(Probs[i]*Probs[i]+ProbsI[i]*ProbsI[i]);
-		}
-
-		return aux;
-	}
-
-	void Normalize() {
-		double aux = sum();
-
-		if (aux > 0) {
-			for (int i = 0; i < q; i++){
-				Probs[i] = sqrt(Probs[i]*Probs[i]+ProbsI[i]*ProbsI[i])/aux;
-				ProbsI[i] = 0;
-			}
-		}
-		else {	// If the message does not sum to something positive, give uniform values to each component TODO: Check why?
-			for (int i = 0; i < q; i++){
-				Probs[i] = 1. / (double) q;
-				ProbsI[i] = 0;
-			}
-		}
-	}
-
-	void Clear() {
-		bzero(Probs, sizeof(double) * q);
-		bzero(ProbsI, sizeof(double) * q);
-	}
+	BOOLEAN operator==(double d);
+	message &operator+=(message &M);
+	message &operator+(message &M);
+	message &operator/=(double d);
+	double sum();
+	void Normalize();
+	void Clear();
 
 	// Normal convolution! TODO: this can be implemented using FFTW
 	// This convolves this message whith M2 and stores the result in this! this is a somehow circular convolution
-	message &Convolve(message &M2) {
-		message M1(*this);   // Auxiliary
-		GFq t;
-		// Clear this
-		Clear();
-
-		for (GFq i(0); i.val < q; i.val++)
-			for (GFq j(0); j.val < q; j.val++){
-				t = i - j;
-				Probs[i.val] += M1.Probs[j.val] * M2.Probs[t.val] - M1.ProbsI[j.val] * M2.ProbsI[t.val];
-				ProbsI[i.val] += M1.Probs[j.val] * M2.ProbsI[t.val] + M1.ProbsI[j.val] * M2.Probs[t.val];
-			}
-//				Probs[i.val] += M1[j] * M2[i - j];
-
-		return *this;
-	}
+	message &Convolve(message &M2);
 
 	//These two are not defined and not used TODO: Define and use them for fast implementation
 	message &ApproxConvolve(message &M2);

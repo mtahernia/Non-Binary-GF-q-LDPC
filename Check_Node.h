@@ -8,6 +8,7 @@
 #ifndef CHECK_NODE_H_
 #define CHECK_NODE_H_
 #include "Node.h"
+#include "Message.h"
 #include "Mapping.h"
 class channel;
 

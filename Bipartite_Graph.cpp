@@ -1,25 +1,10 @@
-//#include <stdio.h>
-//#include <math.h>
-//#include <stdlib.h>
-//#include <iostream>
-//#include <fstream>
-//#include <ctype.h>
-//#include <memory.h> // bcopy memcopy memmove
-
-
-
-//#include "Functions.h"
-#include "GFq.h"
-#include "Matrix.h"
-#include "Utils_2.h" // vector, array
-//#include "LDPC.h" // these two heades both contain parts of LDPC class
-#include "LDPC_2.h"
-class mapping;  //#include "Mapping.h"
-#include "Node.h"
-#include "Variable_Node.h"
-#include "Check_Node.h"
-#include "Edge.h"
-
+/*
+ * Bipartite_Graph.cpp
+ *
+ *  Created on: 23 Dec, 2014
+ *      Author: mehrdad
+ */
+#include "Bipartite_Graph.h"
 
 /**********************************************************************************
  *
@@ -185,5 +170,6 @@ void bipartite_graph::Reset(int p_N,   // number of variable nodes
 	delete [] left_sockets;
 	delete [] right_sockets;
 }
+
 
 

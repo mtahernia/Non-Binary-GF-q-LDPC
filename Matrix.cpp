@@ -9,7 +9,8 @@
 //#include "Functions.h"
 #include "GFq.h"
 #include "Matrix.h"
-#include "LDPC_2.h" // Class check node
+#include "Check_Node.h"
+#include "Edge.h"
 /************************************************************************************
  *
  * GF(q) Matrix

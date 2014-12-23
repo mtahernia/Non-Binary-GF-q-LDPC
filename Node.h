@@ -7,7 +7,9 @@
 #ifndef NODE_H_
 #define NODE_H_
 
+#include <cstdlib>
 #include "Report.h"
+
 class edge;//#include "LDPC_2.h" // temporary declaration, to enable the use of the class in further declaration
 
 class node {

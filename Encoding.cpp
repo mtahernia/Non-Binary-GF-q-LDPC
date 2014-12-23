@@ -7,9 +7,14 @@
  *********************************************************************************/
 
 //#include "LDPC.h"
-#include "LDPC_2.h"
+
 #include "Functions.h"
 #include "GFq.h"
+#include "Node.h"
+#include "Check_Node.h"
+#include "Variable_Node.h"
+#include "Edge.h"
+
 #include "Encoding.h"
 
 /*********************************************************************************

@@ -5,7 +5,7 @@
  *      Author: mehrdad
  */
 
-#include "LDPC_2.h"
+#include "Edge.h"
 #include "Node.h"
 /*************************************************************************
  *

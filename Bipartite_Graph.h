@@ -1,34 +1,16 @@
-#ifndef LDPC_2
-#define LDPC_2
+/*
+ * Bipartite_Graph.h
+ *
+ *  Created on: 23 Dec, 2014
+ *      Author: mehrdad
+ */
 
-//#include <cstring>  // bzero
-//#include <algorithm>  // std::copy needs this but it works without it. It must have been included in other heades
-
-//#include "GFq.h"
-//#include "Matrix.h" // matrix, column vector
-//#include "Utils_2.h" // vector, array
-#include "Channel.h"
-#include "Encoding.h" // Node lists
-#include "Mapping.h"
-#include "Message.h"
-#include "Node.h"
+#ifndef BIPARTITE_GRAPH_H_
+#define BIPARTITE_GRAPH_H_
+#include "Report.h"
 #include "Variable_Node.h"
 #include "Check_Node.h"
 #include "Edge.h"
-//#include "TopList.h" // Not Used
-
-
-/*****************************************************************************
- *
- * Graphs
- *
- *****************************************************************************/
-
-
-
-//class complex_vector;  // FIXME: Where is the definition?
-
-
 
 
 
@@ -104,7 +86,4 @@ public:
 
 	}
 };
-
-
-
-#endif
+#endif /* BIPARTITE_GRAPH_H_ */

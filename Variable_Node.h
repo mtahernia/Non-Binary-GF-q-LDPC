@@ -10,6 +10,7 @@
 #include "Node.h"
 #include "Mapping.h"
 class channel;
+#include "Message.h"
 
 message &GenerateChannelMessage(GFq v, channel &TransmitChannel, mapping &MapInUse, double ChannelOut);
 

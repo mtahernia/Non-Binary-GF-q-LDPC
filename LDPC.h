@@ -17,12 +17,12 @@
 //#include "Utils_2.h" // vector, array
 #include "Channel.h"
 #include "Encoding.h" // Node lists
-#include "Mapping.h"
-#include "Message.h"
-#include "Node.h"
-#include "Variable_Node.h"
-#include "Check_Node.h"
-#include "Edge.h"
+//#include "Mapping.h"
+//#include "Message.h"
+//#include "Node.h"
+//#include "Variable_Node.h"
+//#include "Check_Node.h"
+//#include "Edge.h"
 #include "Bipartite_Graph.h"
 //#include "TopList.h" // Not Used
 

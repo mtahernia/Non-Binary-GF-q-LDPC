@@ -1,8 +1,8 @@
 # -Wextra 
 LIBS = -lm -lfftw3 -static -static-libgcc -static-libstdc++
 CCC = g++ -O3 -Wall -DLINUX_C
-OBJ_FILES = GFq.o Matrix.o Report.o LDPC.o LDPC_2.o Channel.o Mapping.o Encoding.o BSC_Channel.o AWGN_Channel.o PNC_Channel.o Message.o Node.o Main.o
-H_FILES = Functions.h Utils_2.h LDPC.h LDPC_2.h Encoding.h Portability.h Report.h Definitions.h GFq.h Matrix.h Channel.h BSC_Channel.h AWGN_Channel.h PNC_Channel.h Mapping.h Message.h Node.h 
+OBJ_FILES = GFq.o Matrix.o Report.o LDPC.o LDPC_2.o Channel.o Mapping.o Encoding.o BSC_Channel.o AWGN_Channel.o PNC_Channel.o Message.o Node.o Variable_Node.o Main.o
+H_FILES = Functions.h Utils_2.h LDPC.h LDPC_2.h Encoding.h Portability.h Report.h Definitions.h GFq.h Matrix.h Channel.h BSC_Channel.h AWGN_Channel.h PNC_Channel.h Mapping.h Message.h Node.h Variable_Node.h 
 
 all: q_LDPC
 
@@ -30,6 +30,8 @@ Message.o: Message.cpp ${H_FILES}
 	${CCC} -c Message.cpp -o Message.o
 Node.o: Node.cpp ${H_FILES}
 	${CCC} -c Node.cpp -o Node.o
+Variable_Node.o: Variable_Node.cpp ${H_FILES}
+	${CCC} -c Variable_Node.cpp -o Variable_Node.o
 Encoding.o: Encoding.cpp ${H_FILES}
 	${CCC} -c Encoding.cpp -o Encoding.o
 Main.o: Main.cpp ${H_FILES}

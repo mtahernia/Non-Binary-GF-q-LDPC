@@ -9,21 +9,19 @@
 #ifndef LDPC_H_
 #define LDPC_H_
 
+
+#include "Definitions.h"
+#include "Matrix.h" // matrix, column vector
+#include "Mapping.h"
+#include "Bipartite_Graph.h"
+#include "Encoding.h" // Node lists
+
+class vector;	//#include "Utils_2.h" // vector, array
+class channel;	//#include "Channel.h"
+
+
 //#include <cstring>  // bzero
 //#include <algorithm>  // std::copy needs this but it works without it. It must have been included in other heades
-
-//#include "GFq.h"
-//#include "Matrix.h" // matrix, column vector
-//#include "Utils_2.h" // vector, array
-#include "Channel.h"
-#include "Encoding.h" // Node lists
-//#include "Mapping.h"
-//#include "Message.h"
-//#include "Node.h"
-//#include "Variable_Node.h"
-//#include "Check_Node.h"
-//#include "Edge.h"
-#include "Bipartite_Graph.h"
 //#include "TopList.h" // Not Used
 
 
@@ -57,87 +55,50 @@ public:
 	matrix MinusPhiInverse; 				//!< FIXME: I don't know where are these used, in the encoding process
 
 public:
-
-	// General functions ----------------------------------------------------
-
 	/// Constructor declaration for LDPC_Code class with 3,2 or 1 input(s). The default extra values should be specified in function call or in input file
 	LDPC_Code(std::ifstream &File, int p_BlockLength = -1, channel *p_Channel =	NULL);
-
 	/// Initialization of the constructor is called without any arguments
 	LDPC_Code() : /* After colon, there is initialization of constant variables!
 	 you can not initialize constant int,... inside the constructor function */
-			BlockLength(-1), Channel(NULL) {
-	}
+			BlockLength(-1), Channel(NULL) {}
+	~LDPC_Code(){cout <<"LDPC_Code Destructor called \n";}
 
 	/// Operator overloading function declaration for = . The argument is rhs of the assignment operator
-	LDPC_Code &operator=(LDPC_Code &Code); // FIXME: This function should have explicit definition somewhere
-
+//	LDPC_Code &operator=(LDPC_Code &Code); // FIXME: This function should have explicit definition somewhere
 	/// Reads the parameters of LDPC code from the input file
 	void GetFromFile(std::ifstream &file);
-
 	/// Sets the channel used for the simulation
-	void SetChannel(channel &p_Channel) {
-		Channel = &p_Channel;
-	}
-
+	void SetChannel(channel &p_Channel) {Channel = &p_Channel;}
 	double sigma_lambda();			//!< \f$ \sum_{i=1}^{c}\frac{\lambda_i}{i} \f$
 	double sigma_rho();				//!< \f$ \sum_{j=1}^{c}\frac{\rho_j}{j} \f$
 
-	//double Calc_Energy();				//!< FIXME: This is not used so I commented it
+//	double Calc_Energy();				//!< FIXME: This is not used so I commented it
 
 	/// Calculates \f$ \sum_{i=1}^{c} \lambda_i \f$
 	/**
 	 * This will be needed to calculate the lower bound on code rate
 	 */
-	double SumLambda() {
-		double sum = 0;
-		for (int i = 0; lambda_degs[i] != -1; i++)
-			sum += lambda_wts[i];
-		return sum;
-	}
-
+	double SumLambda();
 	/**
 	 * Calculates \f$ \sum_{j=1}^{d} \rho_j \f$
 	 */
-	double SumRho() {
-		double sum = 0;
-		for (int i = 0; rho_degs[i] != -1; i++)
-			sum += rho_wts[i];
-		return sum;
-	}
-
+	double SumRho();
 	/**
 	 * \f$ Rate = 1- \frac{M}{N}=1 - \frac{ \sum_{j=1}^{d} \rho_j/j }{ \sum_{i=1}^{c} \lambda_i/i } \f$
 	 */
 	double Calc_Symbol_Rate();		//!< Calculate the Symbol rate
-
 	/**
 	 * Calculates bit-rate from symbol-rate
 	 */
-	double Calc_Bit_Rate() {
-		return Calc_Symbol_Rate() * log((double) GFq::q) / log(2.);
-	}
-
+	double Calc_Bit_Rate();
 	/**
 	 * Normalize \f$ \lambda \f$ to make it a probability distribution
 	 */
-	void MakeLambdasValid()   /// Make lambdas sum = 1
-	{
-		double sum = SumLambda();
-		for (int i = 0; lambda_degs[i] != -1; i++)
-			lambda_wts[i] /= sum;
-	}
-
+	void MakeLambdasValid();   /// Make lambdas sum = 1
 	/**
 	 * Normalize \f$ \rho \f$ to make it a probability distribution
 	 */
-	void MakeRhosValid()   /// Make rhos sum = 1
-	{
-		double sum = SumRho();
-		for (int i = 0; rho_degs[i] != -1; i++)
-			rho_wts[i] /= sum;
-	}
-
+	void MakeRhosValid();   /// Make rhos sum = 1
 	void GetLambdasWtsFromFile(std::ifstream &file);//!< Reads lambda weights from file
 	void GetRhoWtsFromFile(std::ifstream &file);//!< Reads rho weights from file
 
@@ -145,23 +106,13 @@ public:
 	/**
 	 * c is the number of possible degrees of variable nodes
 	 */
-	int CountLambdaDegs() {
-		int count;
-		for (count = 0; lambda_degs[count] != -1; count++)
-			;
-		return count;
-	}
+	int CountLambdaDegs();
 
 	/// Calculate d
 	/**
 	 * d is the number of possible degrees of check nodes
 	 */
-	int CountRhoDegs() {
-		int count;
-		for (count = 0; rho_degs[count] != -1; count++)
-			;
-		return count;
-	}
+	int CountRhoDegs();
 
 	// Monte Carlo functions -----------------------------------------
 	void Init_Messages(vector &ChannelOutput);
@@ -173,12 +124,7 @@ public:
 	void GetCodeword(vector &Codeword);
 	double Calc_Symbol_Error_Rate();
 	double Calc_Rightbound_Symbol_Error_Rate();
-
-	void ResetGraph() {
-		Graph.Reset(BlockLength, lambda_degs, lambda_wts, rho_degs, rho_wts, MapInUse);
-		Variables.Init(Graph.variable_nodes, Graph.N);
-		Checks.Init(Graph.check_nodes, Graph.M);
-	}
+	void ResetGraph();
 
 	// Encoding ------------------------------------------------------
 	double Calc_Source_Coding_Symbol_Rate(); //!< Calculate source coding symbol rate(FIXME:Not implemented yet)
@@ -187,7 +133,6 @@ public:
 	void Encode();							//!< Encode using Urbanke method
 	void GenerateEncoder();				//!< Generate encoder with gap (FIXME: )
 	void GenerateEncoder_WithoutGap();//!< Generate encoder without gap (FIXME:)
-	~LDPC_Code(){cout <<"LDPC_Code Destructor called\n";}
 
 };
 

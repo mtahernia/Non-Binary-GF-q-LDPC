@@ -6,6 +6,7 @@
 //#include <ctype.h>
 #include "Definitions.h"
 #include "Portability.h" // my_srand
+#include "Utils_2.h"
 #include "LDPC.h"
 #include "BSC_Channel.h"
 #include "AWGN_Channel.h"

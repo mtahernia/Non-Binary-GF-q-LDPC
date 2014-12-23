@@ -4,6 +4,8 @@
  *  Created on: 23 Dec, 2014
  *      Author: mehrdad
  */
+#include <cstdlib>
+#include "Definitions.h"
 #include "LDPC.h" //LDPC Code
 #include "AWGN_Channel.h"
 

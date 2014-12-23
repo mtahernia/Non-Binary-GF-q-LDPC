@@ -4,7 +4,11 @@
  *  Created on: 23 Dec, 2014
  *      Author: mehrdad
  */
+#include <cstdlib>
+#include "Definitions.h"
 #include "LDPC.h" //LDPC Code
+#include "Mapping.h" //Mapping (also was included in LDPC.h)
+#include "GFq.h" // included from LDPC->Matrix->GFq
 #include "BSC_Channel.h"
 
 

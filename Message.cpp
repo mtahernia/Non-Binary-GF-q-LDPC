@@ -71,7 +71,6 @@ void message::DFT()          // A real-valued DFT - also IDFT
 	} // Else if prime Q
 }
 
-
 void message::IDFT()          // A real-valued DFT - also IDFT
 {
 	static message Aux;

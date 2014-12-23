@@ -6,11 +6,12 @@
  *		  User: mehrdad
  */
 
-//#include "Functions.h"
-#include "GFq.h"
-#include "Matrix.h"
+#include "Definitions.h"
+#include "Functions.h"
 #include "Check_Node.h"
+#include "Variable_Node.h"
 #include "Edge.h"
+#include "Matrix.h"
 /************************************************************************************
  *
  * GF(q) Matrix

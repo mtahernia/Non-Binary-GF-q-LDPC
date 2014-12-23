@@ -1,13 +1,8 @@
 #ifndef UTILS_2
 #define UTILS_2
 
-// works even without this because it is called in GFq.h
 #include "Functions.h" //uniform_random
-//#include "GFq.h"
-//#include "Matrix.h"
-
-
-
+#include "Matrix.h"
 /************************************************************************
  *
  * IntArray
@@ -115,7 +110,7 @@ public:
 		return *this;
 	}
 
-	// Operator overload: copy a column vector to this vector
+	// Operator overload: copy a column vector to this vector //TODO: column_vector!!!
 	vector &operator=(column_vector &p_Vector) {
 		Allocate(p_Vector.M);
 		for (int i = 0; i < CountElements; i++)

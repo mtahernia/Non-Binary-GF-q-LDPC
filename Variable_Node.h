@@ -7,10 +7,13 @@
 
 #ifndef VARIABLE_NODE_H_
 #define VARIABLE_NODE_H_
-#include "Node.h"
+
 #include "Mapping.h"
-class channel;
 #include "Message.h"
+#include "Node.h"
+
+class channel;
+
 
 message &GenerateChannelMessage(GFq v, channel &TransmitChannel, mapping &MapInUse, double ChannelOut);
 

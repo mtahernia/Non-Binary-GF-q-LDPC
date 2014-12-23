@@ -6,9 +6,9 @@
  */
 #ifndef EDGE_H_
 #define EDGE_H_
-
-#include "Variable_Node.h"
-#include "Check_Node.h"
+#include "Message.h"
+class variable_node;
+class check_node;
 
 class edge {
 private:

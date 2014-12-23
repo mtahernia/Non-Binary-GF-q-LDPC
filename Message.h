@@ -22,26 +22,16 @@ public:
 	double Probs[MAX_Q];
 	double ProbsI[MAX_Q];
 public:
-	message(int p_q = -1) :
-			q(p_q) {
-	}
-
-	message(message &M) :
-			q(M.q) {
-		*this = M;
-	}
+	message(int p_q = -1) :	q(p_q) {}
+	message(message &M)   :	q(M.q) {*this = M;}
 
 	double ABS(int i){
 		return sqrt(Probs[i]*Probs[i]+ProbsI[i]*ProbsI[i]);
 	}
-	void HardMessage(GFq &g) {
-		*this = 0;
-		(*this)[g] = 1;
-	}
 
-	void Set_q(int p_q) {
-		q = p_q;
-	}
+	void HardMessage(GFq &g) {*this = 0; (*this)[g] = 1;	}
+
+	void Set_q(int p_q) {q = p_q;}
 
 	void DFT();
 	void IDFT();

@@ -7,11 +7,10 @@
 
 #ifndef CHECK_NODE_H_
 #define CHECK_NODE_H_
-#include "Node.h"
-#include "Message.h"
-#include "Mapping.h"
+class GFq;
+class message;//#include "Message.h"
 class channel;
-
+#include "Node.h" //Parent class
 message &CalcLeftboundMessage(message Vectors[], int left_index, int degree);
 // --------- Check Node ----------------------
 class check_node: public node {

@@ -4,10 +4,9 @@
  *  Created on: 23 Dec, 2014
  *      Author: mehrdad
  */
-
 #ifndef AWGN_CHANNEL_H_
 #define AWGN_CHANNEL_H_
-//#include <cstdlib>
+
 #include "Channel.h"
 class LDPC_Code; //defined in LDPC.h, but header is not needed so we use forward declerations
 

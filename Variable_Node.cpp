@@ -7,6 +7,7 @@
 #include "Message.h"
 #include "Channel.h"
 #include "Edge.h"
+#include "Check_Node.h"
 #include "Variable_Node.h"
 
 

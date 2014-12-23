@@ -7,7 +7,13 @@
  */
 #include <cstdlib>
 #include "Report.h"
+#include "Channel.h"
 #include "Encoding.h"
+#include "Utils_2.h" // vector, array
+#include "Variable_Node.h"
+#include "Check_Node.h"
+#include "Edge.h"
+
 #include "LDPC.h"
 
 /**************************************************************
@@ -401,3 +407,55 @@ void LDPC_Code::GenerateEncoder() {
 	}
 }
 
+double LDPC_Code::SumLambda() {
+	double sum = 0;
+	for (int i = 0; lambda_degs[i] != -1; i++)
+		sum += lambda_wts[i];
+	return sum;
+}
+
+double LDPC_Code::SumRho() {
+	double sum = 0;
+	for (int i = 0; rho_degs[i] != -1; i++)
+		sum += rho_wts[i];
+	return sum;
+}
+
+double LDPC_Code::Calc_Bit_Rate() {
+	return Calc_Symbol_Rate() * log((double) GFq::q) / log(2.);
+}
+
+void LDPC_Code::MakeLambdasValid()   /// Make lambdas sum = 1
+{
+	double sum = SumLambda();
+	for (int i = 0; lambda_degs[i] != -1; i++)
+		lambda_wts[i] /= sum;
+}
+
+void LDPC_Code::MakeRhosValid()   /// Make rhos sum = 1
+{
+	double sum = SumRho();
+	for (int i = 0; rho_degs[i] != -1; i++)
+		rho_wts[i] /= sum;
+}
+
+
+int LDPC_Code::CountLambdaDegs() {
+	int count;
+	for (count = 0; lambda_degs[count] != -1; count++)
+		;
+	return count;
+}
+
+int LDPC_Code::CountRhoDegs() {
+	int count;
+	for (count = 0; rho_degs[count] != -1; count++)
+		;
+	return count;
+}
+
+void LDPC_Code::ResetGraph() {
+	Graph.Reset(BlockLength, lambda_degs, lambda_wts, rho_degs, rho_wts, MapInUse);
+	Variables.Init(Graph.variable_nodes, Graph.N);
+	Checks.Init(Graph.check_nodes, Graph.M);
+}

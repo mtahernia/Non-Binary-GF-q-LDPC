@@ -5,9 +5,9 @@
  *      Author: mehrdad
  */
 #include "Message.h"
-//#include "Node.h"
-#include "Check_Node.h"
 #include "Edge.h"
+#include "Variable_Node.h"
+#include "Check_Node.h"
 
 /****************************************************************************
  *

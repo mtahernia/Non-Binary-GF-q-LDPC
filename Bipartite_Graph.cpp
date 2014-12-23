@@ -4,6 +4,9 @@
  *  Created on: 23 Dec, 2014
  *      Author: mehrdad
  */
+#include "Variable_Node.h"
+#include "Check_Node.h"
+#include "Edge.h"
 #include "Bipartite_Graph.h"
 
 /**********************************************************************************

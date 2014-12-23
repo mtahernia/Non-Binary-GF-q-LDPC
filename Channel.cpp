@@ -6,8 +6,8 @@
  *		  User: mehrdad
  */
 //#include "GFq.h"
-//#include "Matrix.h" // matrix, column vector
-//#include "Utils_2.h" // vector, array
+#include "Matrix.h" // matrix, column vector
+#include "Utils_2.h" // vector, array
 
 #include "Channel.h"
 

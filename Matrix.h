@@ -10,7 +10,7 @@
 #define MATRIX_H_
 
 // it will be included in Matrix.cpp
-class GFq;
+#include "GFq.h"
 /************************************************************************
  *
  * GF(q) matrix

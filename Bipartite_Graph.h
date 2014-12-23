@@ -8,11 +8,11 @@
 #ifndef BIPARTITE_GRAPH_H_
 #define BIPARTITE_GRAPH_H_
 //#include "Report.h"
-#include "Variable_Node.h"
-#include "Check_Node.h"
-#include "Edge.h"
 
 
+class variable_node;//#include "Variable_Node.h"
+class check_node;//#include "Check_Node.h"
+class edge;//#include "Edge.h"
 
 ////////////////////////////////////////////////////////////////////////////
 //

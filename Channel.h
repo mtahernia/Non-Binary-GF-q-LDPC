@@ -8,10 +8,10 @@
 #ifndef CHANNEL_H_
 #define CHANNEL_H_
 
-#include "GFq.h"
-#include "Matrix.h" // matrix, column vector
-#include "Utils_2.h" // vector, array
+#include <cstdlib>
 
+class GFq;
+class vector;
 class LDPC_Code; //defined in LDPC.h, but header is not needed so we use forward declerations
 class mapping; // defined down in this file
 

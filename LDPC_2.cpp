@@ -15,7 +15,7 @@
 //#include "LDPC.h" // these two heades both contain parts of LDPC class
 #include "LDPC_2.h"
 class mapping;  //#include "Mapping.h"
-
+#include "Node.h"
 
 /****************************************************************************
  *
@@ -135,17 +135,7 @@ void check_node::CalcAllLeftboundMessages() {
 	} */
 }
 
-/*************************************************************************
- *
- * Node
- *
- *************************************************************************/
 
-void node::Disconnect() {
-	// while edges remain, disconnect the first one
-	while (degree > 0)
-		edges[0]->Disconnect();
-}
 
 /*************************************************************************
  *

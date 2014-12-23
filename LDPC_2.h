@@ -11,7 +11,7 @@
 #include "Encoding.h" // Node lists
 #include "Mapping.h"
 #include "Message.h"
-
+#include "Node.h"
 
 
 
@@ -23,88 +23,6 @@
  *****************************************************************************/
 
 class edge;
-// temporary declaration, to enable the use of the class in further declaration
-
-class node {
-public:
-	int id;   			// number used for identification
-	int degree;			// FIXME:
-	int AuxDegree;      // Auxiliary variable for use in encoder generator
-	edge **edges;
-	int MaxEdges;
-
-public:
-
-	void SetID(int p_id) {
-		id = p_id;
-	}
-	int GetID() {
-		return id;
-	}
-
-	node() :
-			degree(-1), edges(NULL) {
-	}
-
-
-	void Disconnect();  // Disconnect all edges
-
-	void DisconnectEdge(edge *e) {
-		int index = 0;
-		// Find the edge with given pointer
-		for (; index < degree; index++)
-			if (edges[index] == e)
-				break;
-		// if the above for loop exited normally, not with break, then the node was not found
-		if (index == degree) {
-			cout << "node::DisconnectEdge: Attempt to disconnect a nonexistent edge\n";
-			exit(1);
-		}
-
-		// Remove e from the list
-		for (int i = index + 1; i < degree; i++)
-			edges[i - 1] = edges[i];
-
-		degree--;
-	}
-
-	void add_edge(edge *e) {
-		if (degree == -1) {
-			cout << "Edges not yet allocated, aborting.  \n";
-			exit(1);
-		}
-
-		edges[degree++] = e;
-
-		if (degree > MaxEdges) {
-			cout << "MaxEdges exceeded! " << " degree = " << degree
-					<< " MaxEdges = " << MaxEdges << "\n";
-		}
-	}
-
-	// This pops p_MaxEdges edges from Stack and assigns it to the node
-	void AllocateEdges(edge **&EdgeStackPointer, int p_MaxEdges) {
-		degree = 0;    							// FIXME:Why? Indicate edges have been allocated
-		edges = EdgeStackPointer;
-		EdgeStackPointer += p_MaxEdges;        // Advance allocation pointer
-		MaxEdges = p_MaxEdges;
-	}
-
-	int GetDegree() {
-		return degree;
-	}
-	edge &GetEdge(int index) {
-		return *edges[index];
-	}
-
-	virtual node &AdjacentNode(int index) = 0;
-
-	virtual ~node()
-		{
-			//cout << "node destructor called\n";
-		}
-};
-
 
 message &GenerateChannelMessage(GFq v, channel &TransmitChannel, mapping &MapInUse, double ChannelOut);
 
@@ -127,91 +45,57 @@ public:
 	message AllImprovementsForChange;       // For use in greedy source coding
 
 public:
-	variable_node() {
-		v.val = uniform_random(GFq::q);
-	}
+	variable_node() {v.val = uniform_random(GFq::q);}
+	~variable_node(){/*cout<<"variable_node destructor called\n";*/	}
 
 	void Allocate_LCLP_Constraints(int **ConstraintsStack);
-
 	int Count_LCLP_Constraints();
-
 	void Add_LCLP_Constraint(int variable_index);
-
 
 	// TODO
 	message &CalcRightboundMessage(int rightbound_index);
 	void CalcAllRightboundMessages();
 	void CalcFinalMessage();
 	void Initialize(channel &TransmitChannel, double ChannelOut);
-	void SetMapInUse(mapping &p_MapInUse) {
-		MapInUse = &p_MapInUse;
-	}
+	void SetMapInUse(mapping &p_MapInUse) {MapInUse = &p_MapInUse;}
 
-
-	double GetZeroSignal() {
-		return MapInUse->map(v);
-	}
-
-	double GetSignal() {
-		return MapInUse->map(v+Symbol);
-	}
-
+	double GetZeroSignal() {return MapInUse->map(v);}
+	double GetSignal() {return MapInUse->map(v+Symbol);	}
 	// For use in greedy source coding
 
 	BOOLEAN IsRightConnectedTo(node *n);
 	BOOLEAN IsPath3ConnectedTo(node *n);  // Is connected by a path of at most
 	virtual node &AdjacentNode(int index);
-	~variable_node()
-		{
-			//cout<<"variable_node destructor called\n";
-		}
-
 };
 
-class complex_vector;  // FIXME: Where is the definition?
+//class complex_vector;  // FIXME: Where is the definition?
 
 message &CalcLeftboundMessage(message Vectors[], int left_index, int degree);
-
-
 // --------- Check Node ----------------------
 class check_node: public node {
 public:
+	check_node(){}
+	~check_node(){/*cout<<"check_node destructor called\n";*/}
 	void CalcAllLeftboundMessages();
 	BOOLEAN DoesFinalEstimateViolate();
 	virtual node &AdjacentNode(int index);  // returnes the adjacent variable  node to edge i
 	GFq &Element(int i); // For use in encoding - treats check like row of matrix
 	GFq &Value();
-
-	~check_node()
-		{
-			//cout<<"check_node destructor called\n";
-		}
 };
-
-
-
 
 
 class edge {
 private:
 	variable_node *left_node;
 	check_node *right_node;
-
 public:
 	message LeftBoundMessage, RightBoundMessage;
 	GFq label;
-
 public:
-	variable_node &LeftNode() {
-		return *left_node;
-	}
-	check_node &RightNode() {
-		return *right_node;
-	}
+	edge() {label.RandomSelect();}
 
-	edge() {
-		label.RandomSelect();
-	}
+	variable_node &LeftNode() {	return *left_node; }
+	check_node &RightNode() { return *right_node; }
 
 	void set_nodes(variable_node *p_left_node, check_node *p_right_node) {
 		left_node = p_left_node;

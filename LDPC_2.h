@@ -13,6 +13,7 @@
 #include "Message.h"
 #include "Node.h"
 #include "Variable_Node.h"
+#include "Check_Node.h"
 
 
 
@@ -27,18 +28,7 @@
 
 //class complex_vector;  // FIXME: Where is the definition?
 
-message &CalcLeftboundMessage(message Vectors[], int left_index, int degree);
-// --------- Check Node ----------------------
-class check_node: public node {
-public:
-	check_node(){}
-	~check_node(){/*cout<<"check_node destructor called\n";*/}
-	void CalcAllLeftboundMessages();
-	BOOLEAN DoesFinalEstimateViolate();
-	virtual node &AdjacentNode(int index);  // returnes the adjacent variable  node to edge i
-	GFq &Element(int i); // For use in encoding - treats check like row of matrix
-	GFq &Value();
-};
+
 
 
 class edge {

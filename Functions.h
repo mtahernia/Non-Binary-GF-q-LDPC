@@ -143,5 +143,49 @@ inline BOOLEAN IsPrime(int num) {
 	return Reply;
 }
 //=========================================================================================
+inline double GaussGenerate(double sigma)
+// Simulate the result of passing the zero vector through the AWGN
+// using "Box–Muller transform"
+{
+	static const double pi = 3.141592653;
+	double normal_random_number, x1, x2;
+
+	x1 = my_rand();
+	x2 = my_rand();
+
+	if (x1 < EPSILON)
+		x1 = EPSILON;
+
+	normal_random_number = sqrt(-2 * log(x1)) * cos(2 * pi * x2);
+
+	clip(normal_random_number);
+
+	return sigma * normal_random_number;
+}
+//=========================================================================================
+inline double Hb(double p) {
+	return -p * log2(p) - (1 - p) * log2(1 - p);
+}
+//=========================================================================================
+inline double HbInverse(double H) {
+	double pmin = 0, pmax = 0.5, tol = 0.0000001, pmid;
+
+	if (H == 0)
+		return 0;
+	else if (H == 1.)
+		return 0.5;
+
+	while ((pmax - pmin) > tol) {
+		pmid = (pmin + pmax) / 2.;
+		if (Hb(pmid) > H)
+			pmax = pmid;
+		else
+			pmin = pmid;
+	}
+
+	return pmid;
+}
+//=========================================================================================
+
 
 #endif /* FUNCTIONS_H_ */

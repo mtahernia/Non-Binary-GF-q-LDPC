@@ -12,7 +12,6 @@
 #include "Mapping.h"
 class channel;
 
-
 message &CalcLeftboundMessage(message Vectors[], int left_index, int degree);
 // --------- Check Node ----------------------
 class check_node: public node {

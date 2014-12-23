@@ -24,7 +24,7 @@ BOOLEAN GFq::IsPrimeQ = FALSE;
 BOOLEAN GFq::IsModuloOperations = FALSE;
 
 
-// Forward declerations
+// Forward declerations FIXME: Why do we need to forward declare static members?
 int GFq::log_2_q;
 int GFq::mask;
 
@@ -154,3 +154,14 @@ void GFq::GenerateAlphas(int m) {
 		reverse_alpha[alpha[i].val] = i;
 }
 
+// static is only used once in decleration
+GFq& GFq::One() {
+	if (IsModuloOperations) {
+		static GFq ConstOne(1);
+		return ConstOne;
+	} else
+		return alpha[0];
+}
+
+
+BOOLEAN GFq::operator==(GFq g) {	return val == g.val;}

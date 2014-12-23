@@ -27,50 +27,26 @@ public:
 	static BOOLEAN IsPrimeQ;		// is our field prime, extension or invalid
 	static BOOLEAN IsModuloOperations; // when we have a prime field, operations become modular
 
-	// Value of field element
-	int val;
+	int val;// Value of field element
 
 public:
 	// GFq constructor with value g
-	GFq(GFq &g) : val(g.val) {	}
+	GFq(GFq &g) : val(g.val) {}
+	GFq(int i) : val((BYTE) i) {}
+	GFq(BYTE b = 0) :val(b) {}
 
-	BOOLEAN IsZero() {
-		return val == 0;
-	}
-
-	BYTE GetVal() { // Unsigned Char
-		return val;
-	}
-
+	BOOLEAN IsZero() {return val == 0;}
+	BYTE GetVal() {return val;} 	// Unsigned Char
 	static void Initialize(int p_q);
-
 	static void GenerateAlphas(int m);
+	static GFq &One();
 
-	static GFq &One() {
-		if (IsModuloOperations) {
-			static GFq ConstOne(1);
-			return ConstOne;
-		} else
-			return alpha[0];
-	}
-
-	BOOLEAN operator==(GFq g) {
-		return val == g.val;
-	}
-
-	GFq(int i) :
-			val((BYTE) i) {
-	}
-	GFq(BYTE b = 0) :
-			val(b) {
-	}
-
+	BOOLEAN operator==(GFq g);// {	return val == g.val;}
 	GFq &operator+=(GFq g) {
 		if (IsModuloOperations)
 			val = (val + g.val) % q;
 		else
 			val ^= g.val;
-
 		return *this;
 	}
 
@@ -201,16 +177,14 @@ public:
 
 inline std::ostream &operator<<(std::ostream &s, GFq g) {
 	s << (int) g.val;
-
 	return s;
 }
 
 inline std::istream &operator>>(std::istream &s, GFq &g) {
 	int i;
 	s >> i;
-
 	g.val = i;
-
 	return s;
 }
+
 #endif /* GFQ_H_ */

@@ -171,5 +171,41 @@ void bipartite_graph::Reset(int p_N,   // number of variable nodes
 	delete [] right_sockets;
 }
 
+void bipartite_graph::Clear() {
+	if (variable_nodes != NULL)
+		delete [] variable_nodes;
+	if (check_nodes != NULL)
+		delete [] check_nodes;
+	if (edges != NULL)
+		delete [] edges;
+	if (EdgeStack != NULL)
+		delete [] EdgeStack;
+}
 
+void bipartite_graph::PrintNodes(char *title = NULL) {
+	if (title != NULL)
+		cout << " --- " << title << "\n";
+	cout << "Variable Nodes: ";
+	for (int i = 0; i < N; i++)
+		cout << variable_nodes[i].GetDegree() << " ";
+	cout << "\n";
+
+	cout << "Check Nodes: ";
+	for (int i = 0; i < M; i++)
+		cout << check_nodes[i].GetDegree() << " ";
+	cout << "\n";
+}
+
+void bipartite_graph::SaveToFile(char *filename) {
+	std::ofstream OutFile(filename);
+
+	for (int i = 0; i < M; i++) {
+		for (int j = 0; j < check_nodes[i].GetDegree(); j++) {
+			if (j != 0)
+				OutFile << " ";
+			OutFile << check_nodes[i].GetEdge(j).LeftNode().GetID();
+		}
+		OutFile << "\n";
+	}
+}
 

@@ -19,27 +19,6 @@
 
 /*********************************************************************************
  *
- * Utility
- *
- *********************************************************************************/
-
-GFq &check_node::Element(int index)
-// Treats check node as a sparse matrix column
-		{
-	static GFq ReturnVal(0);                    // Value of check at column
-
-	for (int j = 0; j < GetDegree(); j++) {
-		if (GetEdge(j).LeftNode().GetID() == index) {
-			ReturnVal = GetEdge(j).label;
-			break;
-		}
-	}
-
-	return ReturnVal;
-}
-
-/*********************************************************************************
- *
  * Node lists
  *
  *********************************************************************************/

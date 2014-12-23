@@ -25,31 +25,8 @@ void BSC_Channel::ProcessMapping(LDPC_Code &Code) {
 		}
 }
 
-double H2(double p) {
-	return -p * log2(p) - (1 - p) * log2(1 - p);
-}
-
-double H2Reverse(double H) {
-	double pmin = 0, pmax = 0.5, tol = 0.0000001, pmid;
-
-	if (H == 0)
-		return 0;
-	else if (H == 1.)
-		return 0.5;
-
-	while ((pmax - pmin) > tol) {
-		pmid = (pmin + pmax) / 2.;
-		if (H2(pmid) > H)
-			pmax = pmid;
-		else
-			pmin = pmid;
-	}
-
-	return pmid;
-}
-
 double BSC_Channel::CapacityInBits() {
-	return 1 - H2(channel_p);
+	return 1 - Hb(channel_p);
 }
 
 void BSC_Channel::PrintChannelData(LDPC_Code &Code) {
@@ -57,6 +34,29 @@ void BSC_Channel::PrintChannelData(LDPC_Code &Code) {
 
 	BitRate = Code.Calc_Bit_Rate();
 	cout << "channel_p = " << channel_p
-			<< "\nCapacity (bits per channel use) = " << 1 - H2(channel_p)
-			<< " Max channel_p for Bit rate: " << H2Reverse(1. - BitRate);
+			<< "\nCapacity (bits per channel use) = " << 1 - Hb(channel_p)
+			<< " Max channel_p for Bit rate: " << HbInverse(1. - BitRate);
+}
+
+double BSC_Channel::SimulateOutput(double ChannelInput)
+{
+	return (double) (int(ChannelInput) ^ Flip(channel_p));
+}
+
+double BSC_Channel::CalcProbForInput(double ChannelOutput, double ChannelInput) {
+	if (ChannelOutput == ChannelInput)
+		return 1. - channel_p;
+	else
+		return channel_p;
+}
+
+double BSC_Channel::CalcProbForOutput(double ChannelOutput) {
+	if (ChannelOutput == 1)
+		return source_p;
+	else if (ChannelOutput == 0)
+		return 1 - source_p;
+	else {
+		cout << "BSC_Channel.CalcProbForOutput: Invalid parameter\n";
+		exit(1);
+	}
 }

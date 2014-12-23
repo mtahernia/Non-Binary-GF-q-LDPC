@@ -17,10 +17,9 @@
  *
  *********************************************************************************/
 
-void channel::SimulateOutputVector(vector &InVector, vector &OutVector) {
+void channel::SimulateOutputVector(vector &InVector, vector &OutVector)
+{
 	OutVector.Allocate(InVector.GetSize());
-
 	for (int i = 0; i < InVector.GetSize(); i++)  // Add noise to each component
 		OutVector[i] = this->SimulateOutput( /* channel in */InVector[i]);
 }
-

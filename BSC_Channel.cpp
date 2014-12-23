@@ -4,7 +4,7 @@
  *  Created on: 23 Dec, 2014
  *      Author: mehrdad
  */
-#include "LDPC.h"
+#include "LDPC.h" //LDPC Code
 #include "BSC_Channel.h"
 
 

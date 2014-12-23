@@ -7,7 +7,7 @@
 
 #ifndef PNC_CHANNEL_H_
 #define PNC_CHANNEL_H_
-#include <cstdlib>
+//#include <cstdlib>
 #include "Channel.h"
 class LDPC_Code; //defined in LDPC.h, but header is not needed so we use forward declerations
 

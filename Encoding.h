@@ -1,6 +1,7 @@
 #ifndef ENCODING
 #define ENCODING
 
+#include <cstdlib>
 /*********************************************************************************
  *
  * Node lists
@@ -95,5 +96,7 @@ public:
 		return *(check_node *) Nodes[i];
 	}
 };
+
+void UrbankeAlgorithmAH(NodeListWithID &Columns, NodeListWithID &Rows);
 
 #endif

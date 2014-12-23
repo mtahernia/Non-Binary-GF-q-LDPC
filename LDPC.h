@@ -11,8 +11,6 @@
 
 #include "LDPC_2.h"
 
-#define MAX_LAMBDAS 1000//!< Maximum number of Lambdas
-#define MAX_RHOS    1000//!< Maximum number of Rhos
 
 ////////////////////////////////////////////////////////////////////////////
 //

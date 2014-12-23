@@ -7,7 +7,9 @@
 #include "Definitions.h"
 #include "Portability.h" // my_srand
 #include "LDPC.h"
-//#include "Channel.h"
+#include "BSC_Channel.h"
+#include "AWGN_Channel.h"
+#include "PNC_Channel.h"
 
 BOOLEAN debug = FALSE;
 

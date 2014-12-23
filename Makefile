@@ -1,7 +1,8 @@
+# -Wextra 
 LIBS = -lm -lfftw3 -static -static-libgcc -static-libstdc++
-CCC = g++ -O3 -Wall -Wextra -DLINUX_C
-OBJ_FILES = GFq.o Matrix.o Report.o LDPC.o LDPC_2.o Channel.o Mapping.o Encoding.o Main.o
-H_FILES = Functions.h Utils_2.h LDPC.h LDPC_2.h Channel.o Encoding.h Portability.h Channel.h Report.h Definitions.h GFq.h Matrix.h Channel.h Mapping.h
+CCC = g++ -O3 -Wall -DLINUX_C
+OBJ_FILES = GFq.o Matrix.o Report.o LDPC.o LDPC_2.o Channel.o Mapping.o Encoding.o BSC_Channel.o AWGN_Channel.o PNC_Channel.o Main.o
+H_FILES = Functions.h Utils_2.h LDPC.h LDPC_2.h Encoding.h Portability.h Report.h Definitions.h GFq.h Matrix.h Channel.h BSC_Channel.h AWGN_Channel.h PNC_Channel.h Mapping.h 
 
 all: q_LDPC
 
@@ -17,6 +18,12 @@ LDPC_2.o: LDPC_2.cpp ${H_FILES}
 	${CCC} -c LDPC_2.cpp -o LDPC_2.o
 Channel.o: Channel.cpp ${H_FILES}
 	${CCC} -c Channel.cpp -o Channel.o
+BSC_Channel.o: BSC_Channel.cpp ${H_FILES}
+	${CCC} -c BSC_Channel.cpp -o BSC_Channel.o
+AWGN_Channel.o: AWGN_Channel.cpp ${H_FILES}
+	${CCC} -c AWGN_Channel.cpp -o AWGN_Channel.o
+PNC_Channel.o: PNC_Channel.cpp ${H_FILES}
+	${CCC} -c PNC_Channel.cpp -o PNC_Channel.o
 Mapping.o: Mapping.cpp ${H_FILES}
 	${CCC} -c Mapping.cpp -o Mapping.o
 Encoding.o: Encoding.cpp ${H_FILES}

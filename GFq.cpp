@@ -5,8 +5,9 @@
  *      Author: Mehrdad Tahernia
  *		  User: mehrdad
  */
-#include "GFq.h"
 #include "Functions.h"
+#include "GFq.h"
+
 
 /************************************************************************
  *

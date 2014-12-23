@@ -5,6 +5,9 @@
  *      Author: Mehrdad Tahernia
  *		  User: mehrdad
  */
+#include <cstdlib>
+#include "Report.h"
+#include "Encoding.h"
 #include "LDPC.h"
 
 /**************************************************************
@@ -212,3 +215,189 @@ double LDPC_Code::Belief_Propagation_Decoder(int Count_Iterations) {
 
 	return Func_RC;
 }
+
+
+/*********************************************************************************
+ *
+ * Encoder
+ *
+ *********************************************************************************/
+
+
+
+void LDPC_Code::GenerateRandomSystematic() {
+	//------------------------------------------------------
+	// Randomly select values for systematic digits
+	//------------------------------------------------------
+	for (int i = 0; i < Systematic; i++)
+		Variables[i].Symbol.val = uniform_random(GFq::q);
+}
+
+void LDPC_Code::Encode() {
+	int FirstVarOfTriangle = Systematic + Gap;
+
+	//------------------------------------------------------
+	// Determine gap symbols
+	//------------------------------------------------------
+	if (Gap > 0) {
+		// Multiply systematic vector multiplied by GapMatrix
+		matrix Vals(Gap);          // a column vector for results
+		for (int i = 0; i < Gap; i++) {
+			Vals[i] = 0;
+			for (int j = 0; j < Systematic; j++)
+				Vals[i] += Variables[j].Symbol * GapMatrix.Element(i, j);
+		}
+
+		matrix GapVars(Gap);
+		GapVars = MinusPhiInverse * Vals;
+
+		// place vals
+		for (int i = 0; i < Gap; i++)
+			Variables[Systematic + i].Symbol = GapVars[i];
+	}
+
+	//------------------------------------------------------
+	// Determine all the rest
+	//------------------------------------------------------
+	for (int i = 0; i < Triangle; i++) {
+		// Calculate value of check node without symbol
+		Variables[FirstVarOfTriangle + i].Symbol = 0;
+		GFq label = Checks[i].Element(FirstVarOfTriangle + i);
+		Variables[FirstVarOfTriangle + i].Symbol =
+				(Checks[i].Value() / label).Minus();
+	}
+}
+
+void LDPC_Code::GenerateEncoder_WithoutGap() {
+	//------------------------------------------------------
+	// Approximate lower triangularize
+	//------------------------------------------------------
+	// Init
+	Variables.Init(Graph.variable_nodes, Graph.N);
+	Checks.Init(Graph.check_nodes, Graph.M);
+
+	UrbankeAlgorithmAH(/* columns */Checks, /* rows */Variables);
+
+	// Reverse because we have made checks the columns and variables the rows
+	Variables.Reverse();
+	Checks.Reverse();
+
+	// Determine values
+	Systematic = Variables.GetLength() - Checks.GetLength();
+	Gap = Checks.Gap;
+	Triangle = Variables.GetLength() - Systematic - Gap;
+
+	int FirstCheckOfGap = Checks.GetLength() - Gap;
+
+	//------------------------------------------------------
+	// Eliminate gap check nodes
+	//------------------------------------------------------
+	if (Gap > MAX_GAP) {
+		cout << "GenerateEncoder_WithoutGap: Gap = " << Gap << " too big\n";
+		exit(1);
+	}
+
+	for (int i = FirstCheckOfGap; i < Checks.GetLength(); i++) {
+		Checks[i].Disconnect();
+	}
+
+	// Update variables
+	Systematic += Gap;
+	Gap = 0;
+	GapMatrix.deAllocate();
+	MinusPhiInverse.deAllocate();
+}
+
+void LDPC_Code::GenerateEncoder() {
+	//------------------------------------------------------
+	// Approximate lower triangularize
+	//------------------------------------------------------
+	// Init
+	Variables.Init(Graph.variable_nodes, Graph.N);
+	Checks.Init(Graph.check_nodes, Graph.M);
+
+	UrbankeAlgorithmAH(/* columns */Checks, /* rows */Variables);
+
+	// Reverse because we have made checks the columns and variables the rows
+	Variables.Reverse();
+	Checks.Reverse();
+
+	// Determine values
+	Systematic = Variables.GetLength() - Checks.GetLength();
+	Gap = Checks.Gap;
+	Triangle = Variables.GetLength() - Systematic - Gap;
+
+	cout << "GenerateEncoder: Gap = " << Gap << "\n";
+
+	//ofstream bbbTemp("Temp.txt");
+	//for (int i = 0; i < Variables.GetLength(); i++)
+	//   for (int j = 0; j < Variables[i].GetDegree(); j++)
+	//      bbbTemp << Variables[i].AdjacentNode(j).GetID() << " " << i << "\n";
+	//bbbTemp.close();
+	//exit(0);
+
+	int FirstCheckOfGap = Checks.GetLength() - Gap;
+	int FirstVarOfTriangle = Systematic + Gap;
+
+	//------------------------------------------------------
+	// Handle gap
+	//------------------------------------------------------
+	// Init gap matrix
+	GapMatrix.Init(Gap, Variables.GetLength());
+
+	for (int i = 0; i < Gap; i++) {
+		//cout << FirstCheckOfGap + i << ">" << Checks[FirstCheckOfGap + i].GetID() << " " << Checks[FirstCheckOfGap + i].degree << "\n";
+		GapMatrix.Set(i, Checks[FirstCheckOfGap + i]);
+	}
+
+	//ofstream bbbTemp2("Temp.txt");
+	//GapMatrix.SparseOut(bbbTemp2);
+	//bbbTemp2.close();
+	//exit(0);
+
+	// Gaussian elimination
+	for (int j = Triangle - 1; j >= 0; j--)      // column
+			{
+		// Find element appropriate matrix element
+		int EliminatedCol = FirstVarOfTriangle + j;   // Column to be eliminated
+		check_node &CheckRow = Checks[j]; // j'th check should be nonzero at j'th column
+		GFq EliminatingRowVal = CheckRow.Element(EliminatedCol); // Value of row at column to be eliminated
+
+		for (int i = 0; i < GapMatrix.M; i++)     // row of GapMatrix
+				{
+			GFq ValToBeEliminated = GapMatrix.Element(i, EliminatedCol);
+			if (!ValToBeEliminated.IsZero()) {
+				GFq Mult = (ValToBeEliminated / EliminatingRowVal).Minus();
+				GapMatrix.Add(i, CheckRow, Mult);
+			}
+		}
+	}
+
+	// obtain phi^-1
+	// While matrix is singular, switch columns
+	BOOLEAN Success = FALSE;
+	for (int Attempts = 0; Attempts < 10000; Attempts++) {
+		matrix phi = GapMatrix.Extract(Systematic, Gap); // Systematic = first col after systematic
+		MinusPhiInverse = phi.Inverse();
+
+		if (!MinusPhiInverse.IsNull())    // if success
+		{
+			MinusPhiInverse.MultiplyByMinusOne();
+			Success = TRUE;
+			break;
+		} else {  // switch columns randomly
+			int i1 = uniform_random(Systematic);
+			int i2 = uniform_random(Gap) + Systematic;
+
+			GapMatrix.SwitchColumns(i1, i2);
+			Variables.SwitchNodes(i1, i2);
+		}
+	}
+
+	if (!Success) {
+		cout
+				<< "Unable to find an invertible phi, maybe increase number of attempts\n";
+		exit(1);
+	}
+}
+

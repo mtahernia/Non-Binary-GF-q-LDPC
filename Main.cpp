@@ -186,23 +186,63 @@ int main(int argc, char **argv) {
 	// Go
 	//------------------------------------------------------------------------
 	double AccumulatedSER;
-	vector Codeword, ChannelOutput;
+	vector ChannelOutput;
 
 	AccumulatedSER = 0;
+	switch (ChannelType){
+	case 'P':
+	{
+		vector Codeword_A, Codeword_B, Codeword_N;
+		GFq *A = new GFq[BlockLength];
+		GFq *B = new GFq[BlockLength];
+		GFq *N = new GFq[BlockLength];
 
-	for (int i = 0; i < count_runs; i++) {
-		Code.ResetGraph();
-		Code.GenerateEncoder_WithoutGap();
-//		Code.GenerateEncoder(); // Use Urbanke method to deal with gap, but has a bug!
-		Code.GenerateRandomSystematic();
-		Code.Encode();
-//		Code.GetZeroCodeword(Codeword); // Used to transmit zero codeword
-		Code.GetCodeword(Codeword);
+		for (int i = 0; i < count_runs; i++) {
+			Code.ResetGraph();
+			Code.GenerateEncoder_WithoutGap();
+	//		Code.GenerateEncoder(); // Use Urbanke method to deal with gap, but has a bug!
 
-		Channel->SimulateOutputVector(Codeword, ChannelOutput);
-		Code.Init_Messages(ChannelOutput);
-		AccumulatedSER += Code.Belief_Propagation_Decoder(iterations);
+			Code.GenerateRandomSystematic();Code.Encode();
+	//		Code.GetZeroCodeword(Codeword); // Used to transmit zero codeword
+			Code.GetCodeword(Codeword_A);
+			Code.Get_Symbols(A);
+
+			Code.GenerateRandomSystematic();Code.Encode();
+	//		Code.GetZeroCodeword(Codeword); // Used to transmit zero codeword
+			Code.GetCodeword(Codeword_B);
+			Code.Get_Symbols(B);
+
+			(dynamic_cast<PNC_Channel*>(Channel))->SimulateOutputVector_PNC(Codeword_A, Codeword_B, ChannelOutput);
+			(dynamic_cast<PNC_Channel*>(Channel))->SimulateNC_PNC(A,B,N, BlockLength );
+
+			Code.Set_Symbols(N);
+
+//			cout << "A[0]=" << *A << " B[0]=" << *B << " N[0]=A[0]+B[0]=" << *N << "\n";
+
+			Code.Init_Messages(ChannelOutput);
+			AccumulatedSER += Code.Belief_Propagation_Decoder(iterations);
+		}
+		break;
 	}
+	default:
+	{
+		vector Codeword;
+
+		for (int i = 0; i < count_runs; i++) {
+			Code.ResetGraph();
+			Code.GenerateEncoder_WithoutGap();
+	//		Code.GenerateEncoder(); // Use Urbanke method to deal with gap, but has a bug!
+			Code.GenerateRandomSystematic();Code.Encode();
+	//		Code.GetZeroCodeword(Codeword); // Used to transmit zero codeword
+			Code.GetCodeword(Codeword);
+			Channel->SimulateOutputVector(Codeword, ChannelOutput);
+			Code.Init_Messages(ChannelOutput);
+			AccumulatedSER += Code.Belief_Propagation_Decoder(iterations);
+		}
+		break;
+	}
+	} //switch
+
 	cout << "Accumulated SER = " << AccumulatedSER << "\n";
 	//------------------------------------------------------------------------
 	// return OK

@@ -122,6 +122,10 @@ public:
 	double Belief_Propagation_Decoder(int Count_Iterations);
 	void GetZeroCodeword(vector &Codeword);
 	void GetCodeword(vector &Codeword);
+
+	void Get_Symbols(GFq *Symbols);
+	void Set_Symbols(GFq *Symbols);
+
 	double Calc_Symbol_Error_Rate();
 	double Calc_Rightbound_Symbol_Error_Rate();
 	void ResetGraph();

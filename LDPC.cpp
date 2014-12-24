@@ -239,6 +239,20 @@ void LDPC_Code::GenerateRandomSystematic() {
 		Variables[i].Symbol.val = uniform_random(GFq::q);
 }
 
+void LDPC_Code::Get_Symbols(GFq *Symbols)
+{
+	for (int i = 0; i < Variables.GetLength(); i++)
+		*(Symbols+i) = Variables[i].Symbol;
+}
+
+void LDPC_Code::Set_Symbols(GFq *Symbols)
+{
+	for (int i = 0; i < Variables.GetLength(); i++)
+		Variables[i].Symbol = *(Symbols+i);
+}
+
+
+
 void LDPC_Code::Encode() {
 	int FirstVarOfTriangle = Systematic + Gap;
 

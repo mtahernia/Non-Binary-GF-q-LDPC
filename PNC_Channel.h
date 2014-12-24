@@ -21,13 +21,13 @@ class PNC_Channel: public channel {
 private:
 	double noise_sigma;
 	double h_A, h_B;
-	int alpha, beta;
+	GFq alpha, beta;
 public:
 	// Specialized functions ----------------------------
 	PNC_Channel(double p_noise_sigma = -1) :
 		noise_sigma(p_noise_sigma),
-		h_A(1),
-		h_B(1),
+		h_A(1.0),
+		h_B(1.0),
 		alpha(1),
 		beta(1) {}
 	~PNC_Channel(){cout << "PNC_Channel Destructor Called\n";}
@@ -35,6 +35,10 @@ public:
 	double NoiseVariance();  // Returns noise_sigma^2
 	double NoiseStdDev();	 // Returns noise_sigma
 	void SetNoiseSigma(double p_noise_sigma) { noise_sigma = p_noise_sigma; }
+
+	double SimulateOutput_PNC(double ChannelInput_A, double ChannelInput_B);
+	void SimulateOutputVector_PNC(vector &InVector_A, vector &InVector_B, vector &OutVector);
+	void SimulateNC_PNC(GFq *A, GFq *B, GFq *N, int BL );
 
 	// General functions --------------------------------
 	const char *GetChannelName() { return "PNC_Channel"; }

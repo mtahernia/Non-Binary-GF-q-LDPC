@@ -6,6 +6,8 @@
  */
 #include <cstdlib>
 #include "Definitions.h"
+#include "GFq.h"
+#include "Utils_2.h"
 #include "LDPC.h" //LDPC Code
 #include "PNC_Channel.h"
 
@@ -69,4 +71,27 @@ double PNC_Channel::NoiseVariance() {
 
 double PNC_Channel::NoiseStdDev() {
 	return noise_sigma;
+}
+
+
+void PNC_Channel::SimulateOutputVector_PNC(vector &InVector_A, vector &InVector_B, vector &OutVector)
+{
+	if (InVector_A.GetSize() != InVector_A.GetSize()){cout << "Error:Channel input vectors must have the same size\n";exit(1); }
+	OutVector.Allocate(InVector_A.GetSize());
+
+	for (int i = 0; i < InVector_A.GetSize(); i++)  // Add noise to each component
+		OutVector[i] = this->SimulateOutput_PNC( /* channel in */InVector_A[i],/* channel in */InVector_B[i]);
+}
+
+double PNC_Channel::SimulateOutput_PNC(double ChannelInput_A, double ChannelInput_B)
+// Simulate the result of passing the inputs through the AWGN
+{
+	return h_A*ChannelInput_A + h_B*ChannelInput_B + GaussGenerate(noise_sigma);
+}
+
+void PNC_Channel::SimulateNC_PNC(GFq *A, GFq *B, GFq *N, int BL )
+{
+	for (int i = 0 ; i<BL ; i++)
+		*(N+i) = *(A+i) * alpha + *(B+i) * beta;
+
 }

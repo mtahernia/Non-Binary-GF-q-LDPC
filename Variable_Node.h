@@ -36,7 +36,10 @@ public:
 	message AllImprovementsForChange;       // For use in greedy source coding
 
 public:
-	variable_node():SourceData(0),MapInUse(NULL) {v.val = uniform_random(GFq::q);}
+	variable_node():SourceData(0),MapInUse(NULL) {
+		v.val = 0;
+//		uniform_random(GFq::q); //FIXME: Coset Vector set to zero
+	}
 	~variable_node(){/*cout<<"variable_node destructor called\n";*/	}
 
 	void Allocate_LCLP_Constraints(int **ConstraintsStack);

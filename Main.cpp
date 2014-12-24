@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
 	char infilename[100];
 	int BlockLength = 50000;
 	int count_runs = 100;
-	char ChannelType = 'G';
+	char ChannelType = 'P';
 	char *CurrentOption;
 	char *CurrentValue;
 	channel *Channel;
@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
 		cout << "usage: " << argv[0] // argv[0] is always the file name
 				<< " <input file> <SNR (dB)/crossover> {<options>}\n"
 				<< "Options: \n"
-				<< "   -c : Channel (G)aussian, (B)SC default: " << ChannelType
+				<< "   -c : Channel (G)aussian, (P)NC, (B)SC default: " << ChannelType
 				<< "\n" << "   -i : maximum iterations, default: " << iterations
 				<< "\n" << "   -b : block length, default: " << BlockLength
 				<< "\n" << "   -r : number of runs, default: " << count_runs
@@ -126,8 +126,6 @@ int main(int argc, char **argv) {
 	// Parse ChannelType input
 	switch (ChannelType) {
 	case 'G':
-
-//		noise_sigma = 0;         // To avoid compiler warning (moved it to above)
 		Channel = new AWGN_Channel;
 
 		// If channel is gaussian, the next input will be SNR in dB
@@ -140,10 +138,19 @@ int main(int argc, char **argv) {
 		// Now to cast between different classes, and to be safe, we use dynamic_cast. if the casting is not safe, it will return false.
 		(dynamic_cast<AWGN_Channel*>(Channel))->SetNoiseSigma(noise_sigma);
 		break;
+	case 'P':
+		Channel = new PNC_Channel;
+
+		// If channel is gaussian, the next input will be SNR in dB
+		sscanf(argv[2], "%lf", &SNR_dB);
+		SNR = pow(10., SNR_dB / 10.);
+		No = 1. / SNR;
+		noise_sigma = sqrt(No);
+		(dynamic_cast<PNC_Channel*>(Channel))->SetNoiseSigma(noise_sigma);
+		break;
 
 	case 'B':
 		Channel = new BSC_Channel;
-
 		sscanf(argv[2], "%lf", &channel_p);
 		// Again dynamic cast to child class
 		(dynamic_cast<BSC_Channel*> (Channel))->SetChannel_p(channel_p);
@@ -186,10 +193,10 @@ int main(int argc, char **argv) {
 	for (int i = 0; i < count_runs; i++) {
 		Code.ResetGraph();
 		Code.GenerateEncoder_WithoutGap();
-//		Code.GenerateEncoder();
+//		Code.GenerateEncoder(); // Use Urbanke method to deal with gap, but has a bug!
 		Code.GenerateRandomSystematic();
 		Code.Encode();
-//		Code.GetZeroCodeword(Codeword);
+//		Code.GetZeroCodeword(Codeword); // Used to transmit zero codeword
 		Code.GetCodeword(Codeword);
 
 		Channel->SimulateOutputVector(Codeword, ChannelOutput);

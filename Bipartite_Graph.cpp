@@ -126,7 +126,7 @@ void bipartite_graph::Reset(int p_N,   // number of variable nodes
 	//----------------------------------------------------------------------------------------
 	srand(time(NULL)); // Init random seed so that each call to function returns different set of values
 
-	cout << "Starting bipartite graph..." << time(NULL) ;
+	cout << "Starting bipartite graph... " << time(NULL) << " ";
 
 	int left_index, right_index;
 	for (int i = 0; i < E; i++) {

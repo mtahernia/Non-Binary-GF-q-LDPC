@@ -9,8 +9,6 @@
 #define REPORT_H_
 
 #include <fstream>
-
-
 /************************************************************************
  * Cout
  ************************************************************************/
@@ -39,4 +37,5 @@ extern reportbuf ReportBuf;		// Already defined in .c file
 extern std::ostream ReportOut;	// Already defined in .c file
 #define cout ReportOut			// Redefine cout to report buffer that we defined
 //=========================================================================================
+
 #endif /* REPORT_H_ */

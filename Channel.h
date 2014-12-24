@@ -28,9 +28,7 @@ public:
 	virtual const char *GetChannelName() = 0;
 	// General functions ------------------------------------------
 	GFq &MaxProbableForOutput(mapping &MapInUse); // FIXME: Not used or defined in this program
-
-	double ErrorUndefined(char *FuncName)
-		{	cout << GetChannelName() << "::" << FuncName << " undefined.\n";exit(1);}
+	double ErrorUndefined(char *FuncName){cout << GetChannelName() << "::" << FuncName << " undefined.\n";exit(1);}
 	virtual void PrintChannelData(LDPC_Code &Code) = 0; /*!<This is a pure virtual function, meaning the child classes should define it or it will retun zero if not defined */
 	virtual void ProcessMapping(LDPC_Code &Code) = 0;
 	// Channel functions-------------------------------------------

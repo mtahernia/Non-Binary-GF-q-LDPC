@@ -10,7 +10,7 @@
 
 #include "Mapping.h"
 #include "Message.h"
-#include "Node.h"
+#include "Node.h" //Parent
 
 class channel;
 
@@ -36,7 +36,7 @@ public:
 	message AllImprovementsForChange;       // For use in greedy source coding
 
 public:
-	variable_node() {v.val = uniform_random(GFq::q);}
+	variable_node():SourceData(0),MapInUse(NULL) {v.val = uniform_random(GFq::q);}
 	~variable_node(){/*cout<<"variable_node destructor called\n";*/	}
 
 	void Allocate_LCLP_Constraints(int **ConstraintsStack);

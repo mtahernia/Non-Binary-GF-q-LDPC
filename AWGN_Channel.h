@@ -23,25 +23,18 @@ public:
 	// Specialized functions ----------------------------
 	AWGN_Channel(double p_noise_sigma = -1) :noise_sigma(p_noise_sigma) { }
 	~AWGN_Channel(){cout << "AWGN_Channel Destructor Called\n";}
-
 	double NoiseVariance(); // Returns noise_sigma^2
 	double NoiseStdDev();	// Returns noise_sigma
-
 	void SetNoiseSigma(double p_noise_sigma) { noise_sigma = p_noise_sigma; }
-
 	// General functions --------------------------------
 	const char *GetChannelName() { return "AWGN_Channel"; }
 	virtual void PrintChannelData(LDPC_Code &Code);
 	virtual void ProcessMapping(LDPC_Code &Code);
-
 	// Channel coding functions -------------------------
 	virtual double SimulateOutput(double ChannelInput);
 	virtual double CalcProbForInput(double ChannelOutput, double ChannelInput);
-
 	// Statistical data ---------------------------------
 	virtual double CapacityInBits();
 };
-
-
 
 #endif /* AWGN_CHANNEL_H_ */

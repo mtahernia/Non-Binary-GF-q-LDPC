@@ -5,6 +5,7 @@
  *      Author: mehrdad
  */
 #include <fftw3.h> // This is a try to fix fft problem.
+#include <cstring>  // bzero
 #include "Definitions.h"
 #include "Functions.h"
 #include "Message.h"
@@ -478,4 +479,139 @@ double message::AverageD() {
 	return m.sum() / (GFq::q - 1);
 }
 
+void message::Clip(double minval, double maxval) {
+	for (int i = 0; i < q; i++) {
+		clip(Probs[i], maxval);
+		clip(ProbsI[i], maxval);
+		if (Probs[i] < minval)
+			Probs[i] = minval;
+		if (ProbsI[i] < minval)
+			ProbsI[i] = minval;
+	}
+}
 
+
+/********************************************
+ * General Functions related to message
+ * previously these were inline functions
+ ********************************************/
+
+// Convolve two messages using traditional convolve function
+message &Convolve(message &M1, message &M2) {
+	static message Aux;
+
+	Aux = M1;
+	Aux.Convolve(M2);
+	return Aux;
+}
+
+// output message to ostream
+std::ostream &operator<<(std::ostream &s, message &m) {
+	s << ceil(m[0] * 1000.) / 1000.;
+	for (int i = 1; i < m.q; i++)
+		s << " " << ceil(m[i] * 1000.) / 1000.;
+
+	return s;
+}
+
+// subtract two messages
+message &operator-(message &m1, message &m2) {
+	static message aux;
+
+	aux.q = m1.q;
+
+	for (int i = 0; i < m1.q; i++){
+		aux.Probs[i]  = m1.Probs[i]  - m2.Probs[i];
+		aux.ProbsI[i] = m1.ProbsI[i] - m2.ProbsI[i];
+	}
+
+	return aux;
+}
+
+// Devide message by d
+message &operator/(message &m, double d) {
+	static message aux;
+
+	aux.q = m.q;
+
+	for (int i = 0; i < m.q; i++){
+		aux.Probs[i] = m.Probs[i] / d;
+		aux.ProbsI[i] = m.ProbsI[i] / d;
+	}
+	return aux;
+}
+
+// Raise message components to power l
+// FIXME,TODO: This is not used and does not support complex message
+double pow(message &m, int l) {
+	double f = 0;
+
+	for (int i = 0; i < m.q; i++)
+		f += pow(m[i], l);
+
+	return f;
+}
+
+
+// returns sum of absolute values of message component
+double fabs(message &m) {
+	double f = 0;
+	for (int i = 0; i < m.q; i++)
+		f += fabs(m.ABS(i));
+	return f;
+}
+
+// returns the log of message components
+message &log(message &m) {
+	static message aux;
+	aux.q = m.q;
+	for (int i = 0; i < m.q; i++){
+		aux[i] = mylog(m.ABS(i));
+		aux.ProbsI[i] = 0;
+	}
+
+	return aux;
+}
+
+// returns a message which is e^m
+message &exp(message &m) {
+	static message aux;
+	aux.q = m.q;
+	for (int i = 0; i < m.q; i++){
+		aux[i] = exp(m.ABS(i));
+		aux.ProbsI[i] = 0;
+	}
+	return aux;
+}
+
+
+// Returns message in LLR form
+message &LLR(message &m) {
+	static message aux;
+	aux.q = m.q;
+	double log_m0 = mylog(m.ABS(0));
+	aux[0] = 0;
+	aux.ProbsI[0] = 0;
+
+	for (int i = 1; i < m.q; i++){
+		aux[i] = log_m0 - mylog(m.ABS(i));
+		aux.ProbsI[i] = 0;
+	}
+	return aux;
+}
+
+// Does the reverse of LLR
+message &unLLR(message &m) {
+	static message aux;
+
+	aux.q = m.q;
+
+	aux[0] = 1;
+	for (int i = 1; i < m.q; i++)
+		aux[i] = exp(-m.ABS(i));
+
+	aux.Clip();
+	aux.Normalize();
+	aux.Clip();
+	return aux;
+}

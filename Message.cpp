@@ -6,6 +6,7 @@
  */
 #include <fftw3.h> // This is a try to fix fft problem.
 #include "Definitions.h"
+#include "Functions.h"
 #include "Message.h"
 /*********************************************************************************
  *
@@ -153,7 +154,7 @@ BOOLEAN message::operator<(message &m2) {
 	return TRUE;
 }
 
-message& message::operator=(message &M) {
+message &message::operator=(message &M) {
 	if (q != M.q)
 		Set_q(M.q);
 	//======================================================================
@@ -179,7 +180,7 @@ message& message::operator=(message &M) {
 	return *this;
 }
 
-message& message::operator=(double d) {
+message &message::operator=(double d) {
 	for (int i = 0; i < q; i++){
 		Probs[i] = d;
 		ProbsI[i] = 0;
@@ -187,7 +188,7 @@ message& message::operator=(double d) {
 	return *this;
 }
 
-message& message::operator*=(message &M) {
+message &message::operator*=(message &M) {
 	double x,y;
 	for (int i = 0; i < q; i++){
 
@@ -199,7 +200,7 @@ message& message::operator*=(message &M) {
 	return *this;
 }
 
-message& message::operator*(message &M2) {
+message &message::operator*(message &M2) {
 	static message Aux(q);
 	message &M1 = *this;
 
@@ -210,7 +211,7 @@ message& message::operator*(message &M2) {
 	return Aux;
 }
 
-message& message::operator*(double d) {
+message &message::operator*(double d) {
 	static message Aux(q);
 
 	for (int i = 0; i < q; i++){
@@ -239,7 +240,7 @@ BOOLEAN message::operator==(double d) {
 	return TRUE;
 }
 
-message& message::operator+=(message &M) {
+message &message::operator+=(message &M) {
 	for (int i = 0; i < q; i++){
 		Probs[i] += M.Probs[i];
 		ProbsI[i] += M.ProbsI[i];
@@ -247,7 +248,7 @@ message& message::operator+=(message &M) {
 	return *this;
 }
 
-message& message::operator+(message &M) {
+message &message::operator+(message &M) {
 	static message Aux(q);
 
 	for (int i = 0; i < q; i++){
@@ -257,7 +258,7 @@ message& message::operator+(message &M) {
 	return Aux;
 }
 
-message& message::operator/=(double d) {
+message &message::operator/=(double d) {
 	for (int i = 0; i < q; i++){
 		Probs[i] /= d;
 		ProbsI[i] /= d;
@@ -307,7 +308,7 @@ void message::Clear() {
 
 // Normal convolution! TODO: this can be implemented using FFTW
 // This convolves this message whith M2 and stores the result in this! this is a somehow circular convolution
-message& message::Convolve(message &M2) {
+message &message::Convolve(message &M2) {
 	message M1(*this);   // Auxiliary
 	GFq t;
 	// Clear this
@@ -323,3 +324,158 @@ message& message::Convolve(message &M2) {
 
 	return *this;
 }
+
+message &message::MaxConvolve(message &M2) {     // max-prod version
+	message M1(*this);   // Auxiliary
+
+	// Clear this
+	Clear();
+	double max;
+	double candidate;
+
+	for (GFq i(0); i.val < q; i.val++) {
+		max = -1;
+		for (GFq j(0); j.val < q; j.val++) {
+			candidate = M1[j] * M2[i - j];
+			if (candidate > max)
+				max = candidate;
+		}
+		Probs[i.val] = max;
+	}
+
+	return *this;
+}
+
+void message::PermutePlus(GFq &g) {
+	message Aux;
+	GFq t;
+	Aux = *this;
+	for (GFq i(0); i.val < q; i.val++){
+		t = i+g;
+		Probs[i.val] = Aux.Probs[t.val];
+		ProbsI[i.val] = Aux.ProbsI[t.val];
+//			Probs[i.val] = Aux[i + g];
+	}
+}
+
+void message::PermuteTimes(GFq &g) {
+	message Aux;
+	GFq t;
+	Aux = *this;
+	for (GFq i(0); i.val < q; i.val++){
+		t = i * g;
+		Probs[i.val] = Aux.Probs[t.val];
+		ProbsI[i.val] = Aux.ProbsI[t.val];
+	}
+}
+
+message &message::Reverse() {
+	message Aux;
+	GFq t;
+	Aux = *this;
+	for (GFq i(0); i.val < q; i.val++){
+		t = i.Minus();
+		Probs[i.val] = Aux.Probs[t.val];
+		ProbsI[i.val] = Aux.ProbsI[t.val];
+	}
+	return *this;
+}
+
+// Used in Rightbound messages and thus does not need to support complex
+GFq &message::Decision() {
+	static GFq Candidate(0);
+	double max = -1;
+	int count_max = 0;
+
+	// find maximum components of message and number of them if there is no unique maximum
+	for (GFq i(0); i.val < q; i.val++) {
+		if (Probs[i.val] > max) {
+			max = Probs[i.val];
+			Candidate = i;
+			count_max = 1;
+		} else if (Probs[i.val] == max)
+			count_max++;
+	}
+
+	if (count_max > 1) {     // If more than one maximum - randomly select
+		int selection = uniform_random(count_max) + 1; // Between 1 and count_max
+		int found_so_far = 0;
+		// TODO: this part can be written more efficiently
+		for (GFq i(0); i.val < q; i.val++)
+			if (Probs[i.val] == max) {
+				Candidate = i;
+				found_so_far++;
+				if (found_so_far == selection)
+					break;
+			}
+	}
+	return Candidate;
+}
+
+double message::ProbCorrect() {
+	int count_zero = 1;
+
+	for (int i = 1; i < q; i++) {
+		if (Probs[i] > Probs[0]) {
+			return 0;
+		} else if (Probs[i] == Probs[0]) {
+			count_zero++;
+		}
+	}
+	return 1. / count_zero;
+}
+
+double message::Entropy() {
+	double aux = 0;
+	double aux2;
+
+	for (int i = 0; i < q; i++) {
+		if (Probs[i] != 0) {
+			aux2 = Probs[i] * log(Probs[i]);
+			aux += -clip(aux2);
+		}
+	}
+	return aux;
+}
+
+// Left shift the message l
+message &message::operator<<(int l) {
+	static message Aux;
+
+	Aux.q = q;
+	for (int i = 0; i < q; i++){
+		Aux.Probs[i] = Probs[(i + l) % q];
+		Aux.ProbsI[i] = ProbsI[(i + l) % q];
+	}
+	return Aux;
+}
+
+// Left shift assignment for message
+void message::operator<<=(int l) {
+	*this = *this << l;
+}
+
+
+message &message::LLRShift(int k) {
+	message Aux = *this;
+
+	for (int i = 0; i < q; i++){
+		Probs[i] = Aux[(i + k) % q] - Aux[k % q];
+		ProbsI[i] = Aux.ProbsI[(i + k) % q] - Aux.ProbsI[k % q];
+	}
+	return *this;
+}
+
+// Divide message to m[0] and set m[0] to zero
+double message::AverageD() {
+	message m = *this;
+
+	m.Clip();
+	m /= m[0];
+	m.Clip();
+
+	m[0] = 0;     // Don't count zero
+	return m.sum() / (GFq::q - 1);
+}
+
+

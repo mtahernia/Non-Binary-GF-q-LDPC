@@ -171,7 +171,6 @@ void LDPC_Code::FinalIteration() {
 
 double LDPC_Code::Calc_Symbol_Error_Rate() {
 	double acc_correct = 0;
-
 	for (int i = 0; i < Variables.GetLength(); i++)
 //		acc_correct += Variables[i].FinalEstimate.Decision().IsZero();
 		acc_correct += Variables[i].DecSymbol == Variables[i].Symbol;
@@ -183,7 +182,6 @@ double LDPC_Code::Calc_Rightbound_Symbol_Error_Rate() {
 
 	for (int i = 0; i < Graph.E; i++)
 		acc_correct += Graph.edges[i].RightBoundMessage.Decision().IsZero();
-
 	return 1.0 - acc_correct / Graph.E;
 }
 
@@ -235,7 +233,8 @@ void LDPC_Code::GenerateRandomSystematic() {
 	//------------------------------------------------------
 	// Randomly select values for systematic digits
 	//------------------------------------------------------
-	for (int i = 0; i < Systematic; i++)
+//	for (int i = 0; i < Systematic; i++)
+	for (int i = 0; i < Variables.GetLength(); i++)
 		Variables[i].Symbol.val = uniform_random(GFq::q);
 }
 

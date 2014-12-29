@@ -193,9 +193,9 @@ int main(int argc, char **argv) {
 	case 'P':
 	{
 		vector Codeword_A, Codeword_B, Codeword_N;
-		GFq *A = new GFq[BlockLength];
-		GFq *B = new GFq[BlockLength];
-		GFq *N = new GFq[BlockLength];
+		GFq *A = new GFq[BlockLength]; // Symbols of Node A
+		GFq *B = new GFq[BlockLength]; // Symbols of Node B
+		GFq *N = new GFq[BlockLength]; // Network Coded Symbols
 
 		for (int i = 0; i < count_runs; i++) {
 			Code.ResetGraph();
@@ -224,16 +224,18 @@ int main(int argc, char **argv) {
 		}
 		break;
 	}
-	default:
+	default: // for point to point simulation
 	{
 		vector Codeword;
 
 		for (int i = 0; i < count_runs; i++) {
 			Code.ResetGraph();
+			Code.GenerateRandomSystematic();
 			Code.GenerateEncoder_WithoutGap();
-	//		Code.GenerateEncoder(); // Use Urbanke method to deal with gap, but has a bug!
-			Code.GenerateRandomSystematic();Code.Encode();
-	//		Code.GetZeroCodeword(Codeword); // Used to transmit zero codeword
+//			Code.GenerateEncoder(); // Use Urbanke method to deal with gap, but has a bug!
+			Code.Encode();
+//
+//			Code.GetZeroCodeword(Codeword); // Used to transmit zero codeword
 			Code.GetCodeword(Codeword);
 			Channel->SimulateOutputVector(Codeword, ChannelOutput);
 			Code.Init_Messages(ChannelOutput);

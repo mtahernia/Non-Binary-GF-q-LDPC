@@ -6,6 +6,7 @@
  */
 #include "Message.h"
 #include "Channel.h"
+#include "PNC_Channel.h"
 #include "Edge.h"
 #include "Check_Node.h"
 #include "Variable_Node.h"
@@ -54,16 +55,16 @@ void variable_node::CalcAllRightboundMessages() {
 	CalcFinalMessage();
 }
 
-// Generates channel message for zero codeword transmission
+// Generates channel message
 message &GenerateChannelMessage(GFq v, channel &TransmitChannel, mapping &MapInUse, double ChannelOut) {
 	static message InitialMessage;
 	int q = MapInUse.GetQ();
 	double CandidateIn;
 //	double ChannelIn;
-
 //	ChannelIn = MapInUse.map(v);        // mapping of (0 + v) % q; FIXME: This is not used
 
-	// Generate InitialMessage
+// Generate InitialMessage
+
 	InitialMessage.Set_q(q);
 	for (GFq i(0); i.val < q; i.val++) {
 		CandidateIn = MapInUse.map(i + v);
@@ -75,8 +76,30 @@ message &GenerateChannelMessage(GFq v, channel &TransmitChannel, mapping &MapInU
 	return InitialMessage;
 }
 
+message &GenerateChannelMessage_PNC(channel &TransmitChannel, mapping &MapInUse, double ChannelOut) {
+	static message InitialMessage;
+	int q = MapInUse.GetQ();
+	double CandidateIn;
+	GFq N;
+	// Generate InitialMessage
+
+	InitialMessage.Set_q(q);
+	InitialMessage.Clear();
+	for (GFq A(0); A.val < q; A.val++)
+		for (GFq B(0); B.val < q; B.val++) {
+			N = (dynamic_cast<PNC_Channel&>(TransmitChannel)).alpha * A + (dynamic_cast<PNC_Channel&>(TransmitChannel)).beta * B;
+			CandidateIn = MapInUse.map(A)*(dynamic_cast<PNC_Channel&>(TransmitChannel)).h_A + MapInUse.map(B)*(dynamic_cast<PNC_Channel&>(TransmitChannel)).h_B;
+			InitialMessage[N.val] = InitialMessage[N.val] + TransmitChannel.CalcProbForInput(ChannelOut, CandidateIn);
+		}
+	InitialMessage.Normalize();    // Make valid probability vector
+
+	return InitialMessage;
+}
+
+
 void variable_node::Initialize(channel &TransmitChannel, double ChannelOut) {
-	InitialMessage = GenerateChannelMessage(v, TransmitChannel, *MapInUse,ChannelOut);
+//	InitialMessage = GenerateChannelMessage(v, TransmitChannel, *MapInUse,ChannelOut);
+	InitialMessage = GenerateChannelMessage_PNC(TransmitChannel, *MapInUse,ChannelOut);
 	FinalEstimate = InitialMessage;
 
 	// Generate Rightbound messages

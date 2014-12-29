@@ -1,11 +1,11 @@
 #include <cstdio> // sscanf
-#include <cmath>  //pow sqrt ...
-#include <cstdlib> // exit
+//#include <cmath>  //pow sqrt ...
+//#include <cstdlib> // exit
 //#include <iostream>
 //#include <fstream>
 //#include <ctype.h>
-#include "Definitions.h"
-#include "Portability.h" // my_srand
+//#include "Definitions.h"
+//#include "Portability.h" // my_srand
 #include "Utils_2.h"
 #include "LDPC.h"
 #include "BSC_Channel.h"
@@ -143,10 +143,12 @@ int main(int argc, char **argv) {
 
 		// If channel is gaussian, the next input will be SNR in dB
 		sscanf(argv[2], "%lf", &SNR_dB);
-		SNR = pow(10., SNR_dB / 10.);
-		No = 1. / SNR;
-		noise_sigma = sqrt(No);
+		SNR = pow(10., SNR_dB / 10.); No = 1. / SNR; noise_sigma = sqrt(No);
 		(dynamic_cast<PNC_Channel*>(Channel))->SetNoiseSigma(noise_sigma);
+//		(dynamic_cast<PNC_Channel*>(Channel))->h_A = 1.0;
+//		(dynamic_cast<PNC_Channel*>(Channel))->h_B = 1.0;
+//		(dynamic_cast<PNC_Channel*>(Channel))->alpha = 1;
+//		(dynamic_cast<PNC_Channel*>(Channel))->beta = 1;
 		break;
 
 	case 'B':
@@ -171,8 +173,7 @@ int main(int argc, char **argv) {
 	// Print channel data
 	//-------------------------------------------------------------------
 	double Rate = Code.Calc_Symbol_Rate();
-	cout
-			<< "----------------------------------------------------------------------------\n"
+	cout	<< "----------------------------------------------------------------------------\n"
 			<< "Symbol Rate = " << Rate << " Bit Rate = "
 			<< Code.Calc_Bit_Rate() << " Iterations = " << iterations
 			<< "\nSum Lambda = " << Code.SumLambda() << " Sum Rhos = "
@@ -180,15 +181,15 @@ int main(int argc, char **argv) {
 			<< " Channel = " << ChannelType << "\nSeed = " << seed << "\n";
 
 	Channel->PrintChannelData(Code);
-	cout<< "\n----------------------------------------------------------------------------\n";
+	cout	<< "\n----------------------------------------------------------------------------\n";
 
 	//------------------------------------------------------------------------
 	// Go
 	//------------------------------------------------------------------------
 	double AccumulatedSER;
 	vector ChannelOutput;
+    AccumulatedSER = 0;
 
-	AccumulatedSER = 0;
 	switch (ChannelType){
 	case 'P':
 	{
@@ -200,21 +201,17 @@ int main(int argc, char **argv) {
 		for (int i = 0; i < count_runs; i++) {
 			Code.ResetGraph();
 			Code.GenerateEncoder_WithoutGap();
-	//		Code.GenerateEncoder(); // Use Urbanke method to deal with gap, but has a bug!
 
 			Code.GenerateRandomSystematic();Code.Encode();
-	//		Code.GetZeroCodeword(Codeword); // Used to transmit zero codeword
 			Code.GetCodeword(Codeword_A);
 			Code.Get_Symbols(A);
 
 			Code.GenerateRandomSystematic();Code.Encode();
-	//		Code.GetZeroCodeword(Codeword); // Used to transmit zero codeword
 			Code.GetCodeword(Codeword_B);
 			Code.Get_Symbols(B);
 
 			(dynamic_cast<PNC_Channel*>(Channel))->SimulateOutputVector_PNC(Codeword_A, Codeword_B, ChannelOutput);
 			(dynamic_cast<PNC_Channel*>(Channel))->SimulateNC_PNC(A,B,N, BlockLength );
-
 			Code.Set_Symbols(N);
 
 //			cout << "A[0]=" << *A << " B[0]=" << *B << " N[0]=A[0]+B[0]=" << *N << "\n";

@@ -18,7 +18,7 @@ class LDPC_Code; //defined in LDPC.h, but header is not needed so we use forward
  *
  ****************************************************************************/
 class PNC_Channel: public channel {
-private:
+public: //private:
 	double noise_sigma;
 	double h_A, h_B;
 	GFq alpha, beta;

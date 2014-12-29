@@ -89,12 +89,10 @@ class ArrayOfMessage {
 	message *Messages;
 	int size;
 public:
-
-	int GetSize() {	return size;}
-
 	ArrayOfMessage() :Messages(NULL), size(0) {	}
 	~ArrayOfMessage() {	deAllocate();}
 
+	int GetSize() {	return size;}
 	void Allocate(int p_Size) {
 		if (size != p_Size) {
 			deAllocate();

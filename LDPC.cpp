@@ -199,8 +199,9 @@ double LDPC_Code::Belief_Propagation_Decoder(int Count_Iterations) {
 		Rightbound_Iteration();
 
 //		Func_RC = Calc_Rightbound_Symbol_Error_Rate();
+//		sprintf(buffer, "%d: Rightbound SER = %1.10f, %s", i + 1, Func_RC,CharTime());
 		Func_RC = Calc_Symbol_Error_Rate();
-		sprintf(buffer, "%d: Rightbound SER = %1.10f, %s", i + 1, Func_RC,CharTime());
+		sprintf(buffer, "%d: SER = %1.10f, %s", i + 1, Func_RC,CharTime());
 		cout << buffer;
 
 		// Stop when Func_RC doesn't fall for some consecutive iterations

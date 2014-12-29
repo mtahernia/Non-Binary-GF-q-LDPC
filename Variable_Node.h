@@ -16,6 +16,7 @@ class channel;
 
 
 message &GenerateChannelMessage(GFq v, channel &TransmitChannel, mapping &MapInUse, double ChannelOut);
+message &GenerateChannelMessage_PNC(channel &TransmitChannel, mapping &MapInUse, double ChannelOut);
 
 // ----------------- Variable Node ---------------
 class variable_node: public node {

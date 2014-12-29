@@ -47,11 +47,8 @@ void PNC_Channel::PrintChannelData(LDPC_Code &Code) {
 			<< " (absolute value) = " << pow(2.0, 2.0 * BitRate) - 1;
 }
 
-// override virtual functions
-// Gaussian distribution P(Y|X)
 double PNC_Channel::CalcProbForInput(double ChannelOutput, double ChannelInput) {
 	static const double sqrt_2pi = sqrt(2 * 3.141592653);
-
 	double noise_prob = (1 / (sqrt_2pi * noise_sigma)
 			* exp( -pow(ChannelOutput - ChannelInput, 2.)/ (2. * NoiseVariance())) );
 

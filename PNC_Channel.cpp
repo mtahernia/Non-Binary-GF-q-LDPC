@@ -73,6 +73,7 @@ double PNC_Channel::NoiseStdDev() {
 
 void PNC_Channel::SimulateOutputVector_PNC(vector &InVector_A, vector &InVector_B, vector &OutVector)
 {
+//	cout << "CWA:" << InVector_A[0] << "\n";
 	if (InVector_A.GetSize() != InVector_A.GetSize()){cout << "Error:Channel input vectors must have the same size\n";exit(1); }
 	OutVector.Allocate(InVector_A.GetSize());
 

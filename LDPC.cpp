@@ -283,8 +283,7 @@ void LDPC_Code::Encode() {
 		// Calculate value of check node without symbol
 		Variables[FirstVarOfTriangle + i].Symbol = 0;
 		GFq label = Checks[i].Element(FirstVarOfTriangle + i);
-		Variables[FirstVarOfTriangle + i].Symbol =
-				(Checks[i].Value() / label).Minus();
+		Variables[FirstVarOfTriangle + i].Symbol =	(Checks[i].Value() / label).Minus();
 	}
 }
 

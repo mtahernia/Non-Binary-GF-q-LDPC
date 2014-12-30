@@ -204,13 +204,17 @@ int main(int argc, char **argv) {
 
 			Code.GenerateRandomSystematic();Code.Encode();
 			Code.GetCodeword(Codeword_A);
+
 			Code.Get_Symbols(A);
 
 			Code.GenerateRandomSystematic();Code.Encode();
 			Code.GetCodeword(Codeword_B);
-			Code.Get_Symbols(B);
 
+			Code.Get_Symbols(B);
+//			cout << "CWA:" << Codeword_A[0] << "\n";
+//			cout << "CWB:" << Codeword_B[0] << "\n";
 			(dynamic_cast<PNC_Channel*>(Channel))->SimulateOutputVector_PNC(Codeword_A, Codeword_B, ChannelOutput);
+//			cout << "CHO:" << ChannelOutput[0] << "\n";
 			(dynamic_cast<PNC_Channel*>(Channel))->SimulateNC_PNC(A,B,N, BlockLength );
 			Code.Set_Symbols(N);
 

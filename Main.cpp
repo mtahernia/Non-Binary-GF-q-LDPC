@@ -121,8 +121,8 @@ int main(int argc, char **argv) {
 	//-------------------------------------------------------------
 	double channel_p = 0;  // BSC Channel Parameter
 	double noise_sigma = 0;  // (\sigma)^0.5
-	double SNR_dB, No, SNR;
-
+	double SNR_dB, No, SNR, h_A,h_B;
+	int alpha,beta;
 	// Parse ChannelType input
 	switch (ChannelType) {
 	case 'G':
@@ -142,13 +142,14 @@ int main(int argc, char **argv) {
 		Channel = new PNC_Channel;
 
 		// If channel is gaussian, the next input will be SNR in dB
-		sscanf(argv[2], "%lf", &SNR_dB);
+		sscanf(argv[2], "%lf:%lf:%lf:%i:%i", &SNR_dB,&h_A,&h_B,&alpha,&beta);
 		SNR = pow(10., SNR_dB / 10.); No = 1. / SNR; noise_sigma = sqrt(No);
+
 		(dynamic_cast<PNC_Channel*>(Channel))->SetNoiseSigma(noise_sigma);
-//		(dynamic_cast<PNC_Channel*>(Channel))->h_A = 1.0;
-//		(dynamic_cast<PNC_Channel*>(Channel))->h_B = 1.0;
-//		(dynamic_cast<PNC_Channel*>(Channel))->alpha = 1;
-//		(dynamic_cast<PNC_Channel*>(Channel))->beta = 1;
+		(dynamic_cast<PNC_Channel*>(Channel))->h_A = h_A;
+		(dynamic_cast<PNC_Channel*>(Channel))->h_B = h_B;
+		(dynamic_cast<PNC_Channel*>(Channel))->alpha = alpha;
+		(dynamic_cast<PNC_Channel*>(Channel))->beta = beta;
 		break;
 
 	case 'B':
@@ -204,14 +205,14 @@ int main(int argc, char **argv) {
 
 			Code.GenerateRandomSystematic();Code.Encode();
 			Code.GetCodeword(Codeword_A);
-
 			Code.Get_Symbols(A);
 
 			Code.GenerateRandomSystematic();Code.Encode();
 			Code.GetCodeword(Codeword_B);
-
 			Code.Get_Symbols(B);
-//			cout << "CWA:" << Codeword_A[0] << "\n";
+
+
+			//			cout << "CWA:" << Codeword_A[0] << "\n";
 //			cout << "CWB:" << Codeword_B[0] << "\n";
 			(dynamic_cast<PNC_Channel*>(Channel))->SimulateOutputVector_PNC(Codeword_A, Codeword_B, ChannelOutput);
 //			cout << "CHO:" << ChannelOutput[0] << "\n";

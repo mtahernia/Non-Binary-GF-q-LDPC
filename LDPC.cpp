@@ -235,6 +235,7 @@ void LDPC_Code::GenerateRandomSystematic() {
 	// Randomly select values for systematic digits
 	//------------------------------------------------------
 //	for (int i = 0; i < Systematic; i++)
+	cout << "Var Nodes: " << Variables.GetLength() << "\n";
 	for (int i = 0; i < Variables.GetLength(); i++)
 		Variables[i].Symbol.val = uniform_random(GFq::q);
 }

@@ -9,6 +9,6 @@ if (isempty(Poly_J_R))
     disp('Error, Calc_J_R: Unhandled Mapping/SNR');
 else
     I = polyval(Poly_J_R, sigma);
-    I(find(sigma > sigma_last)) = 1;
-    I(find(I < 0)) = 0;
+    I(sigma > sigma_last) = 1;
+    I(I < 0) = 0;
 end;

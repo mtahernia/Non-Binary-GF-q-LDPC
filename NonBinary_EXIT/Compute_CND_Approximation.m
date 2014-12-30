@@ -1,5 +1,5 @@
-function Poly_CND = Compute_CND_Empirical(rho_max, SNR_dB, Mapping, filename)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function Poly_CND = Compute_CND_Approximation(rho_max, SNR_dB, Mapping, filename)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% formerly Compute_CND_Empirical
 % Remark: The function accepts an optional parameter filename.
 % This parameter is useful for debugging.  You may want to change 
 % the way the function computes its approximation, for given data.
@@ -21,8 +21,8 @@ dx = 0.01;
 % Load data
 %------------------------------------------------------------------
 IA = [];  IE = [];
-if (exist('filename'))          % if the variable exists
-    if (exist(filename))        % if the file exists
+if (exist('filename','var'))          % if the variable exists
+    if (exist(filename,'file'))        % if the file exists
         load(filename, 'IA', 'IE'); % load data
     end;
 end;
@@ -30,7 +30,7 @@ end;
 %------------------------------------------------------------------
 % Data needs to be created
 %------------------------------------------------------------------
-if (isempty(IA) | isempty(IE))
+if (isempty(IA) || isempty(IE))
     % Params
     CountSamples = 10000;
     
@@ -38,7 +38,7 @@ if (isempty(IA) | isempty(IE))
     IA = 0:dx:1;
     sigma = Calc_J_R_Minus(IA, SNR_dB, Mapping);
     
-    LastZeroIndex = max(find(sigma <= 0));
+    LastZeroIndex = find(sigma <= 0, 1, 'last' );
     indices = find(sigma > 0);
     indices = [LastZeroIndex, indices];
     
@@ -86,7 +86,7 @@ if (isempty(IA) | isempty(IE))
 %    fclose(flogid);
     
     % Save data
-    if (exist('filename'))          % if the variable exists
+    if (exist('filename','var'))          % if the variable exists
        save(filename, 'IA', 'IE');      % save data
     end;
 end;
@@ -101,7 +101,7 @@ for j = 1:(rho_max - 1)
 
     % Combat Gibbs phenomenon
     CurIA = [0:dx:(IAFirst-dx),IA];
-    indices = find(CurIA >= IAFirst);
+    indices = (CurIA >= IAFirst);
     CurIE(indices) = IE(:, j)';
     indices = find(CurIA < IAFirst);
     CurIE(indices) = CurIA(indices) * (IEFirst / IAFirst);

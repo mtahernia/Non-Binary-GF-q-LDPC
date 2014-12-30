@@ -1,4 +1,4 @@
-function sigma = Calc_J_minus(I)
+function sigma = Calc_J_Minus(I)
 
 global Pol_J_Minus
 

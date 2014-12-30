@@ -7,12 +7,12 @@ sigma = [];
 if (isempty(Poly_J_R_Minus))
     disp('Error, Calc_J_R_Minus: Unhandled Mapping/SNR');
 else
-    indices = find(I < IFirst);
+    indices = (I < IFirst);
     sigma(indices) = 0;
     
     indices = find(I >= IFirst);
     sigma(indices) = polyval(Poly_J_R_Minus, I(indices));
     
-    sigma(find(sigma > 7)) = 7;
-    sigma(find(sigma < 0)) = 0;
+    sigma(sigma > 7) = 7;
+    sigma(sigma < 0) = 0;
 end;

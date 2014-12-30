@@ -3,7 +3,7 @@ function IE = Calc_CND(rho_degs, rho_wts, SNR_dB, Mapping, IA)
 global Pol_J Pol_J_Minus IFirst Poly_J_R Poly_J_R_Minus Poly_CND
 
 IE = zeros(size(IA));
-indices = find(IA < IFirst);
+indices = (IA < IFirst);
 IE(indices) = -inf;
 indices = find(IA >= IFirst);
 

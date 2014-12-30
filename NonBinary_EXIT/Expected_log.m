@@ -1,4 +1,4 @@
-function I = Expected_Log(Samples)
+function I = Expected_log(Samples)
 
 CountSamples = size(Samples, 2);
 q = size(Samples, 1) + 1;

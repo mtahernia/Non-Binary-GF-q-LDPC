@@ -21,8 +21,8 @@ CountSamples = 50000;
 % Load data
 %------------------------------------------------------------------
 sigma = [];  II = [];
-if (exist('filename'))          % if the variable exists
-    if (exist(filename))        % if the file exists
+if (exist('filename','var'))          % if the variable exists
+    if (exist(filename,'file'))        % if the file exists
         load(filename, 'sigma', 'II'); % load data
     end;
 end;
@@ -30,7 +30,7 @@ end;
 %--------------------------------------------------------------------
 % Generate data
 %--------------------------------------------------------------------
-if (isempty(sigma) | isempty(II))
+if (isempty(sigma) || isempty(II))
     sigma = 0:dx:7;
     
     for i = 1:length(sigma)
@@ -38,7 +38,7 @@ if (isempty(sigma) | isempty(II))
         disp(sprintf('i = %d, sigma = %f, I = %f', i, sigma(i), II(i)));
     end;
     
-    if (exist('filename'))          % if the variable exists
+    if (exist('filename','var'))          % if the variable exists
        save(filename, 'sigma', 'II');      % save data
     end;
     

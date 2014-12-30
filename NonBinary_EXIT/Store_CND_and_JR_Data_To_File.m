@@ -1,4 +1,4 @@
-function Store_CND_and_JR_Pols_Data_To_File(SNR_dB, Mapping, IFirst, Poly_J_R, Poly_J_R_Minus, Poly_CND)
+function Store_CND_and_JR_Data_To_File(SNR_dB, Mapping, IFirst, Poly_J_R, Poly_J_R_Minus, Poly_CND)
 
 % Load old data
 % Constants

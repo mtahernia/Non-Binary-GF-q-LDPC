@@ -1,10 +1,10 @@
-function rho_wts = RhoLinProgDesign(lambda_degs, lambda_wts, rho_degs, SNR_dB, Mapping, gap, IE);
+function rho_wts = RhoLinProgDesign(lambda_degs, lambda_wts, rho_degs, SNR_dB, Mapping, gap, IE)
 
-if (exist('IE') ~= 1)
+if (exist('IE','var') ~= 1)
     IE = 0.01:0.01:0.99;
 end
 
-if (exist('gap') ~= 1)
+if (exist('gap','var') ~= 1)
       gap = zeros(size(IE));
 end
 
@@ -55,9 +55,9 @@ X0(I) = 1;
 
 % Linear programming
 disp('RhoLinProgDesign')
-options = optimoptions(@linprog,'Algorithm','active-set');
-x = linprog(f, A, b, Aeq, beq, LB, UB, X0,options);
-
+% options = optimoptions(@linprog,'Algorithm','active-set');
+% x = linprog(f, A, b, Aeq, beq, LB, UB, X0, options);
+x = linprog(f, A, b, Aeq, beq, LB, UB);
 % Store results
 rho_wts = x';
 

@@ -30,7 +30,7 @@ public:
 		h_B(1.0),
 		alpha(1),
 		beta(1) {}
-	~PNC_Channel(){cout << "PNC_Channel Destructor Called\n";}
+	~PNC_Channel(){ /*cout << "PNC_Channel Destructor Called\n";*/}
 
 	double NoiseVariance();  // Returns noise_sigma^2
 	double NoiseStdDev();	 // Returns noise_sigma

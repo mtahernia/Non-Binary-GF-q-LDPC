@@ -61,7 +61,7 @@ public:
 	LDPC_Code() : /* After colon, there is initialization of constant variables!
 	 you can not initialize constant int,... inside the constructor function */
 			BlockLength(-1), Channel(NULL) {}
-	~LDPC_Code(){cout <<"LDPC_Code Destructor called \n";}
+	~LDPC_Code(){/*cout <<"LDPC_Code Destructor called \n";*/}
 
 	/// Operator overloading function declaration for = . The argument is rhs of the assignment operator
 //	LDPC_Code &operator=(LDPC_Code &Code); // FIXME: This function should have explicit definition somewhere

@@ -30,17 +30,20 @@ double PNC_Channel::CapacityInBits() {
 }
 
 void PNC_Channel::PrintChannelData(LDPC_Code &Code) {
-	cout << "FIXME: Channel Data Calculation and Printing Not Implemented!!!!";
-	double BitRate, No, SNR, SNR_dB;
+//	cout << "FIXME: Channel Data Calculation and Printing Not Implemented!!!!\\";
+	double BitRate, No, SNR_A, SNR_B, SNR_A_dB, SNR_B_dB, SNR;
 
 	BitRate = Code.Calc_Bit_Rate();
 	No = pow(noise_sigma, 2.);
-	SNR = (h_A*h_A+h_B*h_B)*1.0 / No;
-	SNR_dB = 10. * log10(SNR);
+	SNR_A = h_A*h_A*1.0 / No;
+	SNR_B= h_B*h_B*1.0 / No;
+	SNR_A_dB = 10. * log10(SNR_A);
+	SNR_B_dB = 10. * log10(SNR_B);
+	SNR = min(SNR_A,SNR_B);
 
-	cout << "SNR(dB) = " << SNR_dB
-			<< " SNR = " << SNR
-			<< " Noise Sigma = "<< noise_sigma
+	cout  	<< "SNR_A(dB) = " << SNR_A_dB << "\tSNR_B(dB) = " << SNR_B_dB << "\n"
+			<< "SNR_A = " << SNR_A << "\tSNR_B = " << SNR_B << "\n"
+			<< "Noise Sigma = "<< noise_sigma
 			<< "\nCapacity at SNR (symbols per channel use) = "<< 0.5 * log(1.0 + SNR) / log((double) GFq::q)
 			<< "\nCapacity at SNR (bits per channel use) = "   << 0.5 * log(1.0 + SNR) / log(2.0)
 			<< "\nMinimum SNR for rate (dB) = "<< 10.0 * log(pow(2.0, 2.0 * BitRate) - 1.) / log(10.0)

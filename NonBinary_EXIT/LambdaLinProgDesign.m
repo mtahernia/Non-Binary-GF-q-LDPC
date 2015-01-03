@@ -13,7 +13,7 @@ end
 
 for ideg = 1:length(lambda_degs)
     IVND(:, ideg) = Calc_VND_Empirical(lambda_degs(ideg), 1, SNR_dB, Mapping, IA)';
-%     plot(IA, IVND(:, ideg), 'b'); hold on;
+%    plot(IA, IVND(:, ideg), 'b'); hold on;
 end;
 
 % CND Minus 
@@ -58,10 +58,7 @@ X0 = zeros(1, count_lambdas);
 X0(I) = 1;
 
 % Linear programming
-disp('LambdaLinProgDesign');
-% options = optimoptions(@linprog,'Algorithm','active-set');
-% x = linprog(f, A, b, Aeq, beq, LB, UB, X0, options);
-x = linprog(f, A, b, Aeq, beq, LB, UB);
+x = linprog(f, A, b, Aeq, beq, LB, UB, X0);
 
 % Store results
 lambda_wts = x';

@@ -21,7 +21,7 @@ for ideg = 1:length(rho_degs)
      ICND(:, ideg) = Calc_CND_Empirical(rho_degs(ideg), 1, SNR_dB, Mapping, IA)';
 end;
 
-indices = find(~isnan(sum(ICND')) & ~isnan(IVND));          % sum, so that if any element in row is Nan, whole row is disqualified 
+indices = find(~isnan(sum(ICND,2)) & ~isnan(IVND));          % sum, so that if any element in row is Nan, whole row is disqualified 
 ICND = ICND(indices, :);
 IVND = IVND(indices) + gap(indices);
 
@@ -54,10 +54,8 @@ X0 = zeros(1, count_rhos);
 X0(I) = 1;
 
 % Linear programming
-disp('RhoLinProgDesign')
-% options = optimoptions(@linprog,'Algorithm','active-set');
-% x = linprog(f, A, b, Aeq, beq, LB, UB, X0, options);
-x = linprog(f, A, b, Aeq, beq, LB, UB);
+x = linprog(f, A, b, Aeq, beq, LB, UB, X0);
+
 % Store results
 rho_wts = x';
 

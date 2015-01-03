@@ -1,9 +1,9 @@
-function IE = Calc_CND(rho_degs, rho_wts, SNR_dB, Mapping, IA)
+function IE = Calc_CND_Empirical(rho_degs, rho_wts, SNR_dB, Mapping, IA)
 
 global Pol_J Pol_J_Minus IFirst Poly_J_R Poly_J_R_Minus Poly_CND
 
 IE = zeros(size(IA));
-indices = (IA < IFirst);
+indices = find(IA < IFirst);
 IE(indices) = -inf;
 indices = find(IA >= IFirst);
 

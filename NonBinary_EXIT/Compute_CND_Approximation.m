@@ -1,5 +1,5 @@
 function Poly_CND = Compute_CND_Approximation(rho_max, SNR_dB, Mapping, filename)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% formerly Compute_CND_Empirical
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Remark: The function accepts an optional parameter filename.
 % This parameter is useful for debugging.  You may want to change 
 % the way the function computes its approximation, for given data.
@@ -38,7 +38,7 @@ if (isempty(IA) || isempty(IE))
     IA = 0:dx:1;
     sigma = Calc_J_R_Minus(IA, SNR_dB, Mapping);
     
-    LastZeroIndex = find(sigma <= 0, 1, 'last' );
+    LastZeroIndex = max(find(sigma <= 0));
     indices = find(sigma > 0);
     indices = [LastZeroIndex, indices];
     
@@ -101,7 +101,7 @@ for j = 1:(rho_max - 1)
 
     % Combat Gibbs phenomenon
     CurIA = [0:dx:(IAFirst-dx),IA];
-    indices = (CurIA >= IAFirst);
+    indices = find(CurIA >= IAFirst);
     CurIE(indices) = IE(:, j)';
     indices = find(CurIA < IAFirst);
     CurIE(indices) = CurIA(indices) * (IEFirst / IAFirst);

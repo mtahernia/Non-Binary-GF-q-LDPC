@@ -12,7 +12,6 @@ if (q ~= last_q)
     
     if (isprime(q))
        disp('GFMul does not handle prime q');
-%        r = gfmul(x1*ones(size(x2)), x2, q);
        return;
     else
         if (floor(log2(q)) ~= log2(q))

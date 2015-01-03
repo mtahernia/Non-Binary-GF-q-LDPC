@@ -7,7 +7,7 @@ if (exist('JPols.mat', 'file') ~= 0)
     load('JPols.mat');
 end;
 
-if (exist('JPols') == 0)
+if (exist('JPols','var') == 0)
     JPols = {};
 end;
 

@@ -29,9 +29,6 @@ SaveSamples = Samples;
 % Random permute
 labels = floor(rand(1,CountSamples)*(q-1)) + 1;
 for i = 1:q-1
-% Original for extension field of 2
-%     indices = GFqMul(i, labels, q);
-% Mine for prime field
     indices = gfmul(i*ones(size(labels)), labels, q);
     Samples(i, :) = SaveSamples(sub2ind(size(Samples), indices, 1:CountSamples));
 end;

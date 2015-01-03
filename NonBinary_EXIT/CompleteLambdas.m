@@ -1,4 +1,4 @@
-function lambda_wts = CompleteLambdas(lambda_degs, lambda_wts, rho_degs, rho_wts, Rate);
+function lambda_wts = CompleteLambdas(lambda_degs, lambda_wts, rho_degs, rho_wts, Rate)
 
 % Plan degree distribution -----------------------------
 K = lambda_degs(1);

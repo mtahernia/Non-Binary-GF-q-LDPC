@@ -1,5 +1,6 @@
 # -Wextra 
-LIBS = -lm -lfftw3 -static -static-libgcc -static-libstdc++
+LIBS = -lm -lfftw3 
+# -static -static-libgcc -static-libstdc++
 CCC = g++ -O3 -Wall -DLINUX_C
 
 OBJ_FILES_TOOLS = GFq.o Matrix.o Report.o 

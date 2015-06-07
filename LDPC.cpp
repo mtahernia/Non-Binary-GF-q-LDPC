@@ -198,11 +198,12 @@ double LDPC_Code::Belief_Propagation_Decoder(int Count_Iterations) {
 		Leftbound_Iteration();
 		Rightbound_Iteration();
 
-//		Func_RC = Calc_Rightbound_Symbol_Error_Rate();
+//		Func_RC = Calc_Rightbound_Symbol_Error_Rate(); //FIXME: Not modified for PNC yet
 //		sprintf(buffer, "%d: Rightbound SER = %1.10f, %s", i + 1, Func_RC,CharTime());
 		Func_RC = Calc_Symbol_Error_Rate();
-		sprintf(buffer, "%d: SER = %1.10f, %s", i + 1, Func_RC,CharTime());
-		cout << buffer;
+//		sprintf(buffer, "%d: SER = %1.10f, %s", i + 1, Func_RC,CharTime());
+//		cout << buffer;
+		cout << ".";
 
 		// Stop when Func_RC doesn't fall for some consecutive iterations
 		if (Func_RC < LastMin) {
@@ -210,12 +211,20 @@ double LDPC_Code::Belief_Propagation_Decoder(int Count_Iterations) {
 			CountIncreaseIterations = 0;
 		} else {
 			CountIncreaseIterations++;
-			if (CountIncreaseIterations > 50)
+			if (CountIncreaseIterations > 50){
+				sprintf(buffer, "\n%d: SER = %1.10f, %s\n", i + 1, Func_RC,CharTime());
+				cout << buffer;
 				break;
+			}
+
 		}
 
-		if (Func_RC < 1e-7)
+		if (Func_RC < 1e-7){
+			sprintf(buffer, "\n%d: SER = %1.10f, %s\n", i + 1, Func_RC,CharTime());
+			cout << buffer;
 			break;
+		}
+
 	}
 
 	return Func_RC;

@@ -205,6 +205,7 @@ int main(int argc, char **argv) {
 		for (int i = 0; i < count_runs; i++) {
 			cout << "Run #" << i+1 << "\n";
 			Code.ResetGraph();
+			// Retry until gap is small enough
 			while (Code.GenerateEncoder_WithoutGap()){
 				Code.ResetGraph();
 			}

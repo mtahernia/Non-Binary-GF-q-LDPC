@@ -25,8 +25,8 @@ int main(int argc, char **argv) {
 	//-------------------------------------------------------------------
 	// Command line arguments and default values
 	//-------------------------------------------------------------------
-	int iterations = 5000;
-	char infilename[100];
+	int iterations = 500;
+	char infilename[200];
 	int BlockLength = 50000;
 	int count_runs = 100;
 	char ChannelType = 'P';
@@ -42,9 +42,12 @@ int main(int argc, char **argv) {
 	if (argc < 3) {		// If less
 		ReportBuf.OpenFile(OutputLogFileName);  // Reportbuf is defined in Report.h
 		cout << "usage: " << argv[0] // argv[0] is always the file name
-				<< " <input file> <SNR (dB)/crossover> {<options>}\n"
+				<< " <input file> <SNR (dB)/crossover>[:<options>}]\n"
 				<< "Options: \n"
 				<< "   -c : Channel (G)aussian, (P)NC, (B)SC default: " << ChannelType
+				<< "\n\t PNC Channel Options SNR:h_A:h_B:alpha:beta"
+				<< "\n\t Gaussian Channel Options : Nothing except SNR"
+				<< "\n\t BSC Channel Options :Not implemented yet\n"
 				<< "\n" << "   -i : maximum iterations, default: " << iterations
 				<< "\n" << "   -b : block length, default: " << BlockLength
 				<< "\n" << "   -r : number of runs, default: " << count_runs
@@ -115,7 +118,6 @@ int main(int argc, char **argv) {
 		exit(1);
 	}
 
-
 	//-------------------------------------------------------------
 	// Handle channel
 	//-------------------------------------------------------------
@@ -130,9 +132,8 @@ int main(int argc, char **argv) {
 
 		// If channel is gaussian, the next input will be SNR in dB
 		sscanf(argv[2], "%lf", &SNR_dB);
-		SNR = pow(10., SNR_dB / 10.);
-		No = 1. / SNR;
-		noise_sigma = sqrt(No);
+
+		SNR = pow(10., SNR_dB / 10.); No = 1. / SNR; noise_sigma = sqrt(No);
 
 		// Because Channel is from base class channel, we need to cast it to the real thing, which is a child class
 		// Now to cast between different classes, and to be safe, we use dynamic_cast. if the casting is not safe, it will return false.
@@ -141,8 +142,9 @@ int main(int argc, char **argv) {
 	case 'P':
 		Channel = new PNC_Channel;
 
-		// If channel is gaussian, the next input will be SNR in dB
+		// If channel is PNC, then the next input will be "SNR:h_A:h_B:alpha:beta"
 		sscanf(argv[2], "%lf:%lf:%lf:%i:%i", &SNR_dB,&h_A,&h_B,&alpha,&beta);
+
 		SNR = pow(10., SNR_dB / 10.); No = 1. / SNR; noise_sigma = sqrt(No);
 
 		(dynamic_cast<PNC_Channel*>(Channel))->SetNoiseSigma(noise_sigma);
@@ -173,7 +175,7 @@ int main(int argc, char **argv) {
 	//-------------------------------------------------------------------
 	// Print channel data
 	//-------------------------------------------------------------------
-/*
+///*
 	double Rate = Code.Calc_Symbol_Rate();
 	cout	<< "----------------------------------------------------------------------------\n"
 			<< "Symbol Rate = " << Rate << " Bit Rate = "
@@ -184,7 +186,7 @@ int main(int argc, char **argv) {
 
 	Channel->PrintChannelData(Code);
 	cout	<< "\n----------------------------------------------------------------------------\n";
-*/
+//*/
 	//------------------------------------------------------------------------
 	// Go
 	//------------------------------------------------------------------------
@@ -201,6 +203,7 @@ int main(int argc, char **argv) {
 		GFq *N = new GFq[BlockLength]; // Network Coded Symbols
 
 		for (int i = 0; i < count_runs; i++) {
+			cout << "Run #" << i+1 << "\n";
 			Code.ResetGraph();
 			Code.GenerateEncoder_WithoutGap();
 
@@ -232,6 +235,7 @@ int main(int argc, char **argv) {
 		vector Codeword;
 
 		for (int i = 0; i < count_runs; i++) {
+			cout << "Run #" << i+1 << "\n";
 			Code.ResetGraph();
 			Code.GenerateRandomSystematic();
 			Code.GenerateEncoder_WithoutGap();
@@ -248,9 +252,9 @@ int main(int argc, char **argv) {
 	}
 	} //switch
 
-	cout << "Accumulated SER = " << AccumulatedSER << "\n";
-	if (AccumulatedSER < EPSILON)
-		cout << "Bingo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " << "alpha=" << alpha << "\t beta=" << beta << "\n";
+	cout << "\nDone!" << "\nAverage SER = " << AccumulatedSER/count_runs << "\n";
+//	if (AccumulatedSER < EPSILON)
+//		cout << "Bingo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " << "alpha=" << alpha << "\t beta=" << beta << "\n";
 
 	//------------------------------------------------------------------------
 	// return OK

@@ -205,7 +205,10 @@ int main(int argc, char **argv) {
 		for (int i = 0; i < count_runs; i++) {
 			cout << "Run #" << i+1 << "\n";
 			Code.ResetGraph();
-			Code.GenerateEncoder_WithoutGap();
+			while (Code.GenerateEncoder_WithoutGap()){
+				Code.ResetGraph();
+			}
+//			Code.GenerateEncoder();
 
 			Code.GenerateRandomSystematic();Code.Encode();
 			Code.GetCodeword(Codeword_A);

@@ -136,8 +136,8 @@ public:
 	void GenerateRandomSystematic();	//!< Randomly generate systematic code
 	void Encode();							//!< Encode using Urbanke method
 	void GenerateEncoder();				//!< Generate encoder with gap (FIXME: )
-	void GenerateEncoder_WithoutGap();//!< Generate encoder without gap (FIXME:)
-
+//	void GenerateEncoder_WithoutGap();//!< Generate encoder without gap (FIXME:)
+	int GenerateEncoder_WithoutGap();//!< Generate encoder without gap (FIXME:)
 };
 
 #endif /* LDPC_H_ */

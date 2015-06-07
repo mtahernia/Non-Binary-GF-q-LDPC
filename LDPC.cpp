@@ -288,7 +288,7 @@ void LDPC_Code::Encode() {
 	}
 }
 
-void LDPC_Code::GenerateEncoder_WithoutGap() {
+int LDPC_Code::GenerateEncoder_WithoutGap() {
 	//------------------------------------------------------
 	// Approximate lower triangularize
 	//------------------------------------------------------
@@ -314,7 +314,8 @@ void LDPC_Code::GenerateEncoder_WithoutGap() {
 	//------------------------------------------------------
 	if (Gap > MAX_GAP) {
 		cout << "GenerateEncoder_WithoutGap: Gap = " << Gap << " too big\n";
-		exit(1);
+//		exit(1);
+		return 1;
 	}
 
 	for (int i = FirstCheckOfGap; i < Checks.GetLength(); i++) {
@@ -326,6 +327,7 @@ void LDPC_Code::GenerateEncoder_WithoutGap() {
 	Gap = 0;
 	GapMatrix.deAllocate();
 	MinusPhiInverse.deAllocate();
+	return 0;
 }
 
 void LDPC_Code::GenerateEncoder() {

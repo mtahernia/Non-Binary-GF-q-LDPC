@@ -53,7 +53,7 @@ q_LDPC: ${OBJ_FILES}
 	${CCC} ${OBJ_FILES} ${LIBS} -o q_LDPC
 
 doxygen:
-	doxygen conf.dox
+	doxygen conf.doxyfile
 latex: doxygen
 	cd doxygen/latex;make
 clean:

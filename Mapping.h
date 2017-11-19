@@ -47,12 +47,12 @@ public:
 	}
 
 	// Determine whether the mapping is a binary mapping or not!
-	BOOLEAN IsBinary() {
+	bool IsBinary() {
 		if (q != 2)
-			return FALSE;
+			return false;
 		if (((vals[0] != 0) && (vals[0] != 1)) || ((vals[1] != 0) && (vals[1] != 1)))
-			return FALSE;
-		return TRUE;
+			return false;
+		return true;
 	}
 
 	// Read mapping from input file

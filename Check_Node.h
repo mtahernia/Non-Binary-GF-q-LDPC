@@ -2,7 +2,7 @@
  * Check_Node.h
  *
  *  Created on: 23 Dec, 2014
- *      Author: mehrdad
+ \*      Author: Mehrdad Tahernia
  */
 
 #ifndef CHECK_NODE_H_
@@ -18,7 +18,7 @@ public:
 	check_node(){}
 	~check_node(){/*cout<<"check_node destructor called\n";*/}
 	void CalcAllLeftboundMessages();
-	BOOLEAN DoesFinalEstimateViolate();
+	bool DoesFinalEstimateViolate();
 	virtual node &AdjacentNode(int index);  // returnes the adjacent variable  node to edge i
 	GFq &Element(int i); // For use in encoding - treats check like row of matrix
 	GFq &Value();

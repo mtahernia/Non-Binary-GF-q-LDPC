@@ -2,7 +2,7 @@
  * Variable_Node.h
  *
  *  Created on: 23 Dec, 2014
- *      Author: mehrdad
+ \*      Author: Mehrdad Tahernia
  */
 
 #ifndef VARIABLE_NODE_H_
@@ -23,7 +23,7 @@ class variable_node: public node {
 public:
 	GFq Symbol;     // Value - for encoding
 	GFq DecSymbol;     // Value - for decoding
-	GFq v;          // coset vector - randomly selected at variable node
+	GFq v;          // coset vector - randomly selected at variable node NOTE: Set to all zero for now
 	double SourceData;
 	mapping *MapInUse;
 
@@ -37,9 +37,9 @@ public:
 	message AllImprovementsForChange;       // For use in greedy source coding
 
 public:
-	variable_node():SourceData(0),MapInUse(NULL) {
+	variable_node():SourceData(0),MapInUse(NULL),LCLP_Constraints(NULL),CountConstraints(-1) {
 		v.val = 0;
-//		uniform_random(GFq::q); //FIXME: Coset Vector set to zero
+//		uniform_random(GFq::q); //FIXME: Here I have set Coset Vector to zero, previously it was set to a random number
 	}
 	~variable_node(){/*cout<<"variable_node destructor called\n";*/	}
 
@@ -58,8 +58,8 @@ public:
 	double GetSignal() {return MapInUse->map(v+Symbol);	}
 	// For use in greedy source coding
 
-	BOOLEAN IsRightConnectedTo(node *n);
-	BOOLEAN IsPath3ConnectedTo(node *n);  // Is connected by a path of at most
+	bool IsRightConnectedTo(node *n);
+	bool IsPath3ConnectedTo(node *n);  // Is connected by a path of at most
 	virtual node &AdjacentNode(int index);
 };
 

@@ -2,7 +2,7 @@
  * Message.cpp
  *
  *  Created on: 23 Dec, 2014
- *      Author: mehrdad
+ \*      Author: Mehrdad Tahernia
  */
 #include <fftw3.h> // This is a try to fix fft problem.
 #include <cstring>  // bzero
@@ -147,12 +147,12 @@ void message::HardMessage(GFq &g){
 	*this = 0; (*this)[g] = 1;
 }
 
-BOOLEAN message::operator<(message &m2) {
+bool message::operator<(message &m2) {
 	message &m1 = *this;
 	for (int i = 0; i <= m1.q; i++)
 		if (m1[i] >= m2[i])
-			return FALSE;
-	return TRUE;
+			return false;
+	return true;
 }
 
 message &message::operator=(message &M) {
@@ -222,23 +222,23 @@ message &message::operator*(double d) {
 	return Aux;
 }
 
-BOOLEAN message::operator==(message &m) {
+bool message::operator==(message &m) {
 	if (q != m.q)
-		return FALSE;
+		return false;
 	for (int i = 0; i < q; i++)
 		//         if (Probs[i] != m[i])
 		if (fabs(Probs[i] - m[i]) > EPSILON)
-			return FALSE;
-	return TRUE;
+			return false;
+	return true;
 }
 
-BOOLEAN message::operator==(double d) {
+bool message::operator==(double d) {
 	for (int i = 0; i < q; i++)
 		//if (fabs(Probs[i] - d) > EPSILON)
 		if (Probs[i] != d)
-			return FALSE;
+			return false;
 
-	return TRUE;
+	return true;
 }
 
 message &message::operator+=(message &M) {

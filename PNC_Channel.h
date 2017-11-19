@@ -2,7 +2,7 @@
  * PNC_Channel.h
  *
  *  Created on: 23 Dec, 2014
- *      Author: mehrdad
+ \*      Author: Mehrdad Tahernia
  */
 
 #ifndef PNC_CHANNEL_H_

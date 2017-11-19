@@ -64,7 +64,7 @@ inline void bcopy(void *from, void *to, int len)
 	}
 }
 
-inline BOOLEAN isfinite(double &d)
+inline bool isfinite(double &d)
 {
 	switch(_fpclass(d))
 	{
@@ -72,10 +72,10 @@ inline BOOLEAN isfinite(double &d)
 	case _FPCLASS_QNAN:
 	case _FPCLASS_NINF:
 	case _FPCLASS_PINF:
-		return FALSE;
+		return false;
 		break;
 	default:
-		return TRUE;
+		return true;
 	}
 }
 
@@ -179,50 +179,19 @@ inline double Q(double x) {
  ************************************************************************/
 #ifdef LINUX_C
 
-// This function is already defined in my math.h file FIXME: I may need to comment it and adapt the original function
-#undef isfinite
-
-inline BOOLEAN isfinite(double d)
-{
-	if (std::isnan(d))
-		return FALSE;
-	else
-	{
-		switch(std::isinf(d))
-		{
-		case -1:
-		case 1:
-			return FALSE;
-			break;
-		default:
-			return TRUE;
-			break;
-		}
-	}
-}
 
 inline double clip(double &d, double MAXVAL = INF)
 {
 	if (std::isnan(d))
 		d = 0;
-	else
-	{
-		switch(std::isinf(d))
-		{
-		case -1:
-			d = -MAXVAL;
-			break;
-		case 1:
-			d = MAXVAL;
-			break;
-		default:
-			if (d > MAXVAL)
-				d = MAXVAL;
-			else if (d < -MAXVAL)
-				d = -MAXVAL;
-			break;
-		}
-	}
+	else if (d == -INFINITY)
+		d = -MAXVAL;
+	else if (d == INFINITY)
+		d = -MAXVAL;
+	else if (d > MAXVAL)
+		d = MAXVAL;
+	else if (d < -MAXVAL)
+		d = -MAXVAL;
 	return d;
 }
 

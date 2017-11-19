@@ -170,7 +170,7 @@ public:
 		deAllocate();
 	}
 
-	BOOLEAN IsNull() {
+	bool IsNull() {
 		return (TotalSize == 0);
 	}
 };

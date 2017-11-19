@@ -2,7 +2,7 @@
  * Message.h
  *
  *  Created on: 23 Dec, 2014
- *      Author: mehrdad
+ \*      Author: Mehrdad Tahernia
  */
 
 #ifndef MESSAGE_H_
@@ -37,9 +37,9 @@ public:
 	message &operator*=(message &M);
 	message &operator*(message &M2);
 	message &operator*(double d);
-	BOOLEAN operator==(message &m); // TODO: Not compatible with complex
-	BOOLEAN operator==(double d);// TODO: Not compatible with complex	// FIXME: this might make a problem because of decimation error
-	BOOLEAN operator<(message &m2);	// If all q components of this message is smaller than message 2 returns true
+	bool operator==(message &m); // TODO: Not compatible with complex
+	bool operator==(double d);// TODO: Not compatible with complex	// FIXME: this might make a problem because of decimation error
+	bool operator<(message &m2);	// If all q components of this message is smaller than message 2 returns true
 	message &operator+=(message &M);
 	message &operator+(message &M);
 	message &operator/=(double d);

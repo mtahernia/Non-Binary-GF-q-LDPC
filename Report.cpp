@@ -25,7 +25,7 @@ void reportbuf::OpenFile(char *FileName) {
 
 		// If Filename is "err"
 		if (strcmp(buffer, "err") == 0)
-			IsDirectedToErr = /*TRUE*/1;
+			IsDirectedToErr = /*true*/1;
 		else
 			fp = fopen(FileName, "w");
 };

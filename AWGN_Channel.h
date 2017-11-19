@@ -2,7 +2,7 @@
  * AWGN_Channel.h
  *
  *  Created on: 23 Dec, 2014
- *      Author: mehrdad
+  *      Author: Mehrdad Tahernia
  */
 #ifndef AWGN_CHANNEL_H_
 #define AWGN_CHANNEL_H_

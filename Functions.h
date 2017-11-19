@@ -99,12 +99,12 @@ inline int Intlog2(int x) {
 }
 //=========================================================================================
 // Check whether num is a power of 2 or not
-inline BOOLEAN IsPowerOfTwo(int num) {
-	BOOLEAN Reply = TRUE;
+inline bool IsPowerOfTwo(int num) {
+	bool Reply = true;
 
 	for (int i = num; i > 2; i = i / 2) {
 		if ((i % 2) != 0) {
-			Reply = FALSE;
+			Reply = false;
 			break;
 		}
 	}
@@ -113,7 +113,7 @@ inline BOOLEAN IsPowerOfTwo(int num) {
 }
 //=========================================================================================
 // Checks if char c is a digit or not
-inline BOOLEAN isnumber(char c) {
+inline bool isnumber(char c) {
 	return (('0' <= c) && (c <= '9'));
 }
 //=========================================================================================
@@ -127,16 +127,16 @@ inline double min_double(double x, double y) {
 	return (x < y) ? x : y;
 }
 //=========================================================================================
-inline BOOLEAN is_double_digit(int c) {
+inline bool is_double_digit(int c) {
 	return (isdigit(c) || (c == '.') || (c == '-') || (c == '+') || (c == 'e'));
 }
 //=========================================================================================
-inline BOOLEAN IsPrime(int num) {
-	BOOLEAN Reply = TRUE;
+inline bool IsPrime(int num) {
+	bool Reply = true;
 
 	for (int i = 2; i < num; i++) {
 		if ((num % i) == 0) {
-			Reply = FALSE;
+			Reply = false;
 			break;
 		}
 	}

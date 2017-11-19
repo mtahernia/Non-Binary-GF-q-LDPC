@@ -20,8 +20,8 @@ int GFq::q = -1;
 GFq GFq::alpha[MAX_Q];
 int GFq::reverse_alpha[MAX_Q];
 GFq GFq::inverse[MAX_Q];
-BOOLEAN GFq::IsPrimeQ = FALSE;
-BOOLEAN GFq::IsModuloOperations = FALSE;
+bool GFq::IsPrimeQ = false;
+bool GFq::IsModuloOperations = false;
 
 
 // Forward declerations FIXME: Why do we need to forward declare static members?
@@ -77,14 +77,14 @@ void GFq::Initialize(int p_q) {
 			exit(1);
 		}
 
-		IsPrimeQ = FALSE;
-		IsModuloOperations = FALSE;
+		IsPrimeQ = false;
+		IsModuloOperations = false;
 	} else {
 		if (q == 2) {
 			log_2_q = 1;
 			mask = 1;
 		}
-		IsModuloOperations = TRUE;
+		IsModuloOperations = true;
 		IsPrimeQ = IsPrime(q);
 	}
 
@@ -164,4 +164,4 @@ GFq& GFq::One() {
 }
 
 
-BOOLEAN GFq::operator==(GFq g) {	return val == g.val;}
+bool GFq::operator==(GFq g) {	return val == g.val;}

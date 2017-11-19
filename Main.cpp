@@ -12,7 +12,7 @@
 #include "AWGN_Channel.h"
 #include "PNC_Channel.h"
 
-BOOLEAN debug = FALSE;
+bool debug = false;
 
 /**
  *****************************************************************************

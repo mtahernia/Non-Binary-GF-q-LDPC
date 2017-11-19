@@ -2,7 +2,7 @@
  * Bipartite_Graph.h
  *
  *  Created on: 23 Dec, 2014
- *      Author: mehrdad
+ \*      Author: Mehrdad Tahernia
  */
 
 #ifndef BIPARTITE_GRAPH_H_
@@ -29,7 +29,7 @@ public:
 	check_node *check_nodes;
 	edge *edges;
 	edge **EdgeStack;    // Pointer used to manage allocation of memory to nodes
-	static BOOLEAN ShouldPermuteLDPCVariables;
+	static bool ShouldPermuteLDPCVariables;
 
 public:
 	//Constructors:

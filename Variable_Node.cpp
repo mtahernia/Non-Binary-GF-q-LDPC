@@ -2,7 +2,7 @@
  * Variable_Node.cpp
  *
  *  Created on: 23 Dec, 2014
- *      Author: mehrdad
+ \*      Author: Mehrdad Tahernia
  */
 #include "Message.h"
 #include "Channel.h"
@@ -108,11 +108,11 @@ void variable_node::Initialize(channel &TransmitChannel, double ChannelOut) {
 
 }
 
-BOOLEAN variable_node::IsRightConnectedTo(node *n) {
+bool variable_node::IsRightConnectedTo(node *n) {
 	for (int i = 0; i < degree; i++)
 		if (&edges[i]->RightNode() == n)
-			return TRUE;
+			return true;
 
-	return FALSE;
+	return false;
 }
 

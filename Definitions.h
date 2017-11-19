@@ -18,11 +18,8 @@
 #define INF             1e10	// Infinity
 #define EPSILON         1e-10	// It's Obvious!
 
-#define TRUE   1
-#define FALSE  0
-
 typedef unsigned char BYTE;
-typedef unsigned char BOOLEAN;
+
 
 #define MAX_Q 	32  // Maximum allowed Q   (to be freely modified)
 

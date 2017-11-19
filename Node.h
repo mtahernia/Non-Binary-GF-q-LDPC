@@ -2,7 +2,7 @@
  * Node.h
  *
  *  Created on: 23 Dec, 2014
- *      Author: mehrdad
+ *      Author: Mehrdad Tahernia
  */
 #ifndef NODE_H_
 #define NODE_H_
@@ -21,7 +21,7 @@ public:
 	int MaxEdges;
 
 public:
-	node() : degree(-1), edges(NULL) {	}
+	node() : id(-1), degree(-1), AuxDegree(-1), edges(NULL) ,MaxEdges(-1) {}
 	virtual ~node()	{/*cout << "node destructor called\n";*/}
 
 	void SetID(int p_id) { id = p_id; }

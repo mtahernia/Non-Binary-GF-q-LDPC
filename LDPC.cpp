@@ -27,7 +27,7 @@ void LDPC_Code::GetFromFile(std::ifstream &file) {
 	int rhos_index, lambdas_index;
 
 	rhos_index = lambdas_index = 0;
-	BOOLEAN GotMapInUse = FALSE;
+	bool GotMapInUse = false;
 
 	//----------------------------------------------
 	// Go over file
@@ -56,7 +56,7 @@ void LDPC_Code::GetFromFile(std::ifstream &file) {
 			file.getline(dummy_buffer, sizeof(dummy_buffer));  // reach EoL
 			break;
 		case 'm': // Read mapping from file
-			GotMapInUse = TRUE;
+			GotMapInUse = true;
 			MapInUse.GetFromFile(file);
 
 			// Initialize GF(q)
@@ -406,7 +406,7 @@ void LDPC_Code::GenerateEncoder() {
 
 	// obtain phi^-1
 	// While matrix is singular, switch columns
-	BOOLEAN Success = FALSE;
+	bool Success = false;
 	for (int Attempts = 0; Attempts < 10000; Attempts++) {
 		matrix phi = GapMatrix.Extract(Systematic, Gap); // Systematic = first col after systematic
 		MinusPhiInverse = phi.Inverse();
@@ -414,7 +414,7 @@ void LDPC_Code::GenerateEncoder() {
 		if (!MinusPhiInverse.IsNull())    // if success
 		{
 			MinusPhiInverse.MultiplyByMinusOne();
-			Success = TRUE;
+			Success = true;
 			break;
 		} else {  // switch columns randomly
 			int i1 = uniform_random(Systematic);

@@ -24,8 +24,8 @@ public:
 	static GFq alpha[MAX_Q];		// alpha[i] is the ith element of field
 	static int reverse_alpha[MAX_Q];// multiplicative inverse of alphas
 	static GFq inverse[MAX_Q];		// inverse[i] multiplicative inverse of i
-	static BOOLEAN IsPrimeQ;		// is our field prime, extension or invalid
-	static BOOLEAN IsModuloOperations; // when we have a prime field, operations become modular
+	static bool IsPrimeQ;		// is our field prime, extension or invalid
+	static bool IsModuloOperations; // when we have a prime field, operations become modular
 
 	int val;// Value of field element
 
@@ -35,13 +35,13 @@ public:
 	GFq(int i) : val((BYTE) i) {}
 	GFq(BYTE b = 0) :val(b) {}
 
-	BOOLEAN IsZero() {return val == 0;}
+	bool IsZero() {return val == 0;}
 	BYTE GetVal() {return val;} 	// Unsigned Char
 	static void Initialize(int p_q);
 	static void GenerateAlphas(int m);
 	static GFq &One();
 
-	BOOLEAN operator==(GFq g);// {	return val == g.val;}
+	bool operator==(GFq g);// {	return val == g.val;}
 	GFq &operator+=(GFq g) {
 		if (IsModuloOperations)
 			val = (val + g.val) % q;

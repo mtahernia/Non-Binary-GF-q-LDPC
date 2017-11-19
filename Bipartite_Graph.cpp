@@ -2,7 +2,7 @@
  * Bipartite_Graph.cpp
  *
  *  Created on: 23 Dec, 2014
- *      Author: mehrdad
+ \*      Author: Mehrdad Tahernia
  */
 #include "Variable_Node.h"
 #include "Check_Node.h"

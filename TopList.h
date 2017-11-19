@@ -2,7 +2,7 @@
  * TopList.h
  *
  *  Created on: 23 Dec, 2014
- *      Author: mehrdad
+ \*      Author: Mehrdad Tahernia
  */
 
 #ifndef TOPLIST_H_
@@ -25,9 +25,7 @@ public:
 
 	int MaxSize, CurrentSize;
 public:
-	TopList() :
-			MaxSize(-1), CurrentSize(-1) {
-	}
+	TopList() :	MaxSize(-1), CurrentSize(-1) ,BestChange(NULL),DistortionImprovement(NULL),VariableIndex(NULL) {}
 
 	~TopList() {
 		DeAllocate();

@@ -19,10 +19,10 @@ std::ifstream &operator>>(std::ifstream &file, int &num);
 //=========================================================================================
 class reportbuf: public std::streambuf {
 public:
-	int IsDirectedToErr; // BOOLEAN has not yet been defined at this stage of compilation
+	int IsDirectedToErr; // bool has not yet been defined at this stage of compilation
 	FILE *fp;
 public:
-	reportbuf() : IsDirectedToErr(/*FALSE*/0), fp(NULL) {	}
+	reportbuf() : IsDirectedToErr(/*false*/0), fp(NULL) {	}
 	void OpenFile(char *FileName);
 	virtual int overflow(int nCh);
 	virtual int underflow();

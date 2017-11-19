@@ -184,11 +184,11 @@ inline double Q(double x) {
 
 inline BOOLEAN isfinite(double d)
 {
-	if (isnan(d))
+	if (std::isnan(d))
 		return FALSE;
 	else
 	{
-		switch(isinf(d))
+		switch(std::isinf(d))
 		{
 		case -1:
 		case 1:
@@ -203,11 +203,11 @@ inline BOOLEAN isfinite(double d)
 
 inline double clip(double &d, double MAXVAL = INF)
 {
-	if (isnan(d))
+	if (std::isnan(d))
 		d = 0;
 	else
 	{
-		switch(isinf(d))
+		switch(std::isinf(d))
 		{
 		case -1:
 			d = -MAXVAL;

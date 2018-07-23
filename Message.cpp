@@ -44,7 +44,7 @@ void message::DFT()          // A real-valued DFT - also IDFT
 	{
 		Aux = *this;
 
-		// Create fft variables and a plan
+		// Create FFT variables and a plan
 		static fftw_complex *in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * q);
 		static fftw_complex *out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * q);
 		static fftw_plan p = fftw_plan_dft_1d(q, in, out, FFTW_FORWARD, FFTW_PATIENT);
